@@ -6,7 +6,7 @@ type SignupResult = {
   isError?: boolean;
   message?: string;
   id?: string;
-  [key: string]: any;
+  [key: string]: any; // 임시로 쓰는 코드
 };
 
 export const signupAction = async (
@@ -19,20 +19,19 @@ export const signupAction = async (
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ id, password }),
-    cache: "no-store",
   });
 
   let data;
   try {
     data = await res.json();
   } catch {
-    return { isError: true, message: "Invalid server response" };
+    data = { isError: true, message: "서버 응답 형식이 올바르지 않습니다." };
   }
 
   if (!res.ok) {
     return {
       isError: true,
-      message: data?.message ?? "Signup failed",
+      message: data?.message ?? "회원가입 실패",
     };
   }
 
