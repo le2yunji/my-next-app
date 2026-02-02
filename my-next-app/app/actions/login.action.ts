@@ -1,28 +1,20 @@
 "use server";
 
-import { API_BASE_URL } from "../utils/api";
+import apiClient from "@/app/utils/api-client";
 
 type LoginResult = {
   isError?: boolean;
   message?: string;
   accessToken?: string;
   refreshToken?: string;
-  [key: string]: any;
+  [key: string]: any; // 임시로 쓰는 코드
 };
 
 export const loginAction = async (
   id: string,
   password: string
 ): Promise<LoginResult> => {
-  const res = await fetch(`${API_BASE_URL}/api/auth/login`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ id, password }),
-  });
-
-  // 백엔드가 401/400 등을 주는 경우 대비
+  const res = await apiClient.post("/api/auth/login", { id, password });
   let data;
   try {
     data = await res.json();

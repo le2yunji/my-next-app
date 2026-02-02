@@ -1,12 +1,13 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { PrimaryButton } from "@/components/Button/PrimaryButton";
 import { TextInput } from "@/components/Input/TextInput";
 import { isValidId, isValidPassword } from "@/app/utils/validators";
 import { loginAction } from "@/app/actions/login.action";
 
 export default function LoginForm() {
+  const router = useRouter();
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -28,11 +29,8 @@ export default function LoginForm() {
         return;
       }
 
-      // 성공 처리(예: 토큰이 바디로 오면 저장 / 쿠키면 그냥 라우팅)
-      // localStorage.setItem("accessToken", result.accessToken);
-
       alert("로그인 성공!");
-      // router.push("/")
+      router.push("/");
     } catch (err) {
       alert("로그인 중 오류가 발생했습니다.");
     } finally {
@@ -58,9 +56,9 @@ export default function LoginForm() {
           onChange={(e) => setPassword(e.target.value)}
         />
 
-        <PrimaryButton ignoreSize className="h-10 rounded-lg" type="submit">
+        <button className="h-10 rounded-lg" type="submit">
           {loading ? "로그인 중..." : "로그인하기"}
-        </PrimaryButton>
+        </button>
       </div>
     </form>
   );

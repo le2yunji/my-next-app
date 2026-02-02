@@ -1,6 +1,6 @@
 "use server";
 
-import { API_BASE_URL } from "../utils/api";
+import apiClient from "@/app/utils/api-client";
 
 type SignupResult = {
   isError?: boolean;
@@ -13,13 +13,7 @@ export const signupAction = async (
   id: string,
   password: string
 ): Promise<SignupResult> => {
-  const res = await fetch(`${API_BASE_URL}/api/auth/signup`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ id, password }),
-  });
+  const res = await apiClient.post("/api/auth/signup", { id, password });
 
   let data;
   try {

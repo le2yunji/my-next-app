@@ -5,12 +5,14 @@ import { PrimaryButton } from "@/components/Button/PrimaryButton";
 import { TextInput } from "@/components/Input/TextInput";
 import { isValidId, isValidPassword } from "@/app/utils/validators";
 import { signupAction } from "@/app/actions/signup.action";
+import { useRouter } from "next/navigation";
 
 const SignupForm = () => {
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -41,7 +43,7 @@ const SignupForm = () => {
       }
 
       alert("회원가입 성공!");
-      // router.push("/login"); // 필요하면 이동
+      router.push("/login");
     } catch (err) {
       console.error(err);
       alert("회원가입 중 오류가 발생했습니다.");
