@@ -30,7 +30,7 @@ export default function LoginForm() {
       }
 
       alert("로그인 성공!");
-      router.push("/");
+      router.push("/feed");
     } catch (err) {
       alert("로그인 중 오류가 발생했습니다.");
     } finally {
