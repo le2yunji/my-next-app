@@ -1,5 +1,5 @@
 import { getFeedAction } from "@/app/actions/feed.action";
-import FeedList from "@/features/feed/FeedList";
+import FeedList from "@/features/feed/ui/FeedList";
 
 const FeedContainer = async () => {
   const initial = await getFeedAction({ limit: 3 });

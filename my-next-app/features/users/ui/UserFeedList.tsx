@@ -23,7 +23,6 @@ export default function UserFeedList({ userId }: { userId: string }) {
   const [items, setItems] = useState<FeedItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  console.log("userId prop:", userId);
 
   const API_BASE = "http://localhost:8080";
 
@@ -44,10 +43,6 @@ export default function UserFeedList({ userId }: { userId: string }) {
   useEffect(() => {
     fetchFirstPage();
   }, []);
-
-  useEffect(() => {
-    console.log("items changed:", items);
-  }, [items]);
 
   return (
     <main style={{ maxWidth: 360, margin: "0 auto", padding: 16 }}>

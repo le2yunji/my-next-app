@@ -42,7 +42,7 @@ export default function FeedList({
     if (!hasNext || loading) return;
     setLoading(true);
     try {
-      const data = await getFeedAction({ limit: 10, cursor }); // ✅ CSR로 추가 로드
+      const data = await getFeedAction({ limit: 10, cursor }); //  추가 로드
       setItems((prev) => [...prev, ...data.items]);
       setCursor(data.nextCursor);
       setHasNext(data.hasNext);
