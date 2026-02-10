@@ -1,10 +1,17 @@
 "use server";
+import apiClient from "@/app/utils/api-client";
 
-import apiClient from "../utils/api-client";
+export const getFeedAction = async (params: {
+  limit?: number;
+  cursor?: string | null;
+}) => {
+  const qs = new URLSearchParams();
+  if (params.limit) qs.set("limit", String(params.limit));
+  if (params.cursor) qs.set("cursor", params.cursor);
 
-export const feedAction = async () => {
-  const res = await apiClient.get("/api/feed");
+  const res = await apiClient.get(`/api/feed?${qs.toString()}`);
   let data;
+
   try {
     data = await res.json();
   } catch {
@@ -15,8 +22,33 @@ export const feedAction = async () => {
     return {
       isError: true,
       message:
+        data?.message ?? `피드를 불러오는데 실패했습니다. (HTTP ${res.status})`,
+      ...data,
+    };
+  }
+
+  return data;
+};
+
+export const getFeedByUserAction = async (params: { userId: string }) => {
+  const res = await apiClient.get(`/api/feed/${params.userId}`);
+
+  let data;
+
+  try {
+    data = await res.json();
+  } catch {
+    data = { isError: true, message: "서버 응답 형식이 올바르지 않습니다." };
+  }
+
+  console.log(data);
+
+  if (!res.ok) {
+    return {
+      isError: true,
+      message:
         data?.message ??
-        `피드를 불러오는데 실패했습니다. (HTTP 상태 코드: ${res.status})`,
+        `유저 피드를 불러오는데 실패했습니다. (HTTP ${res.status})`,
       ...data,
     };
   }
