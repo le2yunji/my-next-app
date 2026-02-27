@@ -1,6 +1,8 @@
 "use client";
 
 import { getFeedAction } from "@/app/actions/feed.action";
+import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
@@ -12,12 +14,6 @@ type FeedItem = {
   commentCount: number;
   createdAt: string;
   media?: { type: "image"; url: string }[];
-};
-
-type FeedResponse = {
-  items: FeedItem[];
-  nextCursor: string | null;
-  hasNext: boolean;
 };
 
 export default function FeedList({
@@ -35,9 +31,6 @@ export default function FeedList({
   const [hasNext, setHasNext] = useState(initialHasNext);
   const [loading, setLoading] = useState(false);
 
-  const API_BASE = "http://localhost:8080";
-  const sentinelRef = useRef<HTMLDivElement | null>(null);
-
   const fetchNext = async () => {
     if (!hasNext || loading) return;
     setLoading(true);
@@ -51,29 +44,16 @@ export default function FeedList({
     }
   };
 
+  const { sentinelRef, isIntersecting } = useIntersectionObserver({
+    enabled: hasNext && !loading,
+    rootMargin: "200px", // 바닥 닿기 전에 미리 로드
+  });
+
   useEffect(() => {
-    const target = sentinelRef.current;
-    if (!target) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0];
-
-        if (entry.isIntersecting) {
-          console.log("센티넬이 화면에 들어왔다!");
-          fetchNext();
-        }
-      },
-      {
-        threshold: 0.1,
-      }
-    );
-
-    observer.observe(target);
-
-    // 4) cleanup(컴포넌트 사라질 때 감시 중지)
-    return () => observer.disconnect();
-  }, [loading]);
+    if (isIntersecting && hasNext && !loading) {
+      fetchNext();
+    }
+  }, [isIntersecting, hasNext, loading]);
 
   return (
     <main style={{ maxWidth: 360, margin: "0 auto", padding: 16 }}>
@@ -105,14 +85,12 @@ export default function FeedList({
                       key={`${post.id}-${idx}`}
                       style={{ borderRadius: 10, overflow: "hidden" }}
                     >
-                      <img
-                        src={`${API_BASE}${m.url}`}
-                        alt=""
-                        style={{
-                          width: "320px",
-                          height: "320px",
-                          display: "block",
-                        }}
+                      <Image
+                        src={m.url}
+                        alt={""}
+                        width={320}
+                        height={320}
+                        unoptimized
                       />
                     </div>
                   ))}

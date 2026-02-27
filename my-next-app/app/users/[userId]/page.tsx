@@ -1,16 +1,18 @@
 // app/users/[userId]/page.tsx
-import UserFeedList from "@/features/users/ui/UserFeedList";
+import { getFeedByUserAction } from "@/app/actions/feed.action";
+import UserFeedContainer from "@/containers/user/UserFeedContainer";
 
 export default async function UserPage({
   params,
 }: {
-  params: Promise<{ userId: string }>; // params가 그냥 객체가 아니라 Promise(ReactPromise) 로 넘어오고 있음.
+  params: Promise<{ userId: string }>;
 }) {
   const { userId } = await params;
-  return (
-    <div>
-      <h1>{userId}의 피드</h1>
-      <UserFeedList userId={userId} />
-    </div>
-  );
+
+  const [initialFeed] = await Promise.all([
+    getFeedByUserAction({ userId, limit: 9 }),
+  ]);
+  console.log(userId);
+
+  return <UserFeedContainer userId={userId} initialFeed={initialFeed} />;
 }

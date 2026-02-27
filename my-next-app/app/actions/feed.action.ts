@@ -30,8 +30,17 @@ export const getFeedAction = async (params: {
   return data;
 };
 
-export const getFeedByUserAction = async (params: { userId: string }) => {
-  const res = await apiClient.get(`/api/feed/${params.userId}`);
+export const getFeedByUserAction = async (params: {
+  userId: string;
+  limit?: number;
+  cursor?: string | null;
+}) => {
+  const qs = new URLSearchParams();
+  if (params.limit) qs.set("limit", String(params.limit));
+  if (params.cursor) qs.set("cursor", params.cursor);
+
+  const url = `/api/feed/user/${params.userId}?${qs.toString()}`;
+  const res = await apiClient.get(url);
 
   let data;
 
@@ -40,9 +49,6 @@ export const getFeedByUserAction = async (params: { userId: string }) => {
   } catch {
     data = { isError: true, message: "서버 응답 형식이 올바르지 않습니다." };
   }
-
-  console.log(data);
-
   if (!res.ok) {
     return {
       isError: true,

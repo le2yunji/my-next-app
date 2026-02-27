@@ -1,109 +1,106 @@
 "use client";
 
 import { getFeedByUserAction } from "@/app/actions/feed.action";
+import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 
 type FeedItem = {
   id: string;
-  content: string;
+  thumbnail: { type: "image"; url: string } | null;
+  mediaCount: number;
   author: { id: string; nickname: string; profileImage: string | null };
-  likeCount: number;
-  commentCount: number;
+  // likeCount: number;
+  // commentCount: number;
   createdAt: string;
-  media?: { type: "image"; url: string }[];
 };
 
-type FeedResponse = {
-  items: FeedItem[];
-  nextCursor: string | null;
-  hasNext: boolean;
-};
-
-export default function UserFeedList({ userId }: { userId: string }) {
-  const [items, setItems] = useState<FeedItem[]>([]);
+export default function UserFeedList({
+  userId,
+  initialItems,
+  initialCursor,
+  initialHasNext,
+}: {
+  userId: string;
+  initialItems: FeedItem[];
+  initialCursor: string | null;
+  initialHasNext: boolean;
+}) {
+  const [items, setItems] = useState<FeedItem[]>(initialItems);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [cursor, setCursor] = useState<string | null>(initialCursor);
+  const [hasNext, setHasNext] = useState(initialHasNext);
 
-  const API_BASE = "http://localhost:8080";
+  const fetchNext = async () => {
+    if (!hasNext || loading) return;
 
-  const fetchFirstPage = async () => {
     setLoading(true);
-    setErrorMsg(null);
 
     try {
-      const res = await getFeedByUserAction({ userId });
-      setItems(res.items);
-    } catch (e: any) {
-      setErrorMsg(e?.message ?? "failed to fetch");
+      const data = await getFeedByUserAction({ userId, limit: 9, cursor });
+
+      setItems((prev) => {
+        const seen = new Set(prev.map((p) => p.id));
+        const merged = [...prev];
+        for (const it of data.items) {
+          if (!seen.has(it.id)) merged.push(it);
+        }
+        return merged;
+      });
+
+      setCursor(data.nextCursor);
+      setHasNext(data.hasNext);
     } finally {
       setLoading(false);
     }
   };
 
+  const { sentinelRef, isIntersecting } = useIntersectionObserver({
+    enabled: hasNext && !loading,
+    rootMargin: "200px", // 바닥 닿기 전에 미리 로드
+  });
+
   useEffect(() => {
-    fetchFirstPage();
-  }, []);
+    if (isIntersecting) fetchNext();
+  }, [isIntersecting]);
 
   return (
-    <main style={{ maxWidth: 360, margin: "0 auto", padding: 16 }}>
+    <main className="w-[393px]">
       {loading && items.length === 0 ? (
         <div style={{ color: "#6b7280" }}>로딩중...</div>
       ) : null}
 
-      <ul style={{ display: "grid", gap: 1, listStyle: "none", padding: 0 }}>
+      <ul className="grid grid-cols-3">
         {items &&
           items.map((post) => (
-            <li
-              key={post.id}
-              style={{
-                border: "1px solid #e5e7eb",
-                borderRadius: 12,
-                padding: 12,
-              }}
-            >
-              {post.media?.length ? (
-                <div style={{ marginTop: 8, display: "grid", gap: 8 }}>
-                  {post.media.map((m, idx) => (
-                    <div
-                      key={`${post.id}-${idx}`}
-                      style={{ borderRadius: 10, overflow: "hidden" }}
-                    >
-                      <img
-                        src={`${API_BASE}${m.url}`}
-                        alt=""
-                        style={{
-                          width: "320px",
-                          height: "320px",
-                          display: "block",
-                        }}
-                      />
-                    </div>
-                  ))}
+            <li key={post.id} className="relative">
+              {post.thumbnail ? (
+                <div className="relative aspect-square w-full overflow-hidden">
+                  <Image
+                    src={post.thumbnail.url}
+                    alt=""
+                    fill
+                    className="object-cover p-0.5"
+                    unoptimized
+                  />
                 </div>
               ) : null}
-              <div style={{ marginTop: 6 }}>{post.content}</div>
-              <div
-                style={{
-                  marginTop: 10,
-                  display: "flex",
-                  gap: 12,
-                  color: "#6b7280",
-                }}
-              >
-                <span>❤️ {post.likeCount}</span>
-                <span>💬 {post.commentCount}</span>
-                <span style={{ marginLeft: "auto" }}>
-                  {new Date(post.createdAt).toLocaleString()}
-                </span>
-              </div>
+
+              {/* 멀티 이미지 표시 아이콘 */}
+              {post.mediaCount > 1 && (
+                <div className="absolute top-2 right-2 text-white text-xs bg-black/60 px-1 rounded">
+                  {post.mediaCount}
+                </div>
+              )}
             </li>
           ))}
       </ul>
 
+      <div ref={sentinelRef} className="h-2.5" />
+
       {loading && items.length > 0 ? (
-        <div style={{ padding: 16, textAlign: "center", color: "#6b7280" }}>
-          로딩중...
-        </div>
+        <div className="p-4 text-center">로딩중...</div>
       ) : null}
     </main>
   );
