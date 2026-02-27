@@ -14,19 +14,21 @@ const FEED_ITEMS = Array.from({ length: 30 }).map((_, i) => {
   const num = 30 - i;
   const author = AUTHORS[i % AUTHORS.length];
 
-  // ✅ 각 게시물당 이미지 1장 고정
-  const imgNo = num;
+  // 🔥 게시물당 1~4장 랜덤 이미지
+  const mediaCount = random(1, 4);
+
+  const media = Array.from({ length: mediaCount }).map((_, idx) => ({
+    id: `post_${num}_media_${idx}`,
+    type: "image",
+    url: `/static/images/feed/${random(1, 30)}.webp`,
+    order: idx,
+  }));
 
   return {
     id: `post_${num}`,
     author,
     content: `더미 게시글 ${num}번입니다.`,
-    media: [
-      {
-        type: "image",
-        url: `/static/images/feed/${imgNo}.webp`,
-      },
-    ],
+    media,
     likeCount: random(0, 200),
     commentCount: random(0, 40),
     viewer: {
