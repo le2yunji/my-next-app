@@ -82,7 +82,8 @@ export default function UserFeedList({
                     alt=""
                     fill
                     className="object-cover p-0.5"
-                    unoptimized
+                    unoptimized // 임시
+                    priority
                   />
                 </div>
               ) : null}

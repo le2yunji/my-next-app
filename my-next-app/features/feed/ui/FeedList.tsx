@@ -50,75 +50,57 @@ export default function FeedList({
   });
 
   useEffect(() => {
-    if (isIntersecting && hasNext && !loading) {
-      fetchNext();
-    }
+    if (isIntersecting && hasNext && !loading) fetchNext();
   }, [isIntersecting, hasNext, loading]);
 
   return (
-    <main style={{ maxWidth: 360, margin: "0 auto", padding: 16 }}>
-      <h1 style={{ fontSize: 22, fontWeight: 700, marginBottom: 12 }}>Feed</h1>
+    <main className="w-[393px] mt-10">
+      <h1 className="font-2xl-bold">Feed</h1>
 
-      {loading && items.length === 0 ? (
-        <div style={{ color: "#6b7280" }}>로딩중...</div>
-      ) : null}
+      {loading && items.length === 0 ? <div>로딩중...</div> : null}
 
-      <ul style={{ display: "grid", gap: 1, listStyle: "none", padding: 0 }}>
+      <ul>
         {items &&
           items.map((post) => (
-            <li
-              key={post.id}
-              style={{
-                border: "1px solid #e5e7eb",
-                borderRadius: 12,
-                padding: 12,
-              }}
-            >
+            <li key={post.id} className="mt-20">
               <Link href={`/users/${post.author.id}`}>
                 {post.author.nickname}
               </Link>
 
               {post.media?.length ? (
-                <div style={{ marginTop: 8, display: "grid", gap: 8 }}>
+                <div className="grid">
                   {post.media.map((m, idx) => (
                     <div
                       key={`${post.id}-${idx}`}
-                      style={{ borderRadius: 10, overflow: "hidden" }}
+                      className="relative mt-5 w-full aspect-393/320 overflow-hidden"
                     >
                       <Image
                         src={m.url}
                         alt={""}
-                        width={320}
-                        height={320}
-                        unoptimized
+                        fill
+                        className="object-cover"
+                        priority // 수정해야 함
+                        unoptimized // 임시
                       />
                     </div>
                   ))}
                 </div>
               ) : null}
-              <div style={{ marginTop: 6 }}>{post.content}</div>
-              <div
-                style={{
-                  marginTop: 10,
-                  display: "flex",
-                  gap: 12,
-                  color: "#6b7280",
-                }}
-              >
+
+              <div>{post.content}</div>
+              <div className="mt-2.5 flex gap-3">
                 <span>❤️ {post.likeCount}</span>
                 <span>💬 {post.commentCount}</span>
-                <span style={{ marginLeft: "auto" }}>
+                <span className="ml-auto">
                   {new Date(post.createdAt).toLocaleString()}
                 </span>
               </div>
             </li>
           ))}
       </ul>
-      <div ref={sentinelRef} style={{ height: 10 }} />
+      <div ref={sentinelRef} className="h-2.5" />
       {loading && items.length > 0 ? (
-        <div style={{ padding: 16, textAlign: "center", color: "#6b7280" }}>
-          로딩중...
-        </div>
+        <div className="p-4 text-center">로딩중...</div>
       ) : null}
     </main>
   );
