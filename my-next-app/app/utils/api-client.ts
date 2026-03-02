@@ -4,6 +4,12 @@ import { API_BASE_URL } from "@/app/utils/api";
 
 type RequestOptions = {
   headers?: HeadersInit;
+  cache?: RequestCache; // "no-store" 등
+  credentials?: RequestCredentials; // 쿠키 포함 여부
+  next?: {
+    revalidate?: number;
+    tags?: string[];
+  };
 };
 
 const request = async (
@@ -19,6 +25,9 @@ const request = async (
       ...options?.headers,
     },
     body: data ? JSON.stringify(data) : undefined,
+    cache: options?.cache,
+    credentials: options?.credentials,
+    next: options?.next,
   });
 };
 
