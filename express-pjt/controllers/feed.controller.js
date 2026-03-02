@@ -2,9 +2,24 @@
 const { getFeedItems } = require("../services/feed.service");
 const { attachAbsoluteMediaUrl } = require("../mappers/feed.mapper");
 
+// 공통: 그리드(리스트)용 최소 필드 + thumbnail로 변환
+function toThumbnailItem(p) {
+  const thumb = p.media?.[0] ?? null;
+  return {
+    id: p.id,
+    author: p.author,
+    createdAt: p.createdAt,
+    likeCount: p.likeCount,
+    commentCount: p.commentCount,
+    thumbnail: thumb ? { type: thumb.type, url: thumb.url } : null,
+    mediaCount: p.media?.length ?? 0,
+  };
+}
+
 function getFeed(req, res) {
   try {
-    const feedItems = attachAbsoluteMediaUrl(getFeedItems()); // 이미지 url
+    const feedItems = attachAbsoluteMediaUrl(getFeedItems());
+
     const parsed = parseInt(req.query.limit || "10", 10);
     const limit = Math.min(Number.isNaN(parsed) ? 10 : parsed, 50);
     const cursor = req.query.cursor || null;
@@ -15,8 +30,11 @@ function getFeed(req, res) {
       startIndex = idx >= 0 ? idx + 1 : 0;
     }
 
-    const items = feedItems.slice(startIndex, startIndex + limit);
-    const last = items[items.length - 1];
+    // slice 후에 thumbnail projection 적용 (성능/의미상 더 깔끔)
+    const page = feedItems.slice(startIndex, startIndex + limit);
+    const items = page.map(toThumbnailItem);
+
+    const last = page[page.length - 1];
 
     return res.status(200).json({
       items,
@@ -34,42 +52,28 @@ function getFeedByUser(req, res) {
     const userId = req.params.userId;
     const feedItems = attachAbsoluteMediaUrl(getFeedItems());
 
-    const items = feedItems
-      .filter((p) => p.author.id === userId)
-      .map((p) => {
-        const thumb = p.media?.[0] ?? null; // ✅ 대표 1장
-        return {
-          id: p.id,
-          author: p.author,
-          createdAt: p.createdAt,
-          // likeCount: p.likeCount,
-          // commentCount: p.commentCount,
-          // 그리드용 대표 썸네일만
-          thumbnail: thumb ? { type: thumb.type, url: thumb.url } : null,
-          // 멀티 여부 표시 (UI에서 겹침 아이콘)
-          mediaCount: p.media?.length ?? 0,
-        };
-      });
+    const filtered = feedItems.filter((p) => p.author.id === userId);
 
     const parsed = parseInt(req.query.limit || "9", 10);
     const limit = Math.min(Number.isNaN(parsed) ? 9 : parsed, 50);
     const cursor = req.query.cursor || null;
 
     let startIndex = 0;
-
     if (cursor) {
-      const idx = items.findIndex((p) => p.id === cursor);
+      const idx = filtered.findIndex((p) => p.id === cursor);
       startIndex = idx >= 0 ? idx + 1 : 0;
     }
 
-    const userItems = items.slice(startIndex, startIndex + limit);
-    const last = userItems[userItems.length - 1];
+    const page = filtered.slice(startIndex, startIndex + limit);
+    const userItems = page.map(toThumbnailItem);
+
+    const last = page[page.length - 1];
 
     return res.status(200).json({
       items: userItems,
-      count: items.length,
+      count: filtered.length,
       nextCursor: last ? last.id : null,
-      hasNext: startIndex + limit < items.length,
+      hasNext: startIndex + limit < filtered.length,
     });
   } catch (error) {
     console.error("[GET_FEED_BY_USER ERROR]", error);
