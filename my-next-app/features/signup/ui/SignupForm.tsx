@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { PrimaryButton } from "@/components/Button/PrimaryButton";
-import { TextInput } from "@/components/Input/TextInput";
+
 import { isValidId, isValidPassword } from "@/app/utils/validators";
 import { signupAction } from "@/app/actions/signup.action";
 import { useRouter } from "next/navigation";
+import { TextInput } from "@/components/Input/TextInput";
+import { PrimaryButton } from "@/components/Button/PrimaryButton";
 
 const SignupForm = () => {
   const [id, setId] = useState("");

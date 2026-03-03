@@ -9,7 +9,10 @@ export const getFeedAction = async (params: {
   if (params.limit) qs.set("limit", String(params.limit));
   if (params.cursor) qs.set("cursor", params.cursor);
 
-  const res = await apiClient.get(`/api/feed?${qs.toString()}`);
+  const res = await apiClient.get(`/api/feed?${qs.toString()}`, {
+    next: { revalidate: 30 }, // 30초 동안 유지
+  });
+
   let data;
 
   try {
@@ -40,7 +43,7 @@ export const getFeedByUserAction = async (params: {
   if (params.cursor) qs.set("cursor", params.cursor);
 
   const url = `/api/feed/user/${params.userId}?${qs.toString()}`;
-  const res = await apiClient.get(url);
+  const res = await apiClient.get(url, { next: { revalidate: 120 } }); // 자주 안 바뀌므로 120초
 
   let data;
 
