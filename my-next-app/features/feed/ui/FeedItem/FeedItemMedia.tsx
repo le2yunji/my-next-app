@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { shouldPriorityMedia } from "@/features/feed/lib/feedImagePolicy";
+import { FeedItemModel } from "../../model/types";
 
 export default function FeedItemMedia({
   postId,

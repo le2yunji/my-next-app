@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 
 import FeedItem from "@/features/feed/ui/FeedItem/FeedItem";
 import { shouldPriorityPostImage } from "@/features/feed/lib/feedImagePolicy";
+import { FeedItemModel } from "../model/types";
 
 export default function FeedList({
   initialItems,

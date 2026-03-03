@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { FeedItemModel } from "../../model/types";
 
 export default function FeedItemHeader({
   author,

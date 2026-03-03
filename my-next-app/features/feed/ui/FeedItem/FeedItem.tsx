@@ -4,6 +4,8 @@ import FeedItemHeader from "./FeedItemHeader";
 import FeedItemMedia from "./FeedItemMedia";
 import FeedItemMeta from "./FeedItemMeta";
 import FeedItemActions from "./FeedItemActions";
+import { FeedItemModel } from "../../model/types";
+import FeedItemThumbnail from "./FeedItemThumbnail";
 
 export default function FeedItem({
   post,
@@ -15,6 +17,13 @@ export default function FeedItem({
   return (
     <li className="mt-20">
       <FeedItemHeader author={post.author} />
+      {post.thumbnail ? (
+        <FeedItemThumbnail
+          postId={post.id}
+          thumbnail={post.thumbnail}
+          priorityPost={priorityPost}
+        />
+      ) : null}
 
       {post.media?.length ? (
         <FeedItemMedia
