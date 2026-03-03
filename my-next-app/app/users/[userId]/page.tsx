@@ -10,6 +10,7 @@ export default async function UserPage({
   const { userId } = await params;
 
   const [initialFeed] = await Promise.all([
+    // getUserProfile(userId),  // 유저 프로필
     getFeedByUserAction({ userId, limit: 9 }),
   ]);
   console.log(userId);
