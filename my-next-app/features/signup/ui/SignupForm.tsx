@@ -1,56 +1,26 @@
 "use client";
 
-import { useState } from "react";
-
-import { isValidId, isValidPassword } from "@/app/utils/validators";
-import { signupAction } from "@/app/actions/signup.action";
-import { useRouter } from "next/navigation";
 import { TextInput } from "@/components/Input/TextInput";
 import { PrimaryButton } from "@/components/Button/PrimaryButton";
+import useSignup from "../hooks/useSignup";
 
-const SignupForm = () => {
-  const [id, setId] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordConfirm, setPasswordConfirm] = useState("");
-  const [loading, setLoading] = useState(false);
-  const router = useRouter();
+export default function SignupForm() {
+  const {
+    id,
+    setId,
+    password,
+    setPassword,
+    passwordConfirm,
+    setPasswordConfirm,
+    onSubmit,
+    loading,
+    error,
+    fieldErrors,
+  } = useSignup();
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
-
-    // 유효성 검사
-    if (!isValidId(id)) {
-      alert("아이디는 영문+숫자 조합 2~8자여야 합니다.");
-      return;
-    }
-
-    if (!isValidPassword(password)) {
-      alert("비밀번호는 영문+숫자 포함 8~16자여야 합니다.");
-      return;
-    }
-
-    if (password !== passwordConfirm) {
-      alert("비밀번호가 일치하지 않습니다.");
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const result = await signupAction(id, password);
-
-      if (result?.isError) {
-        alert(result.message ?? "회원가입 실패");
-        return;
-      }
-
-      alert("회원가입 성공!");
-      router.push("/login");
-    } catch (err) {
-      console.error(err);
-      alert("회원가입 중 오류가 발생했습니다.");
-    } finally {
-      setLoading(false);
-    }
+    onSubmit();
   };
 
   return (
@@ -63,6 +33,7 @@ const SignupForm = () => {
           value={id}
           onChange={(e) => setId(e.target.value)}
         />
+        <p className="text-red-500">{fieldErrors.id}</p>
         <TextInput
           id="password"
           label="비밀번호"
@@ -70,6 +41,7 @@ const SignupForm = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
+        <p className="text-red-500">{fieldErrors.password}</p>
         <TextInput
           id="passwordConfirm"
           label="비밀번호 확인"
@@ -77,12 +49,12 @@ const SignupForm = () => {
           value={passwordConfirm}
           onChange={(e) => setPasswordConfirm(e.target.value)}
         />
+        <p className="text-red-500">{fieldErrors.passwordConfirm}</p>
+        {error && <p className="text-red-500">{error}</p>}
         <PrimaryButton ignoreSize className="h-10 rounded-lg" type="submit">
-          회원가입 하기
+          {loading ? "회원가입 중..." : "회원가입 하기"}
         </PrimaryButton>
       </div>
     </form>
   );
-};
-
-export default SignupForm;
+}

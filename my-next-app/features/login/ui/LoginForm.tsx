@@ -1,42 +1,27 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-
-import { isValidId, isValidPassword } from "@/app/utils/validators";
-import { loginAction } from "@/app/actions/login.action";
 import { TextInput } from "@/components/Input/TextInput";
+import useLogin from "../hooks/useLogin";
+import { useRouter } from "next/navigation";
+import { PrimaryButton } from "@/components/Button/PrimaryButton";
 
 export default function LoginForm() {
   const router = useRouter();
-  const [id, setId] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const {
+    id,
+    password,
+    setId,
+    setPassword,
+    onSubmit,
+    loading,
+    error,
+    fieldErrors,
+  } = useLogin();
+
+  const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
-
-    if (!isValidId(id))
-      return alert("아이디는 영문+숫자 조합 2~8자여야 합니다.");
-    if (!isValidPassword(password))
-      return alert("비밀번호는 영문+숫자 포함 8~16자여야 합니다.");
-
-    setLoading(true);
-    try {
-      const result = await loginAction(id, password);
-
-      if (result?.isError) {
-        alert(result?.message ?? "로그인 실패");
-        return;
-      }
-
-      alert("로그인 성공!");
-      router.push("/feed");
-    } catch (err) {
-      alert("로그인 중 오류가 발생했습니다.");
-    } finally {
-      setLoading(false);
-    }
+    onSubmit();
   };
 
   return (
@@ -45,20 +30,32 @@ export default function LoginForm() {
         <TextInput
           id="id"
           label="아이디"
-          placeholder="아이디."
+          placeholder="아이디"
           value={id}
           onChange={(e) => setId(e.target.value)}
         />
+        <p className="text-red-500">{fieldErrors.id}</p>
         <TextInput
           id="password"
           label="비밀번호"
-          placeholder="비밀번호."
+          placeholder="비밀번호"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
+        <p className="text-red-500">{fieldErrors.password}</p>
 
-        <button className="h-10 rounded-lg" type="submit">
+        {error && <p className="text-red-500">{error}</p>}
+
+        <PrimaryButton ignoreSize className="h-10 rounded-lg" type="submit">
           {loading ? "로그인 중..." : "로그인하기"}
+        </PrimaryButton>
+
+        <button
+          className="h-10 rounded-lg"
+          type="button"
+          onClick={() => router.push("/signup")}
+        >
+          회원가입 하기
         </button>
       </div>
     </form>
