@@ -18,7 +18,7 @@ function toThumbnailItem(p) {
 
 function getFeed(req, res) {
   try {
-    const feedItems = attachAbsoluteMediaUrl(getFeedItems());
+    const feedItems = getFeedItems();
 
     const parsed = parseInt(req.query.limit || "10", 10);
     const limit = Math.min(Number.isNaN(parsed) ? 10 : parsed, 50);
@@ -30,11 +30,12 @@ function getFeed(req, res) {
       startIndex = idx >= 0 ? idx + 1 : 0;
     }
 
-    // slice 후에 thumbnail projection 적용 (성능/의미상 더 깔끔)
+    // slice 후에 thumbnail projection 적용
     const page = feedItems.slice(startIndex, startIndex + limit);
-    const items = page.map(toThumbnailItem);
+    const pageWithAbsUrl = attachAbsoluteMediaUrl(page);
+    const items = pageWithAbsUrl.map(toThumbnailItem);
 
-    const last = page[page.length - 1];
+    const last = pageWithAbsUrl[pageWithAbsUrl.length - 1];
 
     return res.status(200).json({
       items,
@@ -50,7 +51,7 @@ function getFeed(req, res) {
 function getFeedByUser(req, res) {
   try {
     const userId = req.params.userId;
-    const feedItems = attachAbsoluteMediaUrl(getFeedItems());
+    const feedItems = getFeedItems();
 
     const filtered = feedItems.filter((p) => p.author.id === userId);
 
@@ -65,9 +66,10 @@ function getFeedByUser(req, res) {
     }
 
     const page = filtered.slice(startIndex, startIndex + limit);
-    const userItems = page.map(toThumbnailItem);
+    const pageWithAbsUrl = attachAbsoluteMediaUrl(page);
+    const userItems = pageWithAbsUrl.map(toThumbnailItem);
 
-    const last = page[page.length - 1];
+    const last = pageWithAbsUrl[pageWithAbsUrl.length - 1];
 
     return res.status(200).json({
       items: userItems,
