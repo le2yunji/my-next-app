@@ -19,7 +19,7 @@ export default function FeedItemThumbnail({
         fill
         className="object-cover"
         priority={priorityPost}
-        unoptimized // remotePatterns 완료 후 제거
+        unoptimized
       />
     </div>
   );

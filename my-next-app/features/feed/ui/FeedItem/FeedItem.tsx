@@ -17,6 +17,7 @@ export default function FeedItem({
   return (
     <li className="mt-20">
       <FeedItemHeader author={post.author} />
+
       {post.thumbnail ? (
         <FeedItemThumbnail
           postId={post.id}

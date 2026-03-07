@@ -49,6 +49,10 @@ export default function FeedList({
     rootMargin: "200px",
   });
 
+  // useEffect(() => {
+  //   console.log(items.length);
+  // }, [items.length]);
+
   useEffect(() => {
     if (isIntersecting && hasNext && !loading) fetchNext();
   }, [isIntersecting, hasNext, loading]);

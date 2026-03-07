@@ -9,10 +9,9 @@ export default function LoginForm() {
   const router = useRouter();
 
   const {
-    id,
-    password,
-    setId,
-    setPassword,
+    form,
+    setForm,
+    onChangeField,
     onSubmit,
     loading,
     error,
@@ -31,16 +30,16 @@ export default function LoginForm() {
           id="id"
           label="아이디"
           placeholder="아이디"
-          value={id}
-          onChange={(e) => setId(e.target.value)}
+          value={form.id}
+          onChange={(e) => onChangeField("id", e.target.value)}
         />
         <p className="text-red-500">{fieldErrors.id}</p>
         <TextInput
           id="password"
           label="비밀번호"
           placeholder="비밀번호"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          value={form.password}
+          onChange={(e) => onChangeField("password", e.target.value)}
         />
         <p className="text-red-500">{fieldErrors.password}</p>
 

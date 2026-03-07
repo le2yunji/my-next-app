@@ -6,12 +6,9 @@ import useSignup from "../hooks/useSignup";
 
 export default function SignupForm() {
   const {
-    id,
-    setId,
-    password,
-    setPassword,
-    passwordConfirm,
-    setPasswordConfirm,
+    form,
+    setForm,
+    onChangeField,
     onSubmit,
     loading,
     error,
@@ -30,24 +27,24 @@ export default function SignupForm() {
           id="id"
           label="아이디"
           placeholder="아이디"
-          value={id}
-          onChange={(e) => setId(e.target.value)}
+          value={form.id}
+          onChange={(e) => onChangeField("id", e.target.value)}
         />
         <p className="text-red-500">{fieldErrors.id}</p>
         <TextInput
           id="password"
           label="비밀번호"
           placeholder="비밀번호"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          value={form.password}
+          onChange={(e) => onChangeField("password", e.target.value)}
         />
         <p className="text-red-500">{fieldErrors.password}</p>
         <TextInput
           id="passwordConfirm"
           label="비밀번호 확인"
           placeholder="비밀번호 확인"
-          value={passwordConfirm}
-          onChange={(e) => setPasswordConfirm(e.target.value)}
+          value={form.passwordConfirm}
+          onChange={(e) => onChangeField("passwordConfirm", e.target.value)}
         />
         <p className="text-red-500">{fieldErrors.passwordConfirm}</p>
         {error && <p className="text-red-500">{error}</p>}

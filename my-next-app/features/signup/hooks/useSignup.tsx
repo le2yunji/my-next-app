@@ -9,11 +9,15 @@ import {
 } from "@/features/auth/model/validators";
 import { signupAction } from "@/app/actions/signup.action";
 import { useRouter } from "next/navigation";
+import { AUTH_ERROR_MESSAGES } from "@/features/auth/constants/errorMessages";
+
+type SignupForm = {
+  id: string;
+  password: string;
+  passwordConfirm: string;
+};
 
 export default function useSignup() {
-  const [id, setId] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordConfirm, setPasswordConfirm] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<{
@@ -21,6 +25,18 @@ export default function useSignup() {
     password?: string;
     passwordConfirm?: string;
   }>({});
+  const [form, setForm] = useState({
+    id: "",
+    password: "",
+    passwordConfirm: "",
+  });
+
+  const onChangeField = (name: keyof SignupForm, value: string) => {
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
   const router = useRouter();
 
@@ -33,13 +49,12 @@ export default function useSignup() {
     const errors: { id?: string; password?: string; passwordConfirm?: string } =
       {};
 
-    if (!isValidId(id)) errors.id = "아이디는 영문+숫자 조합 2~8자여야 합니다.";
-
-    if (!isValidPassword(password))
-      errors.password = "비밀번호는 영문+숫자 포함 8~16자여야 합니다.";
-
-    if (!isPasswordMatch(password, passwordConfirm))
-      errors.passwordConfirm = "비밀번호가 일치하지 않습니다.";
+    if (!isValidId(form.id)) errors.id = AUTH_ERROR_MESSAGES.id;
+    if (!isValidPassword(form.password))
+      errors.password = AUTH_ERROR_MESSAGES.password;
+    if (!isPasswordMatch(form.password, form.passwordConfirm)) {
+      errors.passwordConfirm = AUTH_ERROR_MESSAGES.passwordConfirm;
+    }
 
     if (Object.keys(errors).length > 0) {
       setFieldErrors(errors);
@@ -49,7 +64,7 @@ export default function useSignup() {
     setLoading(true);
 
     try {
-      const result = await signupAction(id, password);
+      const result = await signupAction(form.id, form.password);
 
       if (result?.isError) {
         setError(result.message ?? "회원가입 실패");
@@ -65,12 +80,9 @@ export default function useSignup() {
   };
 
   return {
-    id,
-    setId,
-    password,
-    setPassword,
-    passwordConfirm,
-    setPasswordConfirm,
+    form,
+    setForm,
+    onChangeField,
     onSubmit,
     loading,
     error,

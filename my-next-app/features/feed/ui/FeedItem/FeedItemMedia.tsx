@@ -26,7 +26,6 @@ export default function FeedItemMedia({
             fill
             className="object-cover"
             priority={shouldPriorityMedia(priorityPost, idx)}
-            unoptimized // TODO: remotePatterns 설정 후 제거
           />
         </div>
       ))}
