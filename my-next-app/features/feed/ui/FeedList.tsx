@@ -8,6 +8,8 @@ import FeedItem from "@/features/feed/ui/FeedItem/FeedItem";
 import { shouldPriorityPostImage } from "@/features/feed/lib/feedImagePolicy";
 import { FeedItemModel } from "../model/types";
 
+const PAGE_SIZE = 10;
+
 export default function FeedList({
   initialItems,
   initialCursor,
@@ -26,7 +28,7 @@ export default function FeedList({
     if (!hasNext || loading) return;
     setLoading(true);
     try {
-      const data = await getFeedAction({ limit: 10, cursor });
+      const data = await getFeedAction({ limit: PAGE_SIZE, cursor });
 
       setItems((prev) => {
         const seen = new Set(prev.map((p) => p.id));
@@ -49,9 +51,9 @@ export default function FeedList({
     rootMargin: "200px",
   });
 
-  // useEffect(() => {
-  //   console.log(items.length);
-  // }, [items.length]);
+  useEffect(() => {
+    console.log(items.length);
+  }, [items.length]);
 
   useEffect(() => {
     if (isIntersecting && hasNext && !loading) fetchNext();
