@@ -4,6 +4,7 @@ const express = require("express");
 const path = require("path");
 const apiRouter = require("./routes");
 const cors = require("cors");
+const loggerMiddleware = require("./middlewares/logger.middleware");
 
 const app = express(); //프레임 워크, node_modules의 파일이 엮여짐
 
@@ -22,7 +23,7 @@ app.use(
 
 // ✅ public 폴더를 /static 으로 노출
 app.use("/static", express.static(path.join(__dirname, "public"))); // 정적 파일 서빙
-app.use("/api", apiRouter); // 8080으로 들어오는 요청은 무조건 여기로 감
+app.use("/api", loggerMiddleware, apiRouter); // 8080으로 들어오는 요청은 무조건 여기로 감
 
 app.use((req, res) =>
   res.status(404).json({ message: "올바르지 않은 API 경로입니다.p" })
