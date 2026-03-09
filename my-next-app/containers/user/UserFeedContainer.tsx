@@ -14,7 +14,6 @@ export default function UserFeedContainer({
   userId: string;
   initialFeed: FeedResponse;
 }) {
-  console.log(userId);
   return (
     <div>
       <UserFeedList
