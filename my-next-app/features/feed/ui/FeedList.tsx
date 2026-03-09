@@ -2,7 +2,7 @@
 
 import { getFeedAction } from "@/app/actions/feed.action";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 import FeedItem from "@/features/feed/ui/FeedItem/FeedItem";
 import { shouldPriorityPostImage } from "@/features/feed/lib/feedImagePolicy";
@@ -23,6 +23,7 @@ export default function FeedList({
   const [cursor, setCursor] = useState<string | null>(initialCursor);
   const [hasNext, setHasNext] = useState<boolean>(initialHasNext);
   const [loading, setLoading] = useState(false);
+  const prevIntersectingRef = useRef(false);
 
   const fetchNext = async () => {
     if (!hasNext || loading) return;
@@ -38,7 +39,6 @@ export default function FeedList({
         }
         return merged;
       });
-
       setCursor(data.nextCursor);
       setHasNext(data.hasNext);
     } finally {
@@ -48,15 +48,17 @@ export default function FeedList({
 
   const { sentinelRef, isIntersecting } = useIntersectionObserver({
     enabled: hasNext && !loading,
-    rootMargin: "200px",
+    rootMargin: "0px",
   });
 
   useEffect(() => {
-    console.log(items.length);
-  }, [items.length]);
+    const entered = isIntersecting && !prevIntersectingRef.current;
 
-  useEffect(() => {
-    if (isIntersecting && hasNext && !loading) fetchNext();
+    if (entered && hasNext && !loading) {
+      fetchNext();
+    }
+
+    prevIntersectingRef.current = isIntersecting;
   }, [isIntersecting, hasNext, loading]);
 
   return (
@@ -73,7 +75,7 @@ export default function FeedList({
         ))}
       </ul>
 
-      <div ref={sentinelRef} className="h-2.5" />
+      <div ref={sentinelRef} className="h-2.5 bg-blue-600" />
 
       {loading && items.length > 0 ? (
         <div className="p-4 text-center">로딩중...</div>
