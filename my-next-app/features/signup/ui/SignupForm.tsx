@@ -1,7 +1,7 @@
 "use client";
 
-import { TextInput } from "@/components/Input/TextInput";
-import { PrimaryButton } from "@/components/Button/PrimaryButton";
+import { TextInput } from "@/components/input/TextInput";
+import { PrimaryButton } from "@/components/button/PrimaryButton";
 import useSignup from "../hooks/useSignup";
 
 export default function SignupForm() {

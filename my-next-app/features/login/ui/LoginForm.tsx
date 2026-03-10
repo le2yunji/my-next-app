@@ -1,9 +1,9 @@
 "use client";
 
-import { TextInput } from "@/components/Input/TextInput";
+import { TextInput } from "@/components/input/TextInput";
 import useLogin from "../hooks/useLogin";
 import { useRouter } from "next/navigation";
-import { PrimaryButton } from "@/components/Button/PrimaryButton";
+import { PrimaryButton } from "@/components/button/PrimaryButton";
 
 export default function LoginForm() {
   const router = useRouter();
