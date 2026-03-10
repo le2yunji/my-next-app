@@ -12,4 +12,19 @@ function attachAbsoluteMediaUrl(items) {
     })),
   }));
 }
-module.exports = { attachAbsoluteMediaUrl };
+
+// 공통: 그리드(리스트)용 최소 필드 + thumbnail로 변환
+function toPostThumbnailItem(p) {
+  const thumb = p.media?.[0] ?? null;
+  return {
+    id: p.id,
+    author: p.author,
+    createdAt: p.createdAt,
+    likeCount: p.likeCount,
+    commentCount: p.commentCount,
+    thumbnail: thumb ? { type: thumb.type, url: thumb.url } : null,
+    mediaCount: p.media?.length ?? 0,
+  };
+}
+
+module.exports = { attachAbsoluteMediaUrl, toPostThumbnailItem };
