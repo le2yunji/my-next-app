@@ -1,6 +1,6 @@
 "use client";
 
-import { getFeedByUserAction } from "@/app/actions/feed.action";
+import { getUserFeedAction } from "@/app/actions/users.action";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -38,7 +38,7 @@ export default function UserFeedList({
     setLoading(true);
 
     try {
-      const data = await getFeedByUserAction({ userId, limit: 9, cursor });
+      const data = await getUserFeedAction({ userId, limit: 9, cursor });
 
       setItems((prev) => {
         const seen = new Set(prev.map((p) => p.id));

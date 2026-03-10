@@ -1,5 +1,7 @@
 // features/users/ui/UserFeedContainer.tsx
+import Spinner from "@/components/common/Spinner";
 import UserFeedList from "@/features/users/ui/UserFeedList";
+import { Suspense } from "react";
 
 type FeedResponse = {
   items: any[];
@@ -15,13 +17,16 @@ export default function UserFeedContainer({
   initialFeed: FeedResponse;
 }) {
   return (
-    <div>
-      <UserFeedList
-        userId={userId}
-        initialItems={initialFeed.items}
-        initialCursor={initialFeed.nextCursor}
-        initialHasNext={initialFeed.hasNext}
-      />
-    </div>
+    <>
+      {/* <UserProfile /> */}
+      <Suspense fallback={<Spinner />}>
+        <UserFeedList
+          userId={userId}
+          initialItems={initialFeed.items}
+          initialCursor={initialFeed.nextCursor}
+          initialHasNext={initialFeed.hasNext}
+        />
+      </Suspense>
+    </>
   );
 }

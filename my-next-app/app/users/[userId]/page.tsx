@@ -1,5 +1,5 @@
 // app/users/[userId]/page.tsx
-import { getFeedByUserAction } from "@/app/actions/feed.action";
+import { getUserFeedAction } from "@/app/actions/users.action";
 import UserFeedContainer from "@/containers/user/UserFeedContainer";
 
 export default async function UserPage({
@@ -11,7 +11,7 @@ export default async function UserPage({
 
   const [initialFeed] = await Promise.all([
     // getUserProfile(userId),  // 유저 프로필
-    getFeedByUserAction({ userId, limit: 9 }),
+    getUserFeedAction({ userId, limit: 9 }),
   ]);
   console.log(userId);
 
