@@ -3,6 +3,33 @@ const {
   attachAbsoluteMediaUrl,
   toPostThumbnailItem,
 } = require("../mappers/feed.mapper");
+const { getUserProfileById } = require("../services/users.service");
+
+function getUserProfile(req, res) {
+  try {
+    const userId = req.params.userId;
+    const user = getUserProfileById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "user not found" });
+    }
+
+    const absoluteProfileImage = user.profileImage
+      ? `${req.protocol}://${req.get("host")}${user.profileImage}`
+      : null;
+
+    return res.status(200).json({
+      user: {
+        id: user.id,
+        nickname: user.nickname,
+        profileImage: absoluteProfileImage,
+      },
+    });
+  } catch (error) {
+    console.error("[GET_USER_PROFILE ERROR]", error);
+    return res.status(500).json({ message: "internal server error" });
+  }
+}
 
 // 유저 피드 그리드 : 썸네일 목록
 function getUserFeed(req, res) {
@@ -40,4 +67,4 @@ function getUserFeed(req, res) {
   }
 }
 
-module.exports = { getUserFeed };
+module.exports = { getUserProfile, getUserFeed };
