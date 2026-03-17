@@ -1,6 +1,7 @@
 import { getUserProfileAction } from "@/app/actions/users.action";
 import UserFeedList from "@/features/users/ui/UserFeedList";
 import UserProfile from "@/features/users/ui/UserProfile";
+import { Suspense } from "react";
 
 type FeedResponse = {
   items: any[];
@@ -15,10 +16,14 @@ export default async function UserFeedContainer({
   userId: string;
   initialFeed: FeedResponse;
 }) {
-  const data = await getUserProfileAction({ userId });
+  const userPromise = getUserProfileAction({ userId });
+
   return (
     <>
-      <UserProfile user={data.user} />
+      <Suspense fallback={<div>loading...</div>}>
+        <UserProfile userPromise={userPromise} />
+      </Suspense>
+
       <UserFeedList
         userId={userId}
         initialItems={initialFeed.items}

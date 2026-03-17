@@ -19,7 +19,7 @@ export default function FeedList({
   initialCursor: string | null;
   initialHasNext: boolean;
 }) {
-  const [items, setItems] = useState<FeedItemModel[]>(initialItems);
+  const [items, setItems] = useState<FeedItemModel[]>(initialItems ?? []);
   const [cursor, setCursor] = useState<string | null>(initialCursor);
   const [hasNext, setHasNext] = useState<boolean>(initialHasNext);
   const [loading, setLoading] = useState(false);
@@ -39,6 +39,7 @@ export default function FeedList({
         }
         return merged;
       });
+
       setCursor(data.nextCursor);
       setHasNext(data.hasNext);
     } finally {

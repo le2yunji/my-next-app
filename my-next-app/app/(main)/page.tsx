@@ -1,9 +1,9 @@
 import FeedContainer from "@/containers/feed/FeedContainer";
 
-export default function Feed() {
+export default function Home() {
   return (
     <>
-      <div>Feed 페이지입니다.</div>
+      <h1 style={{ fontSize: 22, fontWeight: 700, marginBottom: 12 }}>LOGO</h1>
       <FeedContainer />
     </>
   );

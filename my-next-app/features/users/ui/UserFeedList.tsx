@@ -3,6 +3,7 @@
 import { getUserFeedAction } from "@/app/actions/users.action";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 type FeedItem = {
@@ -77,14 +78,16 @@ export default function UserFeedList({
             <li key={post.id} className="relative">
               {post.thumbnail ? (
                 <div className="relative aspect-square w-full overflow-hidden">
-                  <Image
-                    src={post.thumbnail.url}
-                    alt=""
-                    fill
-                    className="object-cover p-0.5"
-                    unoptimized // 임시
-                    priority
-                  />
+                  <Link href={`/users/${userId}/${post.id}`}>
+                    <Image
+                      src={post.thumbnail.url}
+                      alt=""
+                      fill
+                      className="object-cover p-0.5"
+                      unoptimized // 임시
+                      priority
+                    />
+                  </Link>
                 </div>
               ) : null}
 

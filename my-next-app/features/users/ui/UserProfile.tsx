@@ -1,14 +1,15 @@
 "use client";
 
 import Image from "next/image";
+import { use } from "react";
 
-type UserProfileData = {
-  id: string;
-  nickname: string;
-  profileImage: string | null;
-};
+export default function UserProfile({
+  userPromise,
+}: {
+  userPromise: Promise<{ profileImage: string; id: string; nickname: string }>;
+}) {
+  const user = use(userPromise);
 
-export default function UserProfile({ user }: { user: UserProfileData }) {
   return (
     <section className="flex items-center gap-4 p-4">
       <div className="relative h-20 w-20 overflow-hidden rounded-full bg-gray-200">
