@@ -1,35 +1,24 @@
 import { getUserProfileAction } from "@/app/actions/users.action";
-import UserFeedList from "@/features/users/ui/UserFeedList";
 import UserProfile from "@/features/users/ui/UserProfile";
 import { Suspense } from "react";
-
-type FeedResponse = {
-  items: any[];
-  nextCursor: string | null;
-  hasNext: boolean;
-};
+import UserFeedSection from "@/features/users/ui/UserFeedSection";
 
 export default async function UserFeedContainer({
   userId,
-  initialFeed,
 }: {
   userId: string;
-  initialFeed: FeedResponse;
 }) {
   const userPromise = getUserProfileAction({ userId });
 
   return (
     <>
-      <Suspense fallback={<div>loading...</div>}>
+      <Suspense fallback={<div>프로필 loading...</div>}>
         <UserProfile userPromise={userPromise} />
       </Suspense>
 
-      <UserFeedList
-        userId={userId}
-        initialItems={initialFeed.items}
-        initialCursor={initialFeed.nextCursor}
-        initialHasNext={initialFeed.hasNext}
-      />
+      <Suspense fallback={<div>피드 리스트 loading...</div>}>
+        <UserFeedSection userId={userId} />
+      </Suspense>
     </>
   );
 }
