@@ -1,16 +1,8 @@
-function createAuthor(id, nickname, profileNo) {
-  return {
-    id: `user_${id}`,
-    nickname,
-    profileImageUrl: `/static/profiles/${profileNo}.webp`,
-  };
-}
-
 function createMedia(postId, imageNo, width = 1080, height = 1350) {
-  const imageUrl = `/static/feed/${imageNo}.webp`;
+  const imageUrl = `/static/images/feed/${imageNo}.webp`;
 
   return {
-    id: `post_${postId}`,
+    id: `post_${postId}_media_${imageNo}`,
     type: "image",
     thumbnailUrl: imageUrl,
     displayUrl: imageUrl,
@@ -20,4 +12,4 @@ function createMedia(postId, imageNo, width = 1080, height = 1350) {
   };
 }
 
-module.exports = { createAuthor, createMedia };
+module.exports = { createMedia };

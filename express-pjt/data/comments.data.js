@@ -1,10 +1,10 @@
-const { createAuthor } = require("../mappers/posts.mapper");
+const { AUTHORS } = require("../mocks/users.mock");
 
 const COMMENTS = [
   {
     id: "comment_1",
     postId: "post_1",
-    author: createAuthor(2, "minsu", 2),
+    author: AUTHORS[1],
     content: "점심 메뉴 뭐였어? 보기만 해도 맛있어 보인다.",
     createdAt: "2026-03-10T09:10:00Z",
     likeCount: 3,
@@ -12,7 +12,7 @@ const COMMENTS = [
     replies: [
       {
         id: "reply_1",
-        author: createAuthor(1, "yunji", 1),
+        author: AUTHORS[0],
         content: "파스타 먹었어. 생각보다 훨씬 괜찮았어.",
         createdAt: "2026-03-10T09:15:00Z",
         likeCount: 1,
@@ -23,7 +23,7 @@ const COMMENTS = [
   {
     id: "comment_2",
     postId: "post_1",
-    author: createAuthor(3, "jiyoon", 3),
+    author: AUTHORS[2],
     content: "사진 색감도 너무 좋다.",
     createdAt: "2026-03-10T09:20:00Z",
     likeCount: 2,
@@ -33,7 +33,7 @@ const COMMENTS = [
   {
     id: "comment_3",
     postId: "post_1",
-    author: createAuthor(4, "hyunwoo", 4),
+    author: AUTHORS[3],
     content: "나도 여기 가보고 싶다.",
     createdAt: "2026-03-10T09:25:00Z",
     likeCount: 0,
@@ -41,7 +41,7 @@ const COMMENTS = [
     replies: [
       {
         id: "reply_2",
-        author: createAuthor(1, "yunji", 1),
+        author: AUTHORS[0],
         content: "다음에 같이 가자.",
         createdAt: "2026-03-10T09:28:00Z",
         likeCount: 0,
@@ -49,7 +49,7 @@ const COMMENTS = [
       },
       {
         id: "reply_3",
-        author: createAuthor(4, "hyunwoo", 4),
+        author: AUTHORS[3],
         content: "좋지, 시간 맞춰보자.",
         createdAt: "2026-03-10T09:30:00Z",
         likeCount: 0,
@@ -57,11 +57,10 @@ const COMMENTS = [
       },
     ],
   },
-
   {
     id: "comment_4",
     postId: "post_2",
-    author: createAuthor(5, "soyeon", 5),
+    author: AUTHORS[4],
     content: "카페 어디야? 분위기 좋아 보이네.",
     createdAt: "2026-03-10T08:40:00Z",
     likeCount: 4,
@@ -71,18 +70,17 @@ const COMMENTS = [
   {
     id: "comment_5",
     postId: "post_2",
-    author: createAuthor(6, "dongha", 6),
+    author: AUTHORS[5],
     content: "집중 잘 되는 날 있지.",
     createdAt: "2026-03-10T08:45:00Z",
     likeCount: 1,
     likedByMe: true,
     replies: [],
   },
-
   {
     id: "comment_6",
     postId: "post_3",
-    author: createAuthor(7, "haerin", 7),
+    author: AUTHORS[6],
     content: "할 일 끝낸 날이 제일 행복함.",
     createdAt: "2026-03-10T08:05:00Z",
     likeCount: 2,
