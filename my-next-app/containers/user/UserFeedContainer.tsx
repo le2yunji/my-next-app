@@ -8,13 +8,11 @@ export default async function UserFeedContainer({
 }: {
   userId: string;
 }) {
-  const userPromise = getUserProfileAction({ userId });
+  const user = await getUserProfileAction({ userId });
 
   return (
     <>
-      <Suspense fallback={<div>프로필 loading...</div>}>
-        <UserProfile userPromise={userPromise} />
-      </Suspense>
+      <UserProfile user={user} />
 
       <Suspense fallback={<div>피드 리스트 loading...</div>}>
         <UserFeedSection userId={userId} />

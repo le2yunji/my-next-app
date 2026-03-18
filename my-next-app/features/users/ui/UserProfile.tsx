@@ -1,13 +1,12 @@
 import Image from "next/image";
-import { use } from "react";
 
-export default function UserProfile({
-  userPromise,
-}: {
-  userPromise: Promise<{ profileImage: string; id: string; nickname: string }>;
-}) {
-  const user = use(userPromise);
+type User = {
+  profileImage: string | null;
+  id: string;
+  nickname: string;
+};
 
+export default function UserProfile({ user }: { user: User }) {
   return (
     <section className="flex items-center gap-4 p-4">
       <div className="relative h-20 w-20 overflow-hidden rounded-full bg-gray-200">

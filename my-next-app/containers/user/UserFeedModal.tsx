@@ -29,7 +29,7 @@ export default function UserFeedModal({
   };
 
   return (
-    <div className="fixed inset-0 z-[9999]">
+    <div className="fixed inset-0 z-9999">
       <button
         type="button"
         aria-label="닫기"
@@ -41,7 +41,7 @@ export default function UserFeedModal({
 
       <div
         className={`absolute inset-0 bg-white transition-transform duration-300 ease-out ${
-          open ? "translate-x-0" : "-translate-x-full"
+          open ? "translate-x-0" : "translate-x-full"
         }`}
       >
         <div className="sticky top-0 z-10 flex h-14 items-center border-b border-gray-200 bg-white px-4">
