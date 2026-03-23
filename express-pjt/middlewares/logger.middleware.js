@@ -6,7 +6,7 @@
 const loggerMiddleware = (req, _res, next) => {
   const method = req.method ?? "GET";
   const pathName = req.originalUrl ?? "(none)";
-  console.log(`[${method}] ${pathName} ${Date.now()}`);
+  // console.log(`[${method}] ${pathName} ${Date.now()}`);
   next();
 };
 module.exports = loggerMiddleware;

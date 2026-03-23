@@ -1,15 +1,38 @@
-function createMedia(postId, imageNo, width = 1080, height = 1350) {
-  const imageUrl = `/static/images/feed/${imageNo}.webp`;
+// mappers/posts.mapper.js
+
+// 미디어 목록 중 첫 번째 미디어를 썸네일 형태로 변환
+const toPostThumbnailResponse = (mediaList = []) => {
+  if (!mediaList.length) return null;
+
+  const sortedMedia = [...mediaList].sort(
+    (a, b) => (a.order ?? 0) - (b.order ?? 0)
+  );
+  const firstMedia = sortedMedia[0];
 
   return {
-    id: `post_${postId}_media_${imageNo}`,
-    type: "image",
-    thumbnailUrl: imageUrl,
-    displayUrl: imageUrl,
-    fullUrl: imageUrl,
-    width,
-    height,
+    type: firstMedia.type,
+    url:
+      firstMedia.thumbnailUrl ??
+      firstMedia.displayUrl ??
+      firstMedia.fullUrl ??
+      firstMedia.url ??
+      null,
   };
-}
+};
 
-module.exports = { createMedia };
+// 유저 게시물 목록(그리드)용 요약 응답 생성 함수
+const toUserPostItemResponse = ({ post, mediaList = [] }) => {
+  return {
+    id: post.id,
+    thumbnail: toPostThumbnailResponse(mediaList),
+    mediaCount: mediaList.length,
+    likeCount: post.likeCount,
+    commentCount: post.commentCount,
+    createdAt: post.createdAt,
+  };
+};
+
+module.exports = {
+  toPostThumbnailResponse,
+  toUserPostItemResponse,
+};

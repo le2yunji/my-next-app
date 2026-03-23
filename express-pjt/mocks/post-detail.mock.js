@@ -1,4 +1,4 @@
-const { POSTS } = require("../data/posts.data");
+const { POSTS } = require("./posts.mock");
 const { COMMENTS } = require("../data/comments.data");
 
 function getPostDetailResponse(postId) {

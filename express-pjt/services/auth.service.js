@@ -1,3 +1,5 @@
+// services/auth.service.js
+
 const userRepo = require("../repositories/user.repository");
 
 function signup({ id, password }) {
