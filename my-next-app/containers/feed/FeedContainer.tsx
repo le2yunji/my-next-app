@@ -5,6 +5,7 @@ const PAGE_SIZE = 10;
 
 const FeedContainer = async () => {
   const initial = await getFeedAction({ limit: PAGE_SIZE });
+
   return (
     <FeedList
       initialItems={initial.items}

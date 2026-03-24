@@ -1,18 +1,25 @@
 import Image from "next/image";
 
-type User = {
-  profileImage: string | null;
+type UserProfileModel = {
   id: string;
   nickname: string;
+  name: string;
+  profileImageUrl: string | null;
+  bio: string;
+  postCount: number;
+  followerCount: number;
+  followingCount: number;
+  isMe: boolean;
+  isFollowing: boolean;
 };
 
-export default function UserProfile({ user }: { user: User }) {
+export default function UserProfile({ user }: { user: UserProfileModel }) {
   return (
     <section className="flex items-center gap-4 p-4">
       <div className="relative h-20 w-20 overflow-hidden rounded-full bg-gray-200">
-        {user.profileImage ? (
+        {user.profileImageUrl ? (
           <Image
-            src={user.profileImage}
+            src={user.profileImageUrl}
             alt={`${user.nickname} 프로필 이미지`}
             fill
             className="object-cover"

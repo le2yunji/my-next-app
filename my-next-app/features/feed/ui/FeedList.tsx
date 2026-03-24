@@ -25,6 +25,7 @@ export default function FeedList({
   const [loading, setLoading] = useState(false);
   const prevIntersectingRef = useRef(false);
 
+  // 무한 스크롤
   const fetchNext = async () => {
     if (!hasNext || loading) return;
     setLoading(true);
@@ -55,26 +56,25 @@ export default function FeedList({
   useEffect(() => {
     const entered = isIntersecting && !prevIntersectingRef.current;
 
-    if (entered && hasNext && !loading) {
-      fetchNext();
-    }
+    if (entered && hasNext && !loading) fetchNext();
 
     prevIntersectingRef.current = isIntersecting;
   }, [isIntersecting, hasNext, loading]);
 
   return (
-    <main className="w-[393px] mt-10">
+    <main className="mt-10">
       <h1 className="font-2xl-bold">Feed</h1>
-
-      <ul>
-        {items.map((post, idx) => (
-          <FeedItem
-            key={post.id}
-            post={post}
-            priorityPost={shouldPriorityPostImage(idx)}
-          />
-        ))}
-      </ul>
+      <div className="max-w-142.5 w-140 ml-10">
+        <ul>
+          {items.map((post, idx) => (
+            <FeedItem
+              key={post.id}
+              post={post}
+              priorityPost={shouldPriorityPostImage(idx)}
+            />
+          ))}
+        </ul>
+      </div>
 
       <div ref={sentinelRef} className="h-2.5 bg-blue-600" />
 

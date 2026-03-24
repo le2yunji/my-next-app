@@ -1,18 +1,16 @@
-import { getUserProfileAction } from "@/app/actions/users.action";
-import UserProfile from "@/features/users/ui/UserProfile";
+// components/user/UserFeedContainer.tsx
 import { Suspense } from "react";
 import UserFeedSection from "@/features/users/ui/UserFeedSection";
+import UserProfileSection from "@/features/users/ui/UserProfileSection";
 
 export default async function UserFeedContainer({
   userId,
 }: {
   userId: string;
 }) {
-  const user = await getUserProfileAction({ userId });
-
   return (
     <>
-      <UserProfile user={user} />
+      <UserProfileSection userId={userId} />
 
       <Suspense fallback={<div>피드 리스트 loading...</div>}>
         <UserFeedSection userId={userId} />
