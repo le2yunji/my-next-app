@@ -29,8 +29,25 @@ export default function UserProfile({ user }: { user: UserProfileModel }) {
       </div>
 
       <div>
-        <p className="text-lg font-semibold">{user.nickname}</p>
-        <p className="text-sm text-gray-500">{user.id}</p>
+        <div>
+          <p className="text-lg font-semibold">{user.nickname}</p>
+          <p className="text-sm text-gray-500">{user.id}</p>
+        </div>
+        <div className="flex">
+          <div className="flex flex-col items-center">
+            <span>게시물</span>
+            <span className="text-sm text-gray-500">{user.postCount}</span>
+          </div>
+          <div className="flex flex-col items-center">
+            <span>팔로워</span>
+            <span className="text-sm text-gray-500">{user.followerCount}</span>
+          </div>
+          <div className="flex flex-col items-center">
+            <span>팔로잉</span>
+            <span className="text-sm text-gray-500">{user.followingCount}</span>
+          </div>
+        </div>
+        <p className="text-sm text-gray-500">{user.bio}</p>
       </div>
     </section>
   );

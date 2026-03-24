@@ -1,8 +1,12 @@
 "use server";
+
 import apiClient from "@/app/utils/api-client";
 
-export const getPostsAction = async (params: { postId: string }) => {
-  const url = `/api/posts/${params.postId}`;
+export const getPostDetailAction = async (params: {
+  userId: string;
+  postId: string;
+}) => {
+  const url = `/api/users/${params.userId}/posts/${params.postId}`;
   const res = await apiClient.get(url);
 
   let data;
@@ -10,8 +14,12 @@ export const getPostsAction = async (params: { postId: string }) => {
   try {
     data = await res.json();
   } catch {
-    data = { isError: true, message: "서버 응답 형식이 올바르지 않습니다." };
+    data = {
+      isError: true,
+      message: "서버 응답 형식이 올바르지 않습니다.",
+    };
   }
+
   if (!res.ok) {
     return {
       isError: true,

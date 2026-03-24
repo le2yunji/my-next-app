@@ -3,7 +3,7 @@
 
 import UserFeedContainer from "@/containers/user/UserFeedContainer";
 
-export default async function UserPage({
+export default async function UserFeedPage({
   params,
 }: {
   params: Promise<{ userId: string }>;
@@ -14,7 +14,6 @@ export default async function UserPage({
     <>
       <div style={{ padding: 40 }}>
         <h1>원본 상세 페이지</h1>
-        <p>{userId}</p>
       </div>
       <UserFeedContainer userId={userId} />
     </>

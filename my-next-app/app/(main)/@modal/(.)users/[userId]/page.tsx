@@ -2,7 +2,7 @@
 import UserFeedContainer from "@/containers/user/UserFeedContainer";
 import UserFeedModal from "@/containers/user/UserFeedModal";
 
-export default async function UserPage({
+export default async function UserFeedPage({
   params,
 }: {
   params: Promise<{ userId: string }>;

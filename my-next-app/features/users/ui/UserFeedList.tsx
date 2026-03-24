@@ -33,8 +33,6 @@ export default function UserFeedList({
   const [cursor, setCursor] = useState<string | null>(initialCursor);
   const [hasNext, setHasNext] = useState(initialHasNext);
 
-  console.log("items: ", items);
-
   const fetchNext = async () => {
     if (!hasNext || loading) return;
 
@@ -81,7 +79,7 @@ export default function UserFeedList({
               {post.thumbnail ? (
                 <div className="relative aspect-square w-full overflow-hidden">
                   <Link
-                    href={`/users/${userId}/${post.id}`}
+                    href={`/users/${userId}/post/${post.id}`}
                     className="relative block aspect-square w-full overflow-hidden"
                   >
                     <Image
