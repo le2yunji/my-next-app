@@ -1,3 +1,4 @@
+// mocks/mock.helper.js
 const {
   buildProfileImagePath,
   buildFeedImagePath,

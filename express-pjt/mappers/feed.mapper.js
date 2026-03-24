@@ -25,7 +25,7 @@ function toPostThumbnailItem(p) {
     createdAt: p.createdAt,
     likeCount: p.likeCount,
     commentCount: p.commentCount,
-    likedByMe: post.likedByMe,
+    likedByMe: p.likedByMe,
     thumbnail: thumb
       ? {
           type: thumb.type,

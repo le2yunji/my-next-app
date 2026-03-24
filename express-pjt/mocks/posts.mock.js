@@ -81,7 +81,7 @@ const POST_MEDIA = BASE_POSTS.flatMap((post, postIndex) => {
   const mediaCount = (postIndex % 4) + 1;
 
   return Array.from({ length: mediaCount }, (_, mediaIndex) => {
-    const imageNo = ((postIndex * 3 + mediaIndex) % 30) + 1;
+    const imageNo = (((postIndex + 1) * 11 + mediaIndex) % 30) + 1;
     const aspect =
       ASPECT_PRESETS[(postIndex + mediaIndex) % ASPECT_PRESETS.length];
 
