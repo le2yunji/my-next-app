@@ -15,7 +15,7 @@ const toAuthorResponse = (user) => {
 // 상세 프로필 응답 생성 함수
 const toUserProfileResponse = ({
   user,
-  viewerId,
+  viewerId = null,
   postCount,
   followerCount,
   followingCount,
@@ -36,7 +36,14 @@ const toUserProfileResponse = ({
   };
 };
 
+const toUserProfileSummaryResponse = ({ user }) => ({
+  id: user.id,
+  nickname: user.nickname,
+  profileImageUrl: user.profileImageUrl ?? null,
+});
+
 module.exports = {
   toUserProfileResponse,
   toAuthorResponse,
+  toUserProfileSummaryResponse,
 };

@@ -19,8 +19,23 @@ const toPostMediaResponse = (media) => {
   };
 };
 
-// 게시물 상세 응답 모양 생성
-const toPostDetailResponse = ({ post, author, mediaList = [], likedByMe }) => {
+// 댓글 응답 모양 생성
+const toCommentResponse = ({ comment, author }) => {
+  return {
+    id: comment.id,
+    author: author ? toAuthorResponse(author) : null,
+    content: comment.content,
+    createdAt: comment.createdAt,
+  };
+};
+
+// 게시물 상세 1개 응답 모양 생성
+const toSinglePostDetailResponse = ({
+  post,
+  author,
+  mediaList = [],
+  likedByMe,
+}) => {
   const sortedMedia = [...mediaList].sort(
     (a, b) => (a.order ?? 0) - (b.order ?? 0)
   );
@@ -37,18 +52,38 @@ const toPostDetailResponse = ({ post, author, mediaList = [], likedByMe }) => {
   };
 };
 
-// 댓글 응답 모양 생성
-const toCommentResponse = ({ comment, author }) => {
+// 유저 게시물 상세 페이지 전체 응답 모양 생성
+const toUserPostDetailPageResponse = ({
+  profile,
+  post,
+  author,
+  mediaList,
+  likedByMe,
+  previewComment,
+  previewCommentAuthor,
+  navigation,
+}) => {
   return {
-    id: comment.id,
-    author: toAuthorResponse(author),
-    content: comment.content,
-    createdAt: comment.createdAt,
+    profile,
+    post: toSinglePostDetailResponse({
+      post,
+      author,
+      mediaList,
+      likedByMe,
+    }),
+    previewComment: previewComment
+      ? toCommentResponse({
+          comment: previewComment,
+          author: previewCommentAuthor,
+        })
+      : null,
+    navigation,
   };
 };
 
 module.exports = {
   toPostMediaResponse,
-  toPostDetailResponse,
+  toSinglePostDetailResponse,
+  toUserPostDetailPageResponse,
   toCommentResponse,
 };

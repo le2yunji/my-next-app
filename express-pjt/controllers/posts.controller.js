@@ -1,30 +1,51 @@
 // controllers/posts.controller.js
-const { getPostDetailData } = require("../services/post-detail.service");
-const { toPostDetailResponse } = require("../mappers/post-detail.mapper");
+const {
+  getUserPostDetailPageData,
+} = require("../services/post-detail.service");
+const {
+  toUserPostDetailPageResponse,
+} = require("../mappers/post-detail.mapper");
 
 function getPostDetail(req, res) {
   try {
-    const { postId } = req.params;
+    const { userId, postId } = req.params;
     const viewerId = req.user?.id ?? null;
 
-    const result = getPostDetailData({ postId, viewerId });
+    const result = getUserPostDetailPageData({ userId, postId, viewerId });
 
     if (!result.success) {
-      if (result.error.code === "POST_NOT_FOUND") {
+      if (
+        result.error.code === "USER_NOT_FOUND" ||
+        result.error.code === "POST_NOT_FOUND" ||
+        result.error.code === "AUTHOR_NOT_FOUND"
+      ) {
         return res.status(404).json(result.error);
       }
 
       return res.status(400).json(result.error);
     }
 
-    const { post, author, mediaList, likedByMe, comments } = result.data;
+    const {
+      profile,
+      post,
+      author,
+      mediaList,
+      likedByMe,
+      previewComment,
+      previewCommentAuthor,
+      navigation,
+    } = result.data;
 
     return res.status(200).json(
-      toPostDetailResponse({
+      toUserPostDetailPageResponse({
+        profile,
         post,
         author,
         mediaList,
         likedByMe,
+        previewComment,
+        previewCommentAuthor,
+        navigation,
       })
     );
   } catch (error) {

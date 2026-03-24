@@ -4,6 +4,7 @@ const {
   getPostById,
   getMediaByPostId,
   getLikesByPostId,
+  getCommentsByPostId,
 } = require("../selectors/post.selectors");
 
 // 이미지 순서 정렬
@@ -42,6 +43,8 @@ const buildPostDetailBase = ({ postId, viewerId = null }) => {
     ? likeList.some((like) => like.userId === viewerId)
     : false;
 
+  const comments = getCommentsByPostId(post.id) ?? null;
+
   return {
     success: true,
     data: {
@@ -49,6 +52,7 @@ const buildPostDetailBase = ({ postId, viewerId = null }) => {
       author,
       mediaList,
       likedByMe,
+      comments,
     },
   };
 };

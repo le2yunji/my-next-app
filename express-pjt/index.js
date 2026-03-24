@@ -25,10 +25,10 @@ app.use(
 app.use("/static", express.static(path.join(__dirname, "public"))); // 정적 파일 서빙
 app.use("/api", loggerMiddleware, apiRouter); // 8080으로 들어오는 요청은 무조건 여기로 감
 
-app.use((req, res) =>
-  res.status(404).json({ message: "올바르지 않은 API 경로입니다.p" })
+app.use((_req, res) =>
+  res.status(404).json({ message: "올바르지 않은 API 경로입니다." })
 );
-app.use((err, req, res, next) => {
+app.use((err, _req, res, _next) => {
   console.error(err);
   res.status(500).json({ message: "서버 오류가 발생했습니다." });
 });
