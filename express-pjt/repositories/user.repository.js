@@ -7,44 +7,58 @@ const DATA_PATH = path.join(__dirname, "../data/users.json");
  * 내부 유틸
  */
 function readUsers() {
-  const raw = fs.readFileSync(DATA_PATH, "utf-8"); // 파일 읽기 (동기 방식-파일 읽을 때까지 코드 멈춤)
-  return JSON.parse(raw); // JSON → JS 객체 변환
+  if (!fs.existsSync(DATA_PATH)) {
+    return [];
+  }
+
+  const raw = fs.readFileSync(DATA_PATH, "utf-8").trim();
+
+  if (!raw) {
+    return [];
+  }
+
+  return JSON.parse(raw); // JSON → JS 배열
 }
 
-// JS객체 -> 파일 (메모리 객체를 JSON 파일로 다시 저장)
 function writeUsers(users) {
-  // null → 변환 로직 커스터마이징 안 함
-  // 2 → 들여쓰기 2칸 (가독성)
-  fs.writeFileSync(DATA_PATH, JSON.stringify(users, null, 2));
+  fs.writeFileSync(DATA_PATH, JSON.stringify(users, null, 2), "utf-8");
 }
 
 /**
  * Repository API
  */
-// JSON 파일 읽기 -> { id: userData } 객체 획득 -> 해당 id 키로 접근
-function findById(id) {
+
+// 내부 고유 id로 유저 찾기
+function findByUserId(id) {
   const users = readUsers();
-  return users[id] || null;
+  return users.find((user) => user.id === id) || null;
 }
 
-// 중복 검사
-function existsById(id) {
+// 로그인용 아이디(loginId)로 유저 찾기
+function findByLoginId(loginId) {
   const users = readUsers();
-  return Boolean(users[id]);
+  return users.find((user) => user.loginId === loginId) || null;
 }
 
-// 기존 데이터에 새 유저를 추가하고 저장
-function createUser(id, userData) {
+// loginId 중복 검사
+function existsByLoginId(loginId) {
+  const users = readUsers();
+  return users.some((user) => user.loginId === loginId);
+}
+
+// 새 유저 추가
+function createUser(userData) {
   const users = readUsers();
 
-  users[id] = userData;
+  users.push(userData);
   writeUsers(users);
 
-  return { id, ...userData };
+  return userData;
 }
 
 module.exports = {
-  findById,
-  existsById,
+  findByUserId,
+  findByLoginId,
+  existsByLoginId,
   createUser,
 };

@@ -1,8 +1,20 @@
-{
-  "lee11": {
-    "password": "aaaa1111"
+[
+  {
+    "id": "u_001",
+    "loginId": "lee11",
+    "password": "aaaa1111",
+    "createdAt": "2026-03-24T15:00:00.000Z"
   },
-  "lee22": {
-    "password": "aaaa2222"
+  {
+    "id": "u_002",
+    "loginId": "lee22",
+    "password": "aaaa2222",
+    "createdAt": "2026-03-24T15:00:00.000Z"
+  },
+  {
+    "id": "u_003",
+    "loginId": "lee00",
+    "password": "aaaa1111",
+    "createdAt": "2026-03-24T15:00:00.000Z"
   }
-}
+]

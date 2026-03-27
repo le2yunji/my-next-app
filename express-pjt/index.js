@@ -5,6 +5,8 @@ const path = require("path");
 const apiRouter = require("./routes");
 const cors = require("cors");
 const loggerMiddleware = require("./middlewares/logger.middleware");
+const mongoose = require("mongoose");
+const { PORT, DATABASE_URL } = require("./env");
 
 const app = express(); //프레임 워크, node_modules의 파일이 엮여짐
 
@@ -33,4 +35,15 @@ app.use((err, _req, res, _next) => {
   res.status(500).json({ message: "서버 오류가 발생했습니다." });
 });
 
-app.listen(8080, () => console.log("running on 8080"));
+mongoose
+  .connect(DATABASE_URL)
+  .then(() => {
+    console.log("DB 연결 성공");
+
+    app.listen(PORT, () => {
+      console.log(`서버 실행 중: ${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error("DB 연결 실패:", err);
+  });
