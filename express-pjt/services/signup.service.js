@@ -1,6 +1,6 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/user.model");
-const normalization = require("../utils/regex");
+const { normalization, normalizePhone } = require("../utils/regex");
 
 async function signup({ id, email, phone, password, passwordConfirm }) {
   if (!email && !phone) {
@@ -10,15 +10,10 @@ async function signup({ id, email, phone, password, passwordConfirm }) {
     err.status = 400;
     throw err;
   }
-  if (password !== passwordConfirm) {
-    const err = new Error("비밀번호 확인이 일치하지 않습니다.");
-    err.status = 400;
-    throw err;
-  }
 
-  const normalizedId = id?.normalization(id);
-  const normalizedEmail = email?.normalization(email);
-  const normalizedPhone = phone?.normalization(phone);
+  const normalizedId = id ? normalization(id) : undefined;
+  const normalizedEmail = email ? normalization(email) : undefined;
+  const normalizedPhone = phone ? normalizePhone(phone) : undefined;
 
   // 기존 회원 확인
   if (normalizedId) {

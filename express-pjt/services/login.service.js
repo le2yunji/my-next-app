@@ -1,17 +1,18 @@
 // services/auth.service.js
 const bcrypt = require("bcrypt");
 const User = require("../models/user.model");
-const normalization = require("../utils/regex");
+const { normalization, normalizePhone } = require("../utils/regex");
 
 async function login({ identifier, password }) {
   const normalizedIdentifier = normalization(identifier);
+  const normalizedPhone = normalizePhone(identifier);
 
   const user = await User.findOne({
     // 사용자가 입력한 값 하나를 세 필드 중 어디에 해당하는지 찾기
     $or: [
       { loginId: normalizedIdentifier },
       { email: normalizedIdentifier },
-      { phone: identifier.trim() },
+      { phone: normalizedPhone },
     ],
     isDeleted: false,
   });
@@ -31,13 +32,11 @@ async function login({ identifier, password }) {
   }
 
   return {
-    message: "로그인에 성공했습니다!",
-    user: {
-      id: user._id,
-      loginId: user.loginId,
-      email: user.email,
-      phone: user.phone,
-    },
+    id: user._id,
+    loginId: user.loginId,
+    email: user.email,
+    phone: user.phone,
+    createdAt: user.createdAt,
   };
 }
 
