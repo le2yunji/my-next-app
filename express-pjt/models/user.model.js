@@ -22,6 +22,13 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    name: {
+      type: String,
+      trim: true,
+      minlength: 2,
+      maxlength: 10, // 10자 초과 시 validation 에러
+      default: "",
+    },
     birth: {
       type: Date,
     },

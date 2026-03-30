@@ -1,6 +1,7 @@
 require("dotenv").config();
 
 const express = require("express");
+const cookieParser = require("cookie-parser");
 const path = require("path");
 const apiRouter = require("./routes");
 const cors = require("cors");
@@ -12,6 +13,7 @@ const app = express(); //프레임 워크, node_modules의 파일이 엮여짐
 
 app.use(express.json()); //미들웨어 설정, json형식으로 된 데이터를 파싱
 app.use(express.urlencoded({ extended: true })); //urlencoded형식으로 된 데이터를 파싱 -> 쿼리스트링
+app.use(cookieParser());
 
 // ✅ CORS 설정 (Next dev: http://localhost:3000)
 app.use(

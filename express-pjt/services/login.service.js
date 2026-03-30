@@ -1,10 +1,14 @@
 // services/auth.service.js
 const bcrypt = require("bcrypt");
 const User = require("../models/user.model");
-const { normalization, normalizePhone } = require("../utils/regex");
+const { normalizeText, normalizePhone } = require("../utils/regex");
+const {
+  generateAccessToken,
+  generateRefreshToken,
+} = require("./token.service");
 
 async function login({ identifier, password }) {
-  const normalizedIdentifier = normalization(identifier);
+  const normalizedIdentifier = normalizeText(identifier);
   const normalizedPhone = normalizePhone(identifier);
 
   const user = await User.findOne({
@@ -31,12 +35,19 @@ async function login({ identifier, password }) {
     throw err;
   }
 
+  const accessToken = generateAccessToken(user);
+  const refreshToken = generateRefreshToken(user);
+
   return {
-    id: user._id,
-    loginId: user.loginId,
-    email: user.email,
-    phone: user.phone,
-    createdAt: user.createdAt,
+    accessToken,
+    refreshToken,
+    user: {
+      id: user._id,
+      loginId: user.loginId,
+      email: user.email,
+      phone: user.phone,
+      createdAt: user.createdAt,
+    },
   };
 }
 
