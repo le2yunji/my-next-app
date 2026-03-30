@@ -2,7 +2,7 @@ const bcrypt = require("bcrypt");
 const User = require("../models/user.model");
 const { normalizeText, normalizePhone } = require("../utils/regex");
 
-async function signup({ id, email, phone, password, passwordConfirm }) {
+async function signup({ id, name, email, phone, password, passwordConfirm }) {
   if (!email && !phone) {
     const err = new Error(
       "이메일 또는 휴대폰 번호 중 하나는 반드시 입력해야 합니다."
@@ -12,6 +12,7 @@ async function signup({ id, email, phone, password, passwordConfirm }) {
   }
 
   const normalizedId = id ? normalizeText(id) : undefined;
+  const normalizedName = name ? normalizeText(name) : undefined;
   const normalizedEmail = email ? normalizeText(email) : undefined;
   const normalizedPhone = phone ? normalizePhone(phone) : undefined;
 
@@ -56,6 +57,7 @@ async function signup({ id, email, phone, password, passwordConfirm }) {
 
   const user = new User({
     id: normalizedId,
+    name: normalizedName,
     email: normalizedEmail,
     phone: normalizedPhone,
     passwordHash,
@@ -65,6 +67,7 @@ async function signup({ id, email, phone, password, passwordConfirm }) {
   return {
     userId: savedUser._id,
     id: savedUser.id,
+    name: savedUser.name,
     email: savedUser.email,
     phone: savedUser.phone,
     createdAt: savedUser.createdAt,

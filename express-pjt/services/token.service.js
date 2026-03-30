@@ -4,7 +4,7 @@ const {
   JWT_ACCESS_EXPIRES_IN,
   JWT_REFRESH_SECRET,
   JWT_REFRESH_EXPIRES_IN,
-} = require("./env");
+} = require("../env");
 
 function generateAccessToken(user) {
   return jwt.sign(
