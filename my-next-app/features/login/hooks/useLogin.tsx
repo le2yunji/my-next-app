@@ -3,13 +3,10 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { isValidId, isValidPassword } from "@/features/auth/model/validators";
-import { loginAction } from "@/app/actions/login.action";
-import { AUTH_ERROR_MESSAGES } from "@/features/auth/constants/errorMessages";
 
-export type LoginForm = {
-  id: string;
-  password: string;
-};
+import { AUTH_ERROR_MESSAGES } from "@/features/auth/constants/errorMessages";
+import type { LoginForm } from "@/types/auth";
+import { loginApi } from "@/features/login/api/login";
 
 export default function useLogin() {
   const router = useRouter();
@@ -17,12 +14,12 @@ export default function useLogin() {
   const [error, setError] = useState<string | null>("");
 
   const [fieldErrors, setFieldErrors] = useState<{
-    id?: string;
+    identifier?: string;
     password?: string;
   }>({});
 
   const [form, setForm] = useState<LoginForm>({
-    id: "",
+    identifier: "",
     password: "",
   });
 
@@ -39,9 +36,10 @@ export default function useLogin() {
     setError(null);
     setFieldErrors({});
 
-    const errors: { id?: string; password?: string } = {};
+    const errors: { identifier?: string; password?: string } = {};
 
-    if (!isValidId(form.id)) errors.id = AUTH_ERROR_MESSAGES.id;
+    if (!isValidId(form.identifier))
+      errors.identifier = AUTH_ERROR_MESSAGES.identifier;
     if (!isValidPassword(form.password))
       errors.password = AUTH_ERROR_MESSAGES.password;
 
@@ -53,7 +51,7 @@ export default function useLogin() {
     setLoading(true);
 
     try {
-      const result = await loginAction(form.id, form.password);
+      const result = await loginApi(form.identifier, form.password);
 
       if (result?.isError) {
         setError(result.message ?? "로그인 실패");

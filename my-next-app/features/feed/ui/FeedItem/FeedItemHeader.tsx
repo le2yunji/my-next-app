@@ -8,5 +8,9 @@ export default function FeedItemHeader({
 }: {
   author: FeedItemModel["author"];
 }) {
-  return <Link href={`/users/${author.id}`}>{author.nickname}</Link>;
+  return (
+    <Link href={`/users/${author.id}`} scroll={false}>
+      {author.nickname}
+    </Link>
+  );
 }

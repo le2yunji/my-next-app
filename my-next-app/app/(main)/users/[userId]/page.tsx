@@ -13,6 +13,7 @@ export default async function UserFeedPage({
   return (
     <>
       <div style={{ padding: 40 }}>
+        {userId}
         <h1>원본 상세 페이지</h1>
       </div>
       <UserFeedContainer userId={userId} />

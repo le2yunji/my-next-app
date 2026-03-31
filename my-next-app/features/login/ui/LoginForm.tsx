@@ -27,13 +27,13 @@ export default function LoginForm() {
     <form onSubmit={handleSubmit}>
       <div className="flex flex-col gap-6">
         <TextInput
-          id="id"
-          label="아이디"
-          placeholder="아이디"
-          value={form.id}
-          onChange={(e) => onChangeField("id", e.target.value)}
+          id="identifier"
+          label="전화번호, 사용자 이름, 혹은 이메일"
+          placeholder="전화번호, 사용자 이름, 혹은 이메일"
+          value={form.identifier}
+          onChange={(e) => onChangeField("identifier", e.target.value)}
         />
-        <p className="text-red-500">{fieldErrors.id}</p>
+        <p className="text-red-500">{fieldErrors.identifier}</p>
         <TextInput
           id="password"
           label="비밀번호"

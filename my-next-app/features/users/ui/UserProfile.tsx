@@ -13,7 +13,13 @@ type UserProfileModel = {
   isFollowing: boolean;
 };
 
-export default function UserProfile({ user }: { user: UserProfileModel }) {
+export default function UserProfile({
+  user,
+  isOwner,
+}: {
+  user: UserProfileModel;
+  isOwner: boolean;
+}) {
   return (
     <section className="flex items-center gap-4 p-4">
       <div className="relative h-20 w-20 overflow-hidden rounded-full bg-gray-200">
@@ -25,6 +31,12 @@ export default function UserProfile({ user }: { user: UserProfileModel }) {
             className="object-cover"
             unoptimized
           />
+        ) : null}
+
+        {isOwner ? (
+          <>
+            <div>본인 피드</div>
+          </>
         ) : null}
       </div>
 

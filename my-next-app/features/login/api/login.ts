@@ -1,6 +1,4 @@
-"use server";
-
-import apiClient from "@/app/utils/api-client";
+import apiClient from "../../../app/utils/api-client";
 
 type LoginResult = {
   isError?: boolean;
@@ -10,11 +8,17 @@ type LoginResult = {
   [key: string]: any; // 임시로 쓰는 코드
 };
 
-export const loginAction = async (
-  id: string,
+export const loginApi = async (
+  identifier: string,
   password: string
 ): Promise<LoginResult> => {
-  const res = await apiClient.post("/api/auth/login", { id, password });
+  const res = await apiClient.post(
+    "/api/auth/login",
+    { identifier, password },
+    {
+      credentials: "include",
+    }
+  );
   let data;
   try {
     data = await res.json();

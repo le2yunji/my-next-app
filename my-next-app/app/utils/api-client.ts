@@ -4,7 +4,7 @@ type RequestOptions = {
   headers?: HeadersInit;
   cache?: RequestCache; // "no-store" 등
   credentials?: RequestCredentials; // 쿠키 포함 여부
-  next: RequestInit["next"];
+  next?: RequestInit["next"];
 };
 
 const request = async (

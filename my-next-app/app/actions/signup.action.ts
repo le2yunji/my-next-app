@@ -10,10 +10,21 @@ type SignupResult = {
 };
 
 export const signupAction = async (
+  name: string,
+  email: string,
+  phone: string,
   id: string,
-  password: string
+  password: string,
+  passwordConfirm: string
 ): Promise<SignupResult> => {
-  const res = await apiClient.post("/api/auth/signup", { id, password });
+  const res = await apiClient.post("/api/auth/signup", {
+    name,
+    email,
+    phone,
+    id,
+    password,
+    passwordConfirm,
+  });
 
   let data;
   try {

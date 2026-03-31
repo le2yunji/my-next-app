@@ -5,15 +5,8 @@ import { PrimaryButton } from "@/components/button/PrimaryButton";
 import useSignup from "../hooks/useSignup";
 
 export default function SignupForm() {
-  const {
-    form,
-    setForm,
-    onChangeField,
-    onSubmit,
-    loading,
-    error,
-    fieldErrors,
-  } = useSignup();
+  const { form, onChangeField, onSubmit, loading, error, fieldErrors } =
+    useSignup();
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
@@ -23,6 +16,28 @@ export default function SignupForm() {
   return (
     <form onSubmit={handleSubmit}>
       <div className="flex flex-col gap-6">
+        <TextInput
+          id="name"
+          label="이름"
+          placeholder="이름"
+          value={form.name}
+          onChange={(e) => onChangeField("name", e.target.value)}
+        />
+        <TextInput
+          id="email"
+          label="이메일"
+          placeholder="이메일"
+          value={form.email}
+          onChange={(e) => onChangeField("email", e.target.value)}
+        />
+        <TextInput
+          id="phone"
+          type="tel"
+          label="휴대전화"
+          placeholder="휴대전화"
+          value={form.phone}
+          onChange={(e) => onChangeField("phone", e.target.value)}
+        />
         <TextInput
           id="id"
           label="아이디"

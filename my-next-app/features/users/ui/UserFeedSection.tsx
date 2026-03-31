@@ -1,7 +1,15 @@
 import { getUserFeedAction } from "@/app/actions/users.action";
 import UserFeedList from "@/features/users/ui/UserFeedList";
 
-export default async function UserFeedSection({ userId }: { userId: string }) {
+export default async function UserFeedSection({
+  userId,
+  isOwner,
+  me,
+}: {
+  userId: string;
+  isOwner: boolean;
+  me: string;
+}) {
   const initialFeed = await getUserFeedAction({ userId, limit: 9 });
 
   return (

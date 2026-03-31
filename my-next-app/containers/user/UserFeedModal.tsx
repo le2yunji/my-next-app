@@ -16,8 +16,12 @@ export default function UserFeedModal({
     const id = requestAnimationFrame(() => {
       setOpen(true);
     });
-
-    return () => cancelAnimationFrame(id);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      cancelAnimationFrame(id);
+      document.body.style.overflow = prevOverflow;
+    };
   }, []);
 
   const handleClose = () => {
@@ -31,7 +35,6 @@ export default function UserFeedModal({
   return (
     <div className="fixed inset-0 z-9999">
       <button
-        type="button"
         aria-label="닫기"
         onClick={handleClose}
         className={`absolute inset-0 bg-black/40 transition-opacity duration-300 ${
@@ -46,7 +49,6 @@ export default function UserFeedModal({
       >
         <div className="sticky top-0 z-10 flex h-14 items-center border-b border-gray-200 bg-white px-4">
           <button
-            type="button"
             onClick={handleClose}
             className="text-sm font-medium text-gray-700"
           >
