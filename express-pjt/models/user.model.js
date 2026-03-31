@@ -42,6 +42,7 @@ const userSchema = new mongoose.Schema(
       trim: true,
       unique: true,
       sparse: true,
+      default: "",
     },
     profileImageUrl: {
       type: String, // 프로필 이미지 URL 문자열

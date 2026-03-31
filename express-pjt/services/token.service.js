@@ -9,7 +9,7 @@ const {
 function generateAccessToken(user) {
   return jwt.sign(
     {
-      userId: user._id.toString(),
+      mongoId: user._id.toString(),
       id: user.id,
       type: "access",
     },
@@ -23,7 +23,7 @@ function generateAccessToken(user) {
 function generateRefreshToken(user) {
   return jwt.sign(
     {
-      userId: user._id.toString(),
+      mongoId: user._id.toString(),
       type: "refresh",
     },
     JWT_REFRESH_SECRET,

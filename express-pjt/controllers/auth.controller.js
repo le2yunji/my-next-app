@@ -1,5 +1,6 @@
-const loginService = require("../services/login.service");
-const signupService = require("../services/signup.service");
+const loginService = require("../services/auth/login.service");
+const signupService = require("../services/auth/signup.service");
+const meService = require("../services/auth/me.service");
 const {
   verifyRefreshToken,
   generateAccessToken,
@@ -73,7 +74,7 @@ async function refresh(req, res, next) {
       });
     }
 
-    const user = await User.findById(decoded.userId);
+    const user = await User.findById(decoded.mongoId);
 
     if (!user || user.isDeleted) {
       return res.status(401).json({
@@ -117,9 +118,27 @@ function logout(_req, res) {
   });
 }
 
+// 쿠키에서 access token 읽음
+// 토큰 검증
+// 토큰 안의 userId로 DB 조회
+// 현재 로그인한 사용자 정보 반환
+async function me(req, res, next) {
+  try {
+    const user = await meService.getMe(req.user.mongoId);
+
+    return res.status(200).json({
+      isError: false,
+      user,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
 module.exports = {
   signup,
   login,
   refresh,
   logout,
+  me,
 };

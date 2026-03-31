@@ -1,31 +1,24 @@
 const {
   isValidId,
   isValidPassword,
+  isValidName,
   isValidEmail,
   isValidPhone,
 } = require("../utils/regex");
 
 function validateSignup(req, res, next) {
   try {
-    const { id, email, phone, password, passwordConfirm } = req.body;
+    const { name, id, email, phone, password, passwordConfirm } = req.body;
 
-    // 1. 필수값 검사
+    // 필수값 검사
     if (!id || !password || !passwordConfirm) {
       return res.status(400).json({
         isError: true,
-        message: "아이디, 비밀번호, 비밀번호 확인은 필수 입력값입니다.",
+        message: "이름, 아이디, 비밀번호, 비밀번호 확인은 필수 입력값입니다.",
       });
     }
 
-    // 2. 이메일 / 휴대폰 중 하나는 반드시 필요
-    if (!email && !phone) {
-      return res.status(400).json({
-        isError: true,
-        message: "이메일 또는 휴대폰 번호 중 하나는 반드시 입력해야 합니다.",
-      });
-    }
-
-    // 3. 아이디 형식 검사
+    // 아이디 형식 검사
     if (!isValidId(id)) {
       return res.status(400).json({
         isError: true,
@@ -33,7 +26,17 @@ function validateSignup(req, res, next) {
       });
     }
 
-    // 4. 비밀번호 형식 검사
+    // 이름 형식 검사
+    if (name && !isValidName(name)) {
+      return res.status(400).json({
+        isError: true,
+        message: "이름 형식이 올바르지 않습니다.",
+      });
+    }
+    console.log("name raw:", JSON.stringify(name));
+    console.log("name valid:", isValidName(name));
+
+    // 비밀번호 형식 검사
     if (!isValidPassword(password)) {
       return res.status(400).json({
         isError: true,
@@ -41,7 +44,7 @@ function validateSignup(req, res, next) {
       });
     }
 
-    // 5. 비밀번호 확인 일치 검사
+    // 비밀번호 확인 일치 검사
     if (password !== passwordConfirm) {
       return res.status(400).json({
         isError: true,
@@ -64,7 +67,6 @@ function validateSignup(req, res, next) {
         message: "휴대폰 번호 형식이 올바르지 않습니다.",
       });
     }
-
     next();
   } catch (error) {
     next(error);

@@ -2,6 +2,8 @@ const { verifyAccessToken } = require("../services/token.service");
 
 function authenticate(req, res, next) {
   try {
+    console.log("cookies:", req.cookies);
+
     const accessToken = req.cookies.accessToken;
 
     if (!accessToken) {
@@ -12,6 +14,7 @@ function authenticate(req, res, next) {
     }
 
     const decoded = verifyAccessToken(accessToken);
+    console.log("decoded:", decoded);
 
     if (decoded.type !== "access") {
       return res.status(401).json({
@@ -21,12 +24,13 @@ function authenticate(req, res, next) {
     }
 
     req.user = {
-      userId: decoded.userId,
+      mongoId: decoded.mongoId,
       id: decoded.id,
     };
 
-    next();
+    return next();
   } catch (error) {
+    console.error("AUTH ERROR:", error);
     return res.status(401).json({
       isError: true,
       message: "토큰이 만료되었거나 유효하지 않습니다.",
