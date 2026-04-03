@@ -1,0 +1,22 @@
+@theme {
+  --color-bg: #f5f3f0;
+  --color-surface: #fff7ed;
+  --color-surface-muted: #f2ede9;
+
+  --color-fg: #0a0a0a;
+  --color-fg-strong: #000000;
+  --color-text-sub: #364153;
+  --color-text-muted: #6a7282;
+  --color-text-disabled: #99a1af;
+
+  --color-border: #e5e7eb;
+  --color-border-strong: #d1d5dc;
+
+  --color-accent: #ca3500;
+  --color-accent-soft: #cf9668;
+
+  --radius-sm: 0.375rem;
+  --radius-md: 0.625rem;
+  --radius-lg: 0.875rem;
+  --radius-xl: 1rem;
+}

@@ -11,8 +11,8 @@ type FeedItem = {
   thumbnail: { type: "image"; url: string } | null;
   mediaCount: number;
   author: { id: string; nickname: string; profileImage: string | null };
-  // likeCount: number;
-  // commentCount: number;
+  likeCount: number;
+  commentCount: number;
   createdAt: string;
 };
 
