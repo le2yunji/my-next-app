@@ -3,9 +3,6 @@ const {
   getUserById,
   getPostsByUserId,
 } = require("../selectors/user.selectors");
-const User = require("../models/user.model");
-const PostList = require("../models/post.model");
-
 const { toUserProfileSummaryResponse } = require("../mappers/user.mapper");
 const { buildPostDetailBase } = require("./post-detail-base.service");
 
@@ -17,12 +14,9 @@ const sortByCreatedAtDesc = (items) => {
 };
 
 // 유저 프로필 안에서 게시물 상세를 볼 때 필요한 데이터 생성
-const getUserPostDetailPageData = async ({
-  userId,
-  postId,
-  viewerId = null,
-}) => {
-  const user = await User.findOne({ userId });
+const getUserPostDetailPageData = ({ userId, postId, viewerId = null }) => {
+  const user = getUserById(userId);
+
   if (!user) {
     return {
       success: false,
@@ -32,10 +26,9 @@ const getUserPostDetailPageData = async ({
       },
     };
   }
-  const postList = await PostList.findOne(userId);
 
   // 해당 유저의 게시물 목록 찾기 + 최신순 정렬
-  const userPosts = sortByCreatedAtDesc(postList ?? []);
+  const userPosts = sortByCreatedAtDesc(getPostsByUserId(userId) ?? []);
   // 그 목록 안에서 현재 post 위치 찾기
   const postIndex = userPosts.findIndex((post) => post.id === postId);
   // 그 유저 게시물이 아니면 에러

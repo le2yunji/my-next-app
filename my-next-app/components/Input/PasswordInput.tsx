@@ -18,7 +18,7 @@ export const PasswordInput = ({
   const toggleButton = showToggle ? (
     <button
       type="button"
-      className="text-cool-gray transition-colors hover:text-slate"
+      className="text-gray-500 transition-colors hover:text-gray-700"
     >
       {/* {showPassword ? <PasswordShow /> : <PasswordHidden />} */}
     </button>

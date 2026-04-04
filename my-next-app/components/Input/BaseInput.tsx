@@ -17,14 +17,15 @@ export const BaseInput = ({
   const inputId = id ?? generatedId;
   const errorId = `${inputId}-error`;
 
+  // 상태별 스타일
   const getStateClasses = () => {
     if (disabled) {
-      return "border-gray cursor-not-allowed text-near-black";
+      return "border-gray-200 bg-gray-50 cursor-not-allowed text-gray-400";
     }
     if (error) {
-      return "border-red focus:border-red focus:ring-red/40";
+      return "border-red-500 focus:border-red-500 focus:ring-red-500/40";
     }
-    return "border-light-gray focus:border-rust focus:ring-rust/40";
+    return "border-gray-100 focus:border-primary-500 focus:ring-primary-500/40";
   };
 
   const paddingLeft = leftElement ? "pl-14" : "pl-5";
@@ -32,7 +33,7 @@ export const BaseInput = ({
   const baseClasses = [
     paddingLeft,
     paddingRight,
-    "w-full border h-[50px] rounded-md transition-all duration-200 outline-none focus:ring-2 focus:ring-opacity-50 placeholder:text-silver",
+    "w-full rounded-2xl border h-[54px] transition-all duration-200 outline-none focus:ring-2 focus:ring-opacity-50 placeholder:text-gray-400 font-lg-medium",
     getStateClasses(),
     className,
   ]
@@ -42,13 +43,16 @@ export const BaseInput = ({
   return (
     <div className="w-full">
       {label && (
-        <label htmlFor={inputId} className="mb-1.5 block text-slate">
+        <label
+          htmlFor={inputId}
+          className="font-lg-medium mb-2.5 block text-gray-950"
+        >
           {label}
         </label>
       )}
       <div className="relative">
         {leftElement && (
-          <div className="absolute top-1/2 left-5 -translate-y-1/2 text-cool-gray">
+          <div className="absolute top-1/2 left-5 -translate-y-1/2 text-gray-500">
             {leftElement}
           </div>
         )}
@@ -73,7 +77,7 @@ export const BaseInput = ({
       {errorMessage && (
         <p
           id={errorId}
-          className="text-xs font-medium mt-1.5 ml-2 text-red"
+          className="font-xs-medium mt-1.5 ml-2 text-red-500"
           role="alert"
         >
           {errorMessage}

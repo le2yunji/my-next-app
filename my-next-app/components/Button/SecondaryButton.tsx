@@ -46,28 +46,28 @@ export const SecondaryButton = ({
     "inline-flex items-center justify-center gap-1 " +
     "cursor-pointer transition-all duration-200 ease-in-out " +
     "leading-none " +
-    "disabled:bg-white disabled:text-light-gray disabled:border-light-gray disabled:cursor-not-allowed";
+    "disabled:bg-white disabled:text-gray-200 disabled:border-gray-200 disabled:cursor-not-allowed";
 
   // Active 상태가 아닐 때만 호버 효과
-  const hoverClasses = active ? "" : "hover:bg-warm-white";
+  const hoverClasses = active ? "" : "hover:bg-gray-50";
 
   // Active 상태 스타일
   const activeClasses = active
-    ? "bg-rust text-white"
-    : "bg-white text-cool-gray border-light-gray";
+    ? "bg-primary-500 text-white"
+    : "bg-white text-gray-600 border-gray-200";
 
   // 폰트 클래스: sm일 때 font-md, 나머지는 font-lg / active일 때 bold, 아니면 medium
-  const getFontClasses = () => {
-    const fontSize = size === "sm" ? "text-sm" : "text-md";
-    const fontWeight = active ? "font-bold" : "font-medium";
-    return `${fontSize} ${fontWeight}`;
+  const getFontClass = () => {
+    const fontSize = size === "sm" ? "md" : "lg";
+    const fontWeight = active ? "bold" : "medium";
+    return `font-${fontSize}-${fontWeight}`;
   };
 
   // 크기별 스타일 (폰트 제외)
   const sizeClasses = {
-    lg: "rounded-2xl px-5 py-3 h-[54px]",
-    md: "rounded-xl px-[18px] py-3.5 h-12",
-    sm: "rounded-xl px-3 py-1 h-[34px]",
+    lg: "rounded-2xl px-5 py-3 h-[54px]", // 16px radius, 12px 20px padding, 54px height
+    md: "rounded-xl px-[18px] py-3.5 h-12", // 14px radius, 14px 18px padding, 48px height
+    sm: "rounded-xl px-3 py-1 h-[34px]", // 12px radius, 4px 12px padding, 34px height
   };
 
   // 아이콘 크기
@@ -77,7 +77,7 @@ export const SecondaryButton = ({
     sm: "w-4 h-4", // 16px
   };
 
-  const classes = `${baseClasses} ${activeClasses} ${hoverClasses} ${sizeClasses[size]} ${getFontClasses()} border ${className}`;
+  const classes = `${baseClasses} ${activeClasses} ${hoverClasses} ${sizeClasses[size]} ${getFontClass()} border ${className}`;
 
   return (
     <button className={classes} disabled={disabled} type="button" {...props}>

@@ -4,7 +4,6 @@ import { TextInput } from "@/components/input/TextInput";
 import useLogin from "../hooks/useLogin";
 import { useRouter } from "next/navigation";
 import { PrimaryButton } from "@/components/button/PrimaryButton";
-import Link from "next/link";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -26,10 +25,9 @@ export default function LoginForm() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-6">
         <TextInput
           id="identifier"
-          autoComplete="username"
           label="전화번호, 사용자 이름, 혹은 이메일"
           placeholder="전화번호, 사용자 이름, 혹은 이메일"
           value={form.identifier}
@@ -38,9 +36,7 @@ export default function LoginForm() {
         <p className="text-red-500">{fieldErrors.identifier}</p>
         <TextInput
           id="password"
-          type="password"
           label="비밀번호"
-          autoComplete="current-password"
           placeholder="비밀번호"
           value={form.password}
           onChange={(e) => onChangeField("password", e.target.value)}
@@ -48,16 +44,18 @@ export default function LoginForm() {
         <p className="text-red-500">{fieldErrors.password}</p>
 
         {error && <p className="text-red-500">{error}</p>}
-        <PrimaryButton className="lg mb-3" type="submit">
+
+        <PrimaryButton ignoreSize className="h-10 rounded-lg" type="submit">
           {loading ? "로그인 중..." : "로그인하기"}
         </PrimaryButton>
 
-        <div className="flex items-center justify-center gap-1">
-          <span className="text-silver">계정이 없으신가요?</span>
-          <Link href={"/signup"} className="block text-center text-black">
-            회원가입 하기
-          </Link>
-        </div>
+        <button
+          className="h-10 rounded-lg"
+          type="button"
+          onClick={() => router.push("/signup")}
+        >
+          회원가입 하기
+        </button>
       </div>
     </form>
   );

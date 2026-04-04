@@ -67,7 +67,7 @@ export default function UserFeedList({
   }, [isIntersecting]);
 
   return (
-    <main className="w-98.25">
+    <main className="w-[393px]">
       {loading && items.length === 0 ? (
         <div style={{ color: "#6b7280" }}>로딩중...</div>
       ) : null}

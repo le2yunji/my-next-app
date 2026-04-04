@@ -18,7 +18,7 @@ export default function FeedItemMedia({
       {media.map((m, idx) => (
         <div
           key={`${postId}-${idx}`}
-          className="relative mt-5 w-full aspect-393/320 overflow-hidden"
+          className="relative mt-5 w-full aspect-[393/320] overflow-hidden"
         >
           <Image
             src={m.url}
