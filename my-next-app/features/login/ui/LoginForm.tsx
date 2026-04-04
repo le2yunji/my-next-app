@@ -4,6 +4,7 @@ import { TextInput } from "@/components/input/TextInput";
 import useLogin from "../hooks/useLogin";
 import { useRouter } from "next/navigation";
 import { PrimaryButton } from "@/components/button/PrimaryButton";
+import Link from "next/link";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -25,7 +26,7 @@ export default function LoginForm() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-3">
         <TextInput
           id="identifier"
           label="전화번호, 사용자 이름, 혹은 이메일"
@@ -48,14 +49,12 @@ export default function LoginForm() {
         <PrimaryButton ignoreSize className="h-10 rounded-lg" type="submit">
           {loading ? "로그인 중..." : "로그인하기"}
         </PrimaryButton>
-
-        <button
-          className="h-10 rounded-lg"
-          type="button"
-          onClick={() => router.push("/signup")}
-        >
-          회원가입 하기
-        </button>
+        <div className="flex items-center justify-center gap-1">
+          <span className="text-silver">계정이 없으신가요?</span>
+          <Link href={"/signup"} className="text-black">
+            회원가입
+          </Link>
+        </div>
       </div>
     </form>
   );

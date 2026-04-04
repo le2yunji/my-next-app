@@ -3,6 +3,7 @@
 import { TextInput } from "@/components/input/TextInput";
 import { PrimaryButton } from "@/components/button/PrimaryButton";
 import useSignup from "../hooks/useSignup";
+import Link from "next/link";
 
 export default function SignupForm() {
   const { form, onChangeField, onSubmit, loading, error, fieldErrors } =
@@ -15,7 +16,7 @@ export default function SignupForm() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-3">
         <TextInput
           id="name"
           label="이름"
@@ -66,6 +67,12 @@ export default function SignupForm() {
         <PrimaryButton ignoreSize className="h-10 rounded-lg" type="submit">
           {loading ? "회원가입 중..." : "회원가입 하기"}
         </PrimaryButton>
+      </div>
+      <div className="flex items-center justify-center gap-1">
+        <span className="text-silver">계정이 있으신가요?</span>
+        <Link href={"/login"} className="text-black">
+          로그인
+        </Link>
       </div>
     </form>
   );
