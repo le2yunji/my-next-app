@@ -1,3 +1,4 @@
+// models/user.model
 const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema(
@@ -16,7 +17,6 @@ const userSchema = new mongoose.Schema(
       unique: true,
       trim: true,
       lowercase: true, // 대문자를 소문자로 변환해서 저장
-      sparse: true, // 값이 있는 문서들끼리만 unique 검사, 값이 없는 문서는 허용
     },
     passwordHash: {
       type: String,
@@ -41,10 +41,9 @@ const userSchema = new mongoose.Schema(
       type: String,
       trim: true,
       unique: true,
-      sparse: true,
-      default: "",
+      sparse: true, // 값이 있는 문서들끼리만 unique 검사, 값이 없는 문서는 허용
     },
-    profileImageUrl: {
+    profileImage: {
       type: String, // 프로필 이미지 URL 문자열
       default: "static/images/profiles/default.webp", // 없으면 기본 이미지 경로
     },

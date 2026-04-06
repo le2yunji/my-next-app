@@ -2,8 +2,6 @@ const { verifyAccessToken } = require("../services/token.service");
 
 function authenticate(req, res, next) {
   try {
-    console.log("cookies:", req.cookies);
-
     const accessToken = req.cookies.accessToken;
 
     if (!accessToken) {
@@ -14,7 +12,6 @@ function authenticate(req, res, next) {
     }
 
     const decoded = verifyAccessToken(accessToken);
-    console.log("decoded:", decoded);
 
     if (decoded.type !== "access") {
       return res.status(401).json({
@@ -30,10 +27,18 @@ function authenticate(req, res, next) {
 
     return next();
   } catch (error) {
-    console.error("AUTH ERROR:", error);
+    if (error.name === "TokenExpiredError") {
+      return res.status(401).json({
+        isError: true,
+        code: "TOKEN_EXPIRED", // 클라이언트가 이 코드 보고 refresh 요청
+        message: "토큰이 만료되었습니다.",
+      });
+    }
+
     return res.status(401).json({
       isError: true,
-      message: "토큰이 만료되었거나 유효하지 않습니다.",
+      code: "TOKEN_INVALID",
+      message: "유효하지 않은 토큰입니다.",
     });
   }
 }

@@ -1,3 +1,5 @@
+// models/post.model
+
 const mongoose = require("mongoose");
 
 // 게시물 내부의 media 하나를 표현하는 서브 스키마
@@ -76,9 +78,6 @@ const postSchema = new mongoose.Schema(
 );
 
 // authorId로 유저 게시글 목록 조회 + 최신순 정렬에 유리
-postSchema.index({ authorId: 1, createdAt: -1 });
-
-// 전체 피드를 최신순으로 조회할 때 유리
-postSchema.index({ createdAt: -1 });
+postSchema.index({ authorId: 1, isDeleted: 1, _id: -1 });
 
 module.exports = mongoose.model("Post", postSchema);

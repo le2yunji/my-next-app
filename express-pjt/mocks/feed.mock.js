@@ -18,7 +18,6 @@ const toFeedAuthor = (user) => {
   if (!user) {
     return {
       id: null,
-      nickname: "알 수 없음",
       name: "알 수 없음",
       profileImageUrl: resolveProfileImageUrl(null),
     };

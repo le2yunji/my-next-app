@@ -6,19 +6,15 @@ const {
 } = require("../mappers/feed.mapper");
 
 // 홈 피드 목록 : 요약 Data
-function getFeed(req, res) {
+async function getFeed(req, res) {
   try {
-    const viewerId = req.user?.id || null;
+    // const viewerId = req.user?.id || null;
 
     const parsed = parseInt(req.query.limit || "10", 10);
     const limit = Math.min(Number.isNaN(parsed) ? 10 : parsed, 50);
     const cursor = req.query.cursor || null;
 
-    const result = getFeedListData({
-      viewerId,
-      cursor,
-      limit,
-    });
+    const result = await getFeedListData({ cursor, limit });
 
     if (!result.success) {
       return res.status(400).json({
@@ -28,9 +24,10 @@ function getFeed(req, res) {
     }
     const { items, pageInfo } = result.data;
     const itemsWithAbsUrl = attachAbsoluteMediaUrl(items);
+    const responseItems = itemsWithAbsUrl.map(toPostThumbnailItem);
 
     return res.status(200).json({
-      items: itemsWithAbsUrl.map(toPostThumbnailItem),
+      items: responseItems,
       nextCursor: pageInfo.nextCursor,
       hasNext: pageInfo.hasNext,
     });

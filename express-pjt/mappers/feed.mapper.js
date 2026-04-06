@@ -2,30 +2,32 @@
 const { toAuthorResponse } = require("./user.mapper");
 const { toAbsoluteUrl } = require("../constants/image-paths");
 
-// 게시물 배열의 모든 media 내부 URL을 절대 URL로 바꿔주는 함수
 function attachAbsoluteMediaUrl(items = []) {
   return items.map((item) => ({
     ...item,
-    media: (item.media ?? []).map((m) => ({
-      ...m,
-      url: toAbsoluteUrl(m.url),
-      thumbnailUrl: toAbsoluteUrl(m.thumbnailUrl),
-      displayUrl: toAbsoluteUrl(m.displayUrl),
-      fullUrl: toAbsoluteUrl(m.fullUrl),
-    })),
+    media: [...(item.media ?? [])]
+      .sort((a, b) => a.order - b.order)
+      .map((m) => ({
+        ...m,
+        url: toAbsoluteUrl(m.url),
+        thumbnailUrl: toAbsoluteUrl(m.thumbnailUrl),
+        displayUrl: toAbsoluteUrl(m.displayUrl),
+        fullUrl: toAbsoluteUrl(m.fullUrl),
+      })),
   }));
 }
 
-// 공통: 그리드(리스트)용 최소 필드 + thumbnail로 변환
 function toPostThumbnailItem(p) {
-  const thumb = p.media?.[0] ?? null;
+  const media = p.media ?? [];
+  const thumb = media[0] ?? null;
+
   return {
-    id: p.id,
-    author: p.author ? toAuthorResponse(p.author) : null,
+    id: String(p._id ?? p.id),
+    content: p.content ?? "",
+    author: p.authorId ? toAuthorResponse(p.authorId) : null,
     createdAt: p.createdAt,
-    likeCount: p.likeCount,
-    commentCount: p.commentCount,
-    likedByMe: p.likedByMe,
+    likeCount: p.likeCount ?? 0,
+    commentCount: p.commentCount ?? 0,
     thumbnail: thumb
       ? {
           type: thumb.type,
@@ -37,7 +39,7 @@ function toPostThumbnailItem(p) {
             null,
         }
       : null,
-    mediaCount: p.media?.length ?? 0,
+    mediaCount: media.length,
   };
 }
 

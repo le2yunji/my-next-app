@@ -33,9 +33,6 @@ function validateSignup(req, res, next) {
         message: "이름 형식이 올바르지 않습니다.",
       });
     }
-    console.log("name raw:", JSON.stringify(name));
-    console.log("name valid:", isValidName(name));
-
     // 비밀번호 형식 검사
     if (!isValidPassword(password)) {
       return res.status(400).json({
