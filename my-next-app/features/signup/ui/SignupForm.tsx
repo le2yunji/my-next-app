@@ -1,7 +1,7 @@
 "use client";
 
-import { TextInput } from "@/components/input/TextInput";
-import { PrimaryButton } from "@/components/button/PrimaryButton";
+import { TextInput } from "@/components/common/input/TextInput";
+import { PrimaryButton } from "@/components/common/button/PrimaryButton";
 import useSignup from "../hooks/useSignup";
 import Link from "next/link";
 
@@ -64,7 +64,7 @@ export default function SignupForm() {
         />
         <p className="text-red-500">{fieldErrors.passwordConfirm}</p>
         {error && <p className="text-red-500">{error}</p>}
-        <PrimaryButton ignoreSize className="h-10 rounded-lg" type="submit">
+        <PrimaryButton size="lg" className="mb-3" type="submit">
           {loading ? "회원가입 중..." : "회원가입 하기"}
         </PrimaryButton>
       </div>

@@ -23,11 +23,11 @@ export default async function UserDetailPost({
 
   return (
     <div style={{ background: "white", margin: 40, padding: 24 }}>
-      <h1>{data.profile.nickname}의 게시물</h1>
+      <h1>{data.profile.id}의 게시물</h1>
 
       <div style={{ marginTop: 12 }}>
         <p>유저 ID: {data.profile.id}</p>
-        <p>닉네임: {data.profile.nickname}</p>
+        <p>이름: {data.profile.name}</p>
       </div>
 
       <div style={{ marginTop: 20 }}>
@@ -56,7 +56,7 @@ export default async function UserDetailPost({
       {data.previewComment && (
         <div style={{ marginTop: 24 }}>
           <h2>미리보기 댓글</h2>
-          <p>{data.previewComment.author?.nickname}</p>
+          <p>{data.previewComment.author?.id}</p>
           <p>{data.previewComment.content}</p>
         </div>
       )}

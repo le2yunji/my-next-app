@@ -10,7 +10,7 @@ type FeedItem = {
   id: string;
   thumbnail: { type: "image"; url: string } | null;
   mediaCount: number;
-  author: { id: string; nickname: string; profileImage: string | null };
+  author: { id: string; name: string; profileImage: string | null };
   likeCount: number;
   commentCount: number;
   createdAt: string;

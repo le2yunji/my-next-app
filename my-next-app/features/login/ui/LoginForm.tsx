@@ -1,9 +1,9 @@
 "use client";
 
-import { TextInput } from "@/components/input/TextInput";
+import { TextInput } from "@/components/common/input/TextInput";
 import useLogin from "../hooks/useLogin";
 import { useRouter } from "next/navigation";
-import { PrimaryButton } from "@/components/button/PrimaryButton";
+import { PrimaryButton } from "@/components/common/button/PrimaryButton";
 import Link from "next/link";
 
 export default function LoginForm() {
@@ -46,7 +46,7 @@ export default function LoginForm() {
 
         {error && <p className="text-red-500">{error}</p>}
 
-        <PrimaryButton ignoreSize className="h-10 rounded-lg" type="submit">
+        <PrimaryButton size="lg" className="mb-2" type="submit">
           {loading ? "로그인 중..." : "로그인하기"}
         </PrimaryButton>
         <div className="flex items-center justify-center gap-1">

@@ -8,7 +8,7 @@ export default function FeedItemThumbnail({
   priorityPost,
 }: {
   postId: string;
-  thumbnail: { type: "image"; url: string };
+  thumbnail: { type: "image" | "video"; url: string };
   priorityPost: boolean;
 }) {
   return (

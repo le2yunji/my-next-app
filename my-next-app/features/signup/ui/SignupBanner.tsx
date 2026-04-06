@@ -14,6 +14,7 @@ export default function SignupBanner() {
         src="/image/background2.webp"
         alt="그라데이션 배경사진"
         fill
+        sizes="(max-width: 768px) 100vw, 50vw"
         priority
         className="object-cover"
       />

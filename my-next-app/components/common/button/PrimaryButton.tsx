@@ -9,7 +9,7 @@ export const PrimaryButton = ({
   ...props
 }: BaseButtonProps & { ignoreSize?: boolean }) => {
   const sizeClasses = {
-    lg: "h-[52px] px-6 py-3.5 rounded-lg text-md font-bold",
+    lg: "h-[50px] px-6 py-3.5 rounded-lg text-md font-bold",
     md: "h-10 px-5 py-3.5 rounded-md text-md font-bold",
     sm: "h-[34px] px-4 py-3 rounded-md text-sm font-bold",
   };

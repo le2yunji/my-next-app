@@ -2,11 +2,12 @@
 
 import { getFeedAction } from "@/app/actions/feed.action";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 import FeedItem from "@/features/feed/ui/FeedItem/FeedItem";
 import { shouldPriorityPostImage } from "@/features/feed/lib/feedImagePolicy";
-import { FeedItemModel } from "../model/types";
+import { FeedItemModel, PostResponse } from "@/features/feed/model/types";
+import { mapPostListToFeedItems } from "@/features/feed/lib/mapPostToFeedItem";
 
 const PAGE_SIZE = 10;
 
@@ -23,47 +24,56 @@ export default function FeedList({
   const [cursor, setCursor] = useState<string | null>(initialCursor);
   const [hasNext, setHasNext] = useState<boolean>(initialHasNext);
   const [loading, setLoading] = useState(false);
-  const prevIntersectingRef = useRef(false);
 
-  // 무한 스크롤
-  const fetchNext = async () => {
+  const fetchNext = useCallback(async () => {
     if (!hasNext || loading) return;
+
     setLoading(true);
     try {
-      const data = await getFeedAction({ limit: PAGE_SIZE, cursor });
+      const result = await getFeedAction({ limit: PAGE_SIZE, cursor });
+
+      if ("isError" in result) {
+        console.error(result.message);
+        return;
+      }
+
+      const nextPosts = result.data.items ?? [];
+      const nextFeedItems = mapPostListToFeedItems(nextPosts as PostResponse[]);
 
       setItems((prev) => {
-        const seen = new Set(prev.map((p) => p.id));
+        const seen = new Set(prev.map((item) => item.id));
         const merged = [...prev];
-        for (const it of data.items as FeedItemModel[]) {
-          if (!seen.has(it.id)) merged.push(it);
+
+        for (const item of nextFeedItems) {
+          if (!seen.has(item.id)) {
+            seen.add(item.id);
+            merged.push(item);
+          }
         }
+
         return merged;
       });
 
-      setCursor(data.nextCursor);
-      setHasNext(data.hasNext);
+      setCursor(result.data.pageInfo.nextCursor);
+      setHasNext(result.data.pageInfo.hasNext);
     } finally {
       setLoading(false);
     }
-  };
+  }, [cursor, hasNext, loading]);
 
   const { sentinelRef, isIntersecting } = useIntersectionObserver({
     enabled: hasNext && !loading,
-    rootMargin: "0px",
+    rootMargin: "300px",
   });
 
   useEffect(() => {
-    const entered = isIntersecting && !prevIntersectingRef.current;
-
-    if (entered && hasNext && !loading) fetchNext();
-
-    prevIntersectingRef.current = isIntersecting;
-  }, [isIntersecting, hasNext, loading]);
+    if (isIntersecting && hasNext && !loading) {
+      fetchNext();
+    }
+  }, [isIntersecting, hasNext, loading, fetchNext]);
 
   return (
     <main className="mt-10">
-      <h1 className="font-2xl-bold">Feed</h1>
       <div className="max-w-142.5 w-140 ml-10">
         <ul>
           {items.map((post, idx) => (

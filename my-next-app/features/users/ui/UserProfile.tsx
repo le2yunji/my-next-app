@@ -2,9 +2,8 @@ import Image from "next/image";
 
 type UserProfileModel = {
   id: string;
-  nickname: string;
   name: string;
-  profileImageUrl: string | null;
+  profileImage: string | null;
   bio: string;
   postCount: number;
   followerCount: number;
@@ -23,10 +22,10 @@ export default function UserProfile({
   return (
     <section className="flex items-center gap-4 p-4">
       <div className="relative h-20 w-20 overflow-hidden rounded-full bg-gray-200">
-        {user.profileImageUrl ? (
+        {user.profileImage ? (
           <Image
-            src={user.profileImageUrl}
-            alt={`${user.nickname} 프로필 이미지`}
+            src={user.profileImage}
+            alt={`${user.id} 프로필 이미지`}
             fill
             className="object-cover"
             unoptimized
@@ -42,7 +41,7 @@ export default function UserProfile({
 
       <div>
         <div>
-          <p className="text-lg font-semibold">{user.nickname}</p>
+          <p className="text-lg font-semibold">{user.id}</p>
           <p className="text-sm text-gray-500">{user.id}</p>
         </div>
         <div className="flex">
