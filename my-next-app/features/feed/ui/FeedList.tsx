@@ -2,12 +2,11 @@
 
 import { getFeedAction } from "@/app/actions/feed.action";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 
 import FeedItem from "@/features/feed/ui/FeedItem/FeedItem";
 import { shouldPriorityPostImage } from "@/features/feed/lib/feedImagePolicy";
-import { FeedItemModel, PostResponse } from "@/features/feed/model/types";
-import { mapPostListToFeedItems } from "@/features/feed/lib/mapPostToFeedItem";
+import { FeedItemModel } from "@/features/feed/model/types";
 
 const PAGE_SIZE = 10;
 
@@ -25,6 +24,8 @@ export default function FeedList({
   const [hasNext, setHasNext] = useState<boolean>(initialHasNext);
   const [loading, setLoading] = useState(false);
 
+  const prevIntersectingRef = useRef(false);
+
   const fetchNext = useCallback(async () => {
     if (!hasNext || loading) return;
 
@@ -37,8 +38,7 @@ export default function FeedList({
         return;
       }
 
-      const nextPosts = result.data.items ?? [];
-      const nextFeedItems = mapPostListToFeedItems(nextPosts as PostResponse[]);
+      const nextFeedItems = result.items as FeedItemModel[];
 
       setItems((prev) => {
         const seen = new Set(prev.map((item) => item.id));
@@ -50,12 +50,11 @@ export default function FeedList({
             merged.push(item);
           }
         }
-
         return merged;
       });
 
-      setCursor(result.data.pageInfo.nextCursor);
-      setHasNext(result.data.pageInfo.hasNext);
+      setCursor(result.nextCursor ?? null);
+      setHasNext(Boolean(result.hasNext));
     } finally {
       setLoading(false);
     }
@@ -63,13 +62,14 @@ export default function FeedList({
 
   const { sentinelRef, isIntersecting } = useIntersectionObserver({
     enabled: hasNext && !loading,
-    rootMargin: "300px",
+    rootMargin: "100px",
   });
 
   useEffect(() => {
     if (isIntersecting && hasNext && !loading) {
       fetchNext();
     }
+    prevIntersectingRef.current = isIntersecting;
   }, [isIntersecting, hasNext, loading, fetchNext]);
 
   return (
@@ -86,7 +86,7 @@ export default function FeedList({
         </ul>
       </div>
 
-      <div ref={sentinelRef} className="h-2.5 bg-blue-600" />
+      {hasNext ? <div ref={sentinelRef} className="h-2.5" /> : null}
 
       {loading && items.length > 0 ? (
         <div className="p-4 text-center">로딩중...</div>

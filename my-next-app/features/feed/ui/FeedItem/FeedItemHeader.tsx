@@ -12,7 +12,6 @@ export default function FeedItemHeader({
   if (!author) return null;
   const profileSrc = `${author.profileImage}`;
 
-  console.log(author);
   return (
     <Link href={`/users/${author.userId}`} scroll={false}>
       <div className="flex items-center">

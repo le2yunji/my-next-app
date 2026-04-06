@@ -12,10 +12,10 @@ export default function FeedItemThumbnail({
   priorityPost: boolean;
 }) {
   return (
-    <div className="relative mt-5 w-full aspect-[393/320] overflow-hidden rounded-lg">
+    <div className="relative mt-5 w-full aspect-393/320 overflow-hidden rounded-lg">
       <Image
         src={thumbnail.url}
-        alt=""
+        alt={`${postId}의 썸네일`}
         fill
         className="object-cover"
         priority={priorityPost}
