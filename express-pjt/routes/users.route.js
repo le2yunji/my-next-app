@@ -2,23 +2,37 @@ const usersRouter = require("express").Router();
 const usersController = require("../controllers/users.controller");
 const postsController = require("../controllers/posts.controller");
 const commentsController = require("../controllers/comments.controller");
-const authenticate = require("../middlewares/auth.middleware");
+const {
+  authenticate,
+  optionalAuthenticate,
+} = require("../middlewares/auth.middleware");
 
 usersRouter.get(
   "/:userId/profile",
-  authenticate,
+  optionalAuthenticate,
   usersController.getUserProfile
 );
-usersRouter.get("/:userId/feed", authenticate, usersController.getUserFeed);
+
+// usersRouter.post(
+//   "/:userId/profile",
+//   authenticate,
+//   usersController.getUserProfile
+// );
+
+usersRouter.get(
+  "/:userId/feed",
+  optionalAuthenticate,
+  usersController.getUserFeed
+);
 
 usersRouter.get(
   "/:userId/posts/:postId",
-  authenticate,
+  optionalAuthenticate,
   postsController.getPostDetail
 );
 usersRouter.get(
   "/:userId/posts/:postId/comments",
-  authenticate,
+  optionalAuthenticate,
   commentsController.getPostComments
 );
 

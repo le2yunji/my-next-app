@@ -1,21 +1,37 @@
-// services/user-feed-detail.service.js
-const {
-  getUserById,
-  getPostsByUserId,
-} = require("../selectors/user.selectors");
+const mongoose = require("mongoose");
+const User = require("../models/user.model");
+const Post = require("../models/post.model");
+const Comment = require("../models/comment.model");
 const { toUserProfileSummaryResponse } = require("../mappers/user.mapper");
-const { buildPostDetailBase } = require("./post-detail-base.service");
 
-// 게시물 목록을 최신 순으로 정렬
-const sortByCreatedAtDesc = (items) => {
-  return [...items].sort(
-    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-  );
+// PostLike 모델이 있으면 주석 해제
+// const PostLike = require("../models/post-like.model");
+
+const isValidObjectId = (value) => mongoose.Types.ObjectId.isValid(value);
+
+const sortByOrderAsc = (items = []) => {
+  return [...items].sort((a, b) => a.order - b.order);
 };
 
-// 유저 프로필 안에서 게시물 상세를 볼 때 필요한 데이터 생성
-const getUserPostDetailPageData = ({ userId, postId, viewerId = null }) => {
-  const user = getUserById(userId);
+const getUserPostDetailPageData = async ({
+  userId,
+  postId,
+  viewerId = null,
+}) => {
+  if (!isValidObjectId(postId)) {
+    return {
+      success: false,
+      error: {
+        code: "INVALID_POST_ID",
+        message: "유효하지 않은 게시물 id입니다.",
+      },
+    };
+  }
+
+  const user = await User.findOne({
+    userId,
+    isDeleted: false,
+  }).lean();
 
   if (!user) {
     return {
@@ -27,12 +43,13 @@ const getUserPostDetailPageData = ({ userId, postId, viewerId = null }) => {
     };
   }
 
-  // 해당 유저의 게시물 목록 찾기 + 최신순 정렬
-  const userPosts = sortByCreatedAtDesc(getPostsByUserId(userId) ?? []);
-  // 그 목록 안에서 현재 post 위치 찾기
-  const postIndex = userPosts.findIndex((post) => post.id === postId);
-  // 그 유저 게시물이 아니면 에러
-  if (postIndex < 0) {
+  const post = await Post.findOne({
+    _id: postId,
+    authorId: user._id,
+    isDeleted: false,
+  }).lean();
+
+  if (!post) {
     return {
       success: false,
       error: {
@@ -41,38 +58,73 @@ const getUserPostDetailPageData = ({ userId, postId, viewerId = null }) => {
       },
     };
   }
-  // 공통 상세 조립 로직 재사용
-  const detailResult = buildPostDetailBase({ postId, viewerId });
-  // base 실패면 그대로 반환
-  if (!detailResult.success) return detailResult;
 
-  // 이전 글 / 다음 글 계산
+  const [userPosts, previewComment] = await Promise.all([
+    Post.find({
+      authorId: user._id,
+      isDeleted: false,
+    })
+      .sort({ createdAt: -1, _id: -1 })
+      .select("_id")
+      .lean(),
+
+    Comment.findOne({
+      postId: post._id,
+      isDeleted: false,
+    })
+      .sort({ createdAt: 1, _id: 1 })
+      .lean(),
+  ]);
+
+  const postIndex = userPosts.findIndex(
+    (item) => String(item._id) === String(post._id)
+  );
+
   const prevPost = postIndex > 0 ? userPosts[postIndex - 1] : null;
   const nextPost =
-    postIndex < userPosts.length - 1 ? userPosts[postIndex + 1] : null;
+    postIndex >= 0 && postIndex < userPosts.length - 1
+      ? userPosts[postIndex + 1]
+      : null;
 
-  // 댓글 미리보기
-  const previewComment = detailResult.data.comments?.[0] ?? null;
-  // comment 작성자 id 필드명이 userId인지 authorId인지 데이터 구조에 맞게 확인 필요
   const previewCommentAuthor = previewComment
-    ? getUserById(previewComment.userId ?? previewComment.authorId)
+    ? await User.findOne({
+        _id: previewComment.authorId,
+        isDeleted: false,
+      })
+        .select("_id userId name profileImage")
+        .lean()
     : null;
+
+  let likedByMe = false;
+
+  // PostLike 모델이 있을 때만 사용
+  // if (viewerId && isValidObjectId(viewerId)) {
+  //   likedByMe = !!(await PostLike.exists({
+  //     postId: post._id,
+  //     userId: viewerId,
+  //   }));
+  // }
 
   return {
     success: true,
     data: {
-      profile: toUserProfileSummaryResponse({
-        user,
-      }),
-      post: detailResult.data.post,
-      author: detailResult.data.author,
-      mediaList: detailResult.data.mediaList,
-      likedByMe: detailResult.data.likedByMe,
-      previewComment,
-      previewCommentAuthor,
+      profile: toUserProfileSummaryResponse({ user }),
+      post,
+      author: user,
+      mediaList: sortByOrderAsc(post.media ?? []),
+      likedByMe,
+      previewComment: previewComment
+        ? {
+            ...previewComment,
+            content: previewComment.isDeleted
+              ? "삭제된 댓글입니다."
+              : previewComment.content,
+          }
+        : null,
+      previewCommentAuthor: previewCommentAuthor ?? null,
       navigation: {
-        prevPostId: prevPost?.id ?? null,
-        nextPostId: nextPost?.id ?? null,
+        prevPostId: prevPost ? String(prevPost._id) : null,
+        nextPostId: nextPost ? String(nextPost._id) : null,
       },
     },
   };

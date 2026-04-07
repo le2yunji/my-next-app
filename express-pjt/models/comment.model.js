@@ -24,10 +24,33 @@ const commentSchema = new mongoose.Schema(
       maxlength: 500, // 최대 500자
     },
 
+    // 바로 위 부모 댓글
     parentCommentId: {
       type: mongoose.Schema.Types.ObjectId, // 대댓글용 부모 댓글 id
       ref: "Comment", // Comment 자기 자신 참조
       default: null, // 일반 댓글이면 null
+    },
+
+    // 맨 위 원댓글 -> 1단계로만 허용할거면 없어도 됨
+    // rootCommentId: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: "Comment",
+    //   default: null,
+    //   index: true,
+    // },
+
+    // 대댓 깊이
+    depth: {
+      type: Number,
+      default: 0,
+      min: 0,
+      max: 1, // MVP면 1단계 대댓글까지만 추천
+    },
+
+    replyCount: {
+      type: Number,
+      default: 0,
+      min: 0,
     },
 
     isDeleted: {
@@ -42,5 +65,6 @@ const commentSchema = new mongoose.Schema(
 
 // 특정 게시글의 댓글을 생성순으로 불러올 때 유리
 commentSchema.index({ postId: 1, createdAt: 1 });
+commentSchema.index({ postId: 1, parentCommentId: 1, createdAt: 1 });
 
 module.exports = mongoose.model("Comment", commentSchema);

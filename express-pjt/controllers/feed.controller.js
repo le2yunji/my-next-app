@@ -8,7 +8,7 @@ const {
 // 홈 피드 목록 : 요약 Data
 async function getFeed(req, res) {
   try {
-    // const viewerId = req.user?.id || null;
+    // const viewerId = req.user?.mongoId || null;
 
     const parsed = parseInt(req.query.limit || "10", 10);
     const limit = Math.min(Number.isNaN(parsed) ? 10 : parsed, 50);

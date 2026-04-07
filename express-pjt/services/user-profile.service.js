@@ -55,12 +55,12 @@ const getUserProfileData = ({
 
   // 유저 관련 집계값 계산
   const postCount = allPosts.length;
-  const followerCount = getFollowersByUserId(user.id).length;
-  const followingCount = getFollowingsByUserId(user.id).length;
+  const followerCount = getFollowersByUserId(user.userId).length;
+  const followingCount = getFollowingsByUserId(user.userId).length;
 
   // 로그인 유저 기준 팔로우 여부 계산
   const isFollowing =
-    viewerId && viewerId !== user.id
+    viewerId && viewerId !== user.userId
       ? isFollowingUser({
           followerId: viewerId,
           followingId: user.id,

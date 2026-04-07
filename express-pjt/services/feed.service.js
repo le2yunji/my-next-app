@@ -18,7 +18,7 @@ async function getFeedListData({ cursor = null, limit = 10 }) {
     .limit(safeLimit + 1) // 1개 더 가져와서 다음 페이지 여부 확인
     .populate({
       path: "authorId",
-      select: "id name profileImage",
+      select: "userId name profileImage",
       match: { isDeleted: false },
     })
     .lean();

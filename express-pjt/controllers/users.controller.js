@@ -10,7 +10,7 @@ function getUserProfile(req, res) {
 
     // 인증 미들웨어가 있다면 req.user.id 에서 가져옴
     // 비로그인 허용이면 null 처리하거나 기본값을 둘 수 있음
-    const viewerId = req.user?.id || null;
+    const viewerId = req.user?.mongoId || null;
 
     const result = getUserProfileData({
       userId,
@@ -53,7 +53,7 @@ function getUserProfile(req, res) {
 function getUserFeed(req, res) {
   try {
     const userId = req.params.userId;
-    const viewerId = req.user?.id || null;
+    const viewerId = req.user?.mongoId || null;
 
     const parsed = parseInt(req.query.limit || "9", 10);
     const limit = Math.min(Number.isNaN(parsed) ? 9 : parsed, 50);

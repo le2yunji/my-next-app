@@ -22,7 +22,7 @@ function authenticate(req, res, next) {
 
     req.user = {
       mongoId: decoded.mongoId,
-      id: decoded.id,
+      userId: decoded.userId,
     };
 
     return next();
@@ -43,4 +43,35 @@ function authenticate(req, res, next) {
   }
 }
 
-module.exports = authenticate;
+// 조회용 미들웨어
+function optionalAuthenticate(req, _res, next) {
+  try {
+    const accessToken = req.cookies.accessToken;
+
+    // 토큰 없으면 비로그인 사용자로 통과
+    if (!accessToken) {
+      req.user = null;
+      return next();
+    }
+
+    const decoded = verifyAccessToken(accessToken);
+
+    if (decoded.type !== "access") {
+      req.user = null;
+      return next();
+    }
+
+    req.user = {
+      mongoId: decoded.mongoId,
+      userId: decoded.userId ?? decoded.id,
+    };
+
+    return next();
+  } catch (error) {
+    // 조회 API에서는 토큰 오류가 있어도 막지 않고 비로그인처럼 처리
+    req.user = null;
+    return next();
+  }
+}
+
+module.exports = { authenticate, optionalAuthenticate };

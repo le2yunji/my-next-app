@@ -10,7 +10,7 @@ function generateAccessToken(user) {
   return jwt.sign(
     {
       mongoId: user._id.toString(),
-      id: user.id,
+      userId: user.userId,
       type: "access",
     },
     JWT_ACCESS_SECRET,

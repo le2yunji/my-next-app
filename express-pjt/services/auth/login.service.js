@@ -14,7 +14,7 @@ async function login({ identifier, password }) {
   const user = await User.findOne({
     // 사용자가 입력한 값 하나를 세 필드 중 어디에 해당하는지 찾기
     $or: [
-      { id: normalizedIdentifier },
+      { userId: normalizedIdentifier },
       { email: normalizedIdentifier },
       { phone: normalizedPhone },
     ],
@@ -54,7 +54,7 @@ async function login({ identifier, password }) {
     refreshToken,
     user: {
       _id: user._id,
-      id: user.id,
+      userId: user.userId,
       email: user.email,
       phone: user.phone,
       createdAt: user.createdAt,

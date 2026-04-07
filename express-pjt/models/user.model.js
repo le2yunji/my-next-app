@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema(
   {
-    id: {
+    userId: {
       type: String,
       required: true, // 값이 없으면 저장 실패
       unique: true, // 중복 불가

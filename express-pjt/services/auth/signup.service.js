@@ -13,8 +13,15 @@ const {
   normalizePhone,
 } = require("../../utils/regex");
 
-async function signup({ id, name, email, phone, password, passwordConfirm }) {
-  if (!id) throw createAppError(AUTH_ERROR.ID_REQUIRED);
+async function signup({
+  userId,
+  name,
+  email,
+  phone,
+  password,
+  passwordConfirm,
+}) {
+  if (!userId) throw createAppError(AUTH_ERROR.ID_REQUIRED);
   if (!name) throw createAppError(AUTH_ERROR.NAME_REQUIRED);
   if (!email) throw createAppError(AUTH_ERROR.EMAIL_REQUIRED);
   if (!phone) throw createAppError(AUTH_ERROR.PHONE_REQUIRED);
@@ -22,7 +29,7 @@ async function signup({ id, name, email, phone, password, passwordConfirm }) {
   if (!passwordConfirm)
     throw createAppError(AUTH_ERROR.PASSWORD_CONFIRM_REQUIRED);
 
-  if (!isValidId(id)) throw createAppError(AUTH_ERROR.INVALID_ID);
+  if (!isValidId(userId)) throw createAppError(AUTH_ERROR.INVALID_ID);
   if (!isValidName(name)) throw createAppError(AUTH_ERROR.INVALID_NAME);
   if (!isValidEmail(email)) throw createAppError(AUTH_ERROR.INVALID_EMAIL);
   if (!isValidPhone(phone)) throw createAppError(AUTH_ERROR.INVALID_PHONE);
@@ -33,13 +40,13 @@ async function signup({ id, name, email, phone, password, passwordConfirm }) {
     throw createAppError(AUTH_ERROR.PASSWORD_CONFIRM_MISMATCH);
   }
 
-  const normalizedId = normalizeText(id);
+  const normalizedId = normalizeText(userId);
   const normalizedName = normalizeText(name);
   const normalizedEmail = normalizeText(email);
   const normalizedPhone = normalizePhone(phone);
 
   // 기존 회원 확인
-  const existingIdUser = await User.findOne({ id: normalizedId });
+  const existingIdUser = await User.findOne({ userId: normalizedId });
   if (existingIdUser) throw createAppError(AUTH_ERROR.DUPLICATE_ID);
 
   const existingEmailUser = await User.findOne({ email: normalizedEmail });
@@ -52,7 +59,7 @@ async function signup({ id, name, email, phone, password, passwordConfirm }) {
   const passwordHash = await bcrypt.hash(password, 10);
 
   const user = new User({
-    id: normalizedId,
+    userId: normalizedId,
     name: normalizedName,
     email: normalizedEmail,
     phone: normalizedPhone,
@@ -62,7 +69,7 @@ async function signup({ id, name, email, phone, password, passwordConfirm }) {
   const savedUser = await user.save();
   return {
     mongoId: savedUser._id,
-    id: savedUser.id,
+    userId: savedUser.userId,
     name: savedUser.name,
     email: savedUser.email,
     phone: savedUser.phone,
