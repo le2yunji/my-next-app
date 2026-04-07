@@ -1,10 +1,9 @@
 const { getPostCommentsData } = require("../services/comments.service");
-const { toCommentThreadResponse } = require("../mappers/post-detail.mapper");
+const { toCommentThreadResponse } = require("../mappers/comment.mapper");
 
 async function getPostComments(req, res) {
   try {
     const { postId } = req.params;
-
     const parsed = parseInt(req.query.limit || "10", 10);
     const limit = Math.min(Number.isNaN(parsed) ? 10 : parsed, 50);
     const cursor = req.query.cursor || null;
@@ -71,4 +70,6 @@ async function getPostComments(req, res) {
   }
 }
 
-module.exports = { getPostComments };
+module.exports = {
+  getPostComments,
+};

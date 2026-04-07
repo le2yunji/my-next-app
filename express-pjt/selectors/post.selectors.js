@@ -1,9 +1,9 @@
-const {
-  POSTS,
-  POST_MEDIA_MAP,
-  POST_LIKE_MAP,
-  COMMENT_MAP,
-} = require("../mocks/posts.mock");
+// const {
+//   POSTS,
+//   POST_MEDIA_MAP,
+//   POST_LIKE_MAP,
+//   COMMENT_MAP,
+// } = require("../mocks/posts.mock");
 
 // 게시물 한 개 찾기
 const getPostById = (postId) =>

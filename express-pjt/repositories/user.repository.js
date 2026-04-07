@@ -1,64 +1,40 @@
-const fs = require("fs");
-const path = require("path");
+const User = require("../models/user.model");
 
-const DATA_PATH = path.join(__dirname, "../data/users.json");
-
-/**
- * 내부 유틸
- */
-function readUsers() {
-  if (!fs.existsSync(DATA_PATH)) {
-    return [];
-  }
-
-  const raw = fs.readFileSync(DATA_PATH, "utf-8").trim();
-
-  if (!raw) {
-    return [];
-  }
-
-  return JSON.parse(raw); // JSON → JS 배열
-}
-
-function writeUsers(users) {
-  fs.writeFileSync(DATA_PATH, JSON.stringify(users, null, 2), "utf-8");
-}
+const USER_SUMMARY_SELECT = "_id userId name profileImage";
 
 /**
- * Repository API
+ * 공개용 userId 기준으로 활성 사용자 1명 조회
+ *
+ * 사용 예:
+ * - /users/:userId/profile
+ * - /users/:userId/posts/:postId
  */
+const findActiveUserSummaryByUserId = (userId) => {
+  return User.findOne({
+    userId,
+    isDeleted: false,
+  })
+    .select(USER_SUMMARY_SELECT)
+    .lean();
+};
 
-// 내부 고유 id로 유저 찾기
-function findByUserId(id) {
-  const users = readUsers();
-  return users.find((user) => user.id === id) || null;
-}
-
-// 로그인용 아이디(loginId)로 유저 찾기
-function findByLoginId(loginId) {
-  const users = readUsers();
-  return users.find((user) => user.loginId === loginId) || null;
-}
-
-// loginId 중복 검사
-function existsByLoginId(loginId) {
-  const users = readUsers();
-  return users.some((user) => user.loginId === loginId);
-}
-
-// 새 유저 추가
-function createUser(userData) {
-  const users = readUsers();
-
-  users.push(userData);
-  writeUsers(users);
-
-  return userData;
-}
+/**
+ * 여러 MongoDB _id 기준으로 활성 사용자 요약 정보 조회
+ *
+ * 사용 예:
+ * - 댓글 목록에서 작성자 여러 명 한 번에 조회
+ * - authorId(ObjectId) 배열 기반 조회
+ */
+const findActiveUsersSummaryByMongoIds = (mongoIds = []) => {
+  return User.find({
+    _id: { $in: mongoIds },
+    isDeleted: false,
+  })
+    .select(USER_SUMMARY_SELECT)
+    .lean();
+};
 
 module.exports = {
-  findByUserId,
-  findByLoginId,
-  existsByLoginId,
-  createUser,
+  findActiveUserSummaryByUserId,
+  findActiveUsersSummaryByMongoIds,
 };

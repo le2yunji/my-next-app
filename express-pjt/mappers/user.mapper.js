@@ -7,7 +7,7 @@ const toAuthorResponse = (user) => {
 
   return {
     id: String(user._id ?? ""),
-    userId: user.id ?? "",
+    userId: user.userId ?? "",
     name: user.name ?? "",
     profileImage: resolveProfileImageUrl(
       user.profileImage ?? user.profileImageUrl ?? null
@@ -26,7 +26,7 @@ const toUserProfileResponse = ({
 }) => {
   if (!user) return null;
 
-  const userId = user.id ?? "";
+  const userId = user.userId ?? "";
 
   return {
     id: String(user._id ?? ""),
@@ -46,7 +46,7 @@ const toUserProfileResponse = ({
 
 const toUserProfileSummaryResponse = ({ user }) => ({
   id: String(user._id ?? ""),
-  userId: user.id ?? "",
+  userId: user.userId ?? "",
   name: user.name ?? "",
   profileImage: resolveProfileImageUrl(
     user.profileImage ?? user.profileImageUrl ?? null

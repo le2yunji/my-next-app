@@ -1,6 +1,6 @@
-const { USER_MAP } = require("../mocks/users.mock");
-const { POSTS } = require("../mocks/posts.mock");
-const { FOLLOWS } = require("../mocks/followers.mock");
+// const { USER_MAP } = require("../mocks/users.mock");
+// const { POSTS } = require("../mocks/posts.mock");
+// const { FOLLOWS } = require("../mocks/followers.mock");
 
 // 특정 유저 1인 찾기
 const getUserById = (userId) => {
