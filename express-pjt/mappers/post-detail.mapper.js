@@ -5,7 +5,7 @@ const { toAbsoluteUrl } = require("../constants/image-paths");
 // 게시물 상세의 media 항목 하나를 프론트 응답용 형태로 변환
 const toPostMediaResponse = (media) => {
   return {
-    id: media.id,
+    id: String(media._id ?? media.id ?? ""),
     type: media.type,
     url: toAbsoluteUrl(
       media.url ?? media.displayUrl ?? media.fullUrl ?? media.thumbnailUrl
@@ -22,10 +22,30 @@ const toPostMediaResponse = (media) => {
 // 댓글 응답 모양 생성
 const toCommentResponse = ({ comment, author }) => {
   return {
-    id: comment.id,
+    id: String(comment._id ?? comment.id ?? ""),
     author: author ? toAuthorResponse(author) : null,
     content: comment.content,
+    parentCommentId: comment.parentCommentId
+      ? String(comment.parentCommentId)
+      : null,
+    depth: comment.depth ?? 0,
+    replyCount: comment.replyCount ?? 0,
+    isDeleted: comment.isDeleted ?? false,
     createdAt: comment.createdAt,
+    updatedAt: comment.updatedAt,
+  };
+};
+
+// 댓글 스레드 응답 모양 생성
+const toCommentThreadResponse = ({ comment, author, replies = [] }) => {
+  return {
+    comment: toCommentResponse({ comment, author }),
+    replies: replies.map((reply) =>
+      toCommentResponse({
+        comment: reply.comment,
+        author: reply.author,
+      })
+    ),
   };
 };
 
@@ -39,9 +59,8 @@ const toSinglePostDetailResponse = ({
   const sortedMedia = [...mediaList].sort(
     (a, b) => (a.order ?? 0) - (b.order ?? 0)
   );
-
   return {
-    id: post.id,
+    id: String(post._id ?? post.id ?? ""),
     author: toAuthorResponse(author),
     content: post.content,
     media: sortedMedia.map(toPostMediaResponse),
@@ -83,7 +102,8 @@ const toUserPostDetailPageResponse = ({
 
 module.exports = {
   toPostMediaResponse,
+  toCommentResponse,
+  toCommentThreadResponse,
   toSinglePostDetailResponse,
   toUserPostDetailPageResponse,
-  toCommentResponse,
 };

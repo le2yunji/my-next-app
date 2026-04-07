@@ -1,3 +1,4 @@
+// services/comments.service.js
 const mongoose = require("mongoose");
 const Post = require("../models/post.model");
 const Comment = require("../models/comment.model");
@@ -88,19 +89,17 @@ const paginateRootComments = ({
 // 작성자 정보가 삭제되었거나 조회 실패했을 때 사용할 fallback 값
 const toFallbackAuthor = () => ({
   _id: null,
-  id: "",
+  userId: "",
   name: "알 수 없음",
   profileImage: null,
 });
 
 // User 문서를 댓글 응답용 작성자 형태로 축약
-// 나중에 id -> userId로 필드명 바꾸면 여기만 같이 수정해야 함
 const toAuthorSummary = (author) => {
   if (!author) return toFallbackAuthor();
-
   return {
     _id: author._id,
-    id: author.id,
+    userId: author.userId,
     name: author.name,
     profileImage: author.profileImage ?? null,
   };
@@ -227,7 +226,7 @@ const getPostCommentsData = async ({
     _id: { $in: [...authorIds] },
     isDeleted: false,
   })
-    .select("_id id name profileImage")
+    .select("_id userId name profileImage")
     .lean();
 
   // 빠르게 찾기 위해 Map으로 변환
@@ -335,7 +334,7 @@ const createPostCommentData = async ({
   const [post, author] = await Promise.all([
     Post.findOne({ _id: postId, isDeleted: false }).lean(),
     User.findOne({ _id: authorId, isDeleted: false })
-      .select("_id id name profileImage")
+      .select("_id userId name profileImage")
       .lean(),
   ]);
 
