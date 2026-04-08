@@ -4,7 +4,7 @@ const { toUserProfileResponse } = require("../mappers/user.mapper");
 const { toUserPostItemResponse } = require("../mappers/posts.mapper");
 
 // 유저 프로필 + 유저 게시물 첫 페이지까지 함께 반환
-function getUserProfile(req, res) {
+async function getUserProfile(req, res) {
   try {
     const userId = req.params.userId;
 
@@ -12,7 +12,7 @@ function getUserProfile(req, res) {
     // 비로그인 허용이면 null 처리하거나 기본값을 둘 수 있음
     const viewerId = req.user?.mongoId || null;
 
-    const result = getUserProfileData({
+    const result = await getUserProfileData({
       userId,
       viewerId,
     });
@@ -50,7 +50,7 @@ function getUserProfile(req, res) {
 }
 
 // 유저 피드 그리드 : 썸네일 목록만 반환
-function getUserFeed(req, res) {
+async function getUserFeed(req, res) {
   try {
     const userId = req.params.userId;
     const viewerId = req.user?.mongoId || null;
@@ -59,7 +59,7 @@ function getUserFeed(req, res) {
     const limit = Math.min(Number.isNaN(parsed) ? 9 : parsed, 50);
     const cursor = req.query.cursor || null;
 
-    const result = getUserProfileData({
+    const result = await getUserProfileData({
       userId,
       viewerId,
       cursor,

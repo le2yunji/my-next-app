@@ -1,4 +1,9 @@
+// models/comment.model.js
+
 const mongoose = require("mongoose");
+
+const MAX_COMMENT_DEPTH = 1;
+const MAX_LENGTH = 500;
 
 // 댓글 문서 구조 정의
 const commentSchema = new mongoose.Schema(
@@ -21,7 +26,7 @@ const commentSchema = new mongoose.Schema(
       type: String, // 댓글 내용
       required: true, // 반드시 있어야 함
       trim: true, // 앞뒤 공백 제거
-      maxlength: 500, // 최대 500자
+      maxlength: MAX_LENGTH, // 최대 500자
     },
 
     // 바로 위 부모 댓글
@@ -44,7 +49,7 @@ const commentSchema = new mongoose.Schema(
       type: Number,
       default: 0,
       min: 0,
-      max: 1, // MVP면 1단계 대댓글까지만 추천
+      max: MAX_COMMENT_DEPTH, // MVP면 1단계 대댓글까지만 추천
     },
 
     replyCount: {

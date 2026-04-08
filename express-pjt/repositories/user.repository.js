@@ -1,13 +1,13 @@
 const User = require("../models/user.model");
 
+// 유저 요약 정보
 const USER_SUMMARY_SELECT = "_id userId name profileImage";
+
+const USER_PROFILE_SELECT =
+  "_id userId name bio profileImage followerCount followingCount postCount";
 
 /**
  * 공개용 userId 기준으로 활성 사용자 1명 조회
- *
- * 사용 예:
- * - /users/:userId/profile
- * - /users/:userId/posts/:postId
  */
 const findActiveUserSummaryByUserId = (userId) => {
   return User.findOne({
@@ -15,6 +15,18 @@ const findActiveUserSummaryByUserId = (userId) => {
     isDeleted: false,
   })
     .select(USER_SUMMARY_SELECT)
+    .lean();
+};
+
+/**
+ * 공개용 userId 기준으로 활성 사용자 1명의 프로필 정보 조회
+ */
+const findUserProfileByUserId = (userId) => {
+  return User.findOne({
+    userId,
+    isDeleted: false,
+  })
+    .select(USER_PROFILE_SELECT)
     .lean();
 };
 
@@ -36,5 +48,6 @@ const findActiveUsersSummaryByMongoIds = (mongoIds = []) => {
 
 module.exports = {
   findActiveUserSummaryByUserId,
+  findUserProfileByUserId,
   findActiveUsersSummaryByMongoIds,
 };

@@ -25,7 +25,7 @@ const toPostThumbnailResponse = (mediaList = []) => {
 // users/:userId/feed
 const toUserPostItemResponse = ({ post, mediaList = [] }) => {
   return {
-    id: post.id,
+    _id: String(post._id ?? post.id ?? ""),
     thumbnail: toPostThumbnailResponse(mediaList),
     mediaCount: mediaList.length,
     likeCount: post.likeCount,

@@ -37,6 +37,18 @@ const userSchema = new mongoose.Schema(
       default: "", // 값이 없으면 빈 문자열 저장
       maxlength: 160, // 160자 초과 불가
     },
+    customInterestCategories: {
+      type: Array,
+      default: [],
+      min: 0,
+      max: 10,
+    },
+    interestCategories: {
+      type: Array,
+      default: [],
+      min: 0,
+      max: 10,
+    },
     phone: {
       type: String,
       trim: true,
@@ -58,6 +70,11 @@ const userSchema = new mongoose.Schema(
       min: 0,
     },
     postCount: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+    boardCount: {
       type: Number,
       default: 0,
       min: 0,

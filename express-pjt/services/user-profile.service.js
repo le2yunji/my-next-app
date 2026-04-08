@@ -1,31 +1,34 @@
-// services/user-profile.servise.js
 const {
-  getUserById,
-  getPostsByUserId,
-  getFollowersByUserId,
-  getFollowingsByUserId,
-  isFollowingUser,
-} = require("../selectors/user.selectors");
-
-const { getMediaByPostId } = require("../selectors/post.selectors");
+  findActiveUserSummaryByUserId,
+} = require("../repositories/user.repository");
+const {
+  findActivePostsByAuthorId,
+} = require("../repositories/post.repository");
+const {
+  countFollowersByUserMongoId,
+  countFollowingsByUserMongoId,
+  existsFollowRelation,
+} = require("../repositories/follow.repository");
 const { paginateByCursor } = require("../utils/pagination");
 
-// 원본 데이터 변경 없이 최신순 정렬 데이터 생성
-const sortPostsByCreatedAtDesc = (posts) => {
-  return [...posts].sort(
-    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-  );
-};
-
-// 유저 1명에 대한 프로필 페이지 데이터를 조회하는 서비스 함수
-// 유저 정보, 게시물 목록, 카운트, 팔로우 관계, 페이지네이션 정보를 반환
-const getUserProfileData = ({
-  userId, // 조회 대상
-  viewerId = null, // 현재 로그인 유저
+/**
+ * 유저 프로필 페이지 데이터 조회
+ *
+ * 반환:
+ * - 유저 정보
+ * - 게시물 목록(각 post의 media 포함)
+ * - 카운트 정보
+ * - 현재 로그인 유저 기준 팔로우 여부
+ * - 페이지네이션 정보
+ */
+const getUserProfileData = async ({
+  userId, // 공개용 userId (예: lee_00)
+  viewerId = null, // 현재 로그인 유저의 mongoId
   cursor = null,
   limit = 6,
 }) => {
-  const user = getUserById(userId);
+  // 1) 대상 유저 조회
+  const user = await findActiveUserSummaryByUserId(userId);
 
   if (!user) {
     return {
@@ -37,41 +40,47 @@ const getUserProfileData = ({
     };
   }
 
-  // 해당 유저의 전체 게시물 조회 + 최신순 정렬
-  const allPosts = sortPostsByCreatedAtDesc(getPostsByUserId(userId));
+  // 2) 대상 유저 게시물 전체 조회
+  // posts는 User._id(authorId) 기준으로 찾아야 함
+  const allPosts = await findActivePostsByAuthorId(user._id);
 
+  // 3) 페이지네이션
   const { pagedItems, pageInfo } = paginateByCursor({
     items: allPosts,
     cursor,
     limit,
   });
 
-  // 게시물별 media 목록까지 같이 묶어줌
-  // -> controller에서 mapper로 쉽게 응답 shape 생성 가능
+  // 4) Post.media는 내장 배열이므로 별도 media 조회 불필요
   const postsWithMedia = pagedItems.map((post) => ({
     post,
-    mediaList: getMediaByPostId(post.id),
+    mediaList: post.media ?? [],
   }));
 
-  // 유저 관련 집계값 계산
-  const postCount = allPosts.length;
-  const followerCount = getFollowersByUserId(user.userId).length;
-  const followingCount = getFollowingsByUserId(user.userId).length;
+  // 5) 카운트
+  // 이미 user 문서에 followerCount, followingCount, postCount가 있다면
+  // 그 값을 그대로 써도 되지만, 여기서는 repository 기준으로 다시 계산
+  const [followerCount, followingCount] = await Promise.all([
+    countFollowersByUserMongoId(user._id),
+    countFollowingsByUserMongoId(user._id),
+  ]);
 
-  // 로그인 유저 기준 팔로우 여부 계산
+  const postCount = allPosts.length;
+
+  // 6) 로그인 유저 기준 팔로우 여부
   const isFollowing =
-    viewerId && viewerId !== user.userId
-      ? isFollowingUser({
-          followerId: viewerId,
-          followingId: user.id,
-        })
+    viewerId && String(viewerId) !== String(user._id)
+      ? !!(await existsFollowRelation({
+          followerMongoId: viewerId,
+          followingMongoId: user._id,
+        }))
       : false;
 
   return {
     success: true,
     data: {
-      user, // 프로필 원본 데이터
-      posts: postsWithMedia, // 게시물 + media 원본 데이터
+      user,
+      posts: postsWithMedia,
       counts: {
         postCount,
         followerCount,

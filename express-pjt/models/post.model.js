@@ -1,57 +1,104 @@
-// models/post.model
-
 const mongoose = require("mongoose");
 
-// 게시물 내부의 media 하나를 표현하는 서브 스키마
+const SYSTEM_CATEGORIES = [
+  "fashion",
+  "beauty",
+  "cafe",
+  "food",
+  "travel",
+  "interior",
+  "object",
+  "desk",
+  "art",
+  "music",
+  "book",
+  "film",
+  "photo",
+  "plant",
+  "pet",
+];
+
 const postMediaSchema = new mongoose.Schema(
   {
     url: {
-      type: String, // 이미지/영상 주소
+      type: String,
       required: true,
+      trim: true,
     },
-
     type: {
       type: String,
-      enum: ["image", "video"], // image 또는 video만 허용
-      default: "image", // 값이 없으면 image
+      enum: ["image", "video"],
+      default: "image",
     },
-
     order: {
       type: Number,
       required: true,
-      min: 1, // 1 이상만 허용
+      min: 1,
     },
   },
   {
-    _id: false, // media 배열 안 각 요소에 자동 _id 생성 안 함
+    _id: false,
   }
 );
 
-// Post 문서 구조 정의
 const postSchema = new mongoose.Schema(
   {
     authorId: {
-      type: mongoose.Schema.Types.ObjectId, // MongoDB ObjectId 타입
-      ref: "User", // User 컬렉션 참조 의미
-      required: true, // 반드시 있어야 함
-      index: true, // 이 필드로 조회 자주 하니까 인덱스 생성
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+      index: true,
     },
 
     content: {
-      type: String, // 게시글 본문
-      default: "", // 비어있으면 빈 문자열
-      maxlength: 2000, // 최대 길이 제한
+      type: String,
+      default: "",
+      maxlength: 2000,
+      trim: true,
     },
 
     media: {
-      type: [postMediaSchema], // media는 postMediaSchema 배열
-      default: [], // 기본값은 빈 배열
+      type: [postMediaSchema],
+      default: [],
       validate: {
-        // 커스텀 로직
         validator: function (value) {
-          return value.length <= 10; // media 최대 10개까지만 허용
+          return value.length <= 10;
         },
         message: "미디어는 최대 10개까지 가능합니다.",
+      },
+    },
+
+    primaryCategory: {
+      type: String,
+      enum: SYSTEM_CATEGORIES,
+      default: undefined,
+      index: true,
+    },
+
+    categories: {
+      type: [
+        {
+          type: String,
+          enum: SYSTEM_CATEGORIES,
+        },
+      ],
+      default: [],
+      validate: {
+        validator: function (value) {
+          return value.length <= 3;
+        },
+        message: "카테고리는 최대 3개까지 가능합니다.",
+      },
+    },
+
+    customCategories: {
+      type: [String],
+      default: [],
+      validate: {
+        validator: function (value) {
+          return value.length <= 3;
+        },
+        message: "직접 입력 카테고리는 최대 3개까지 가능합니다.",
       },
     },
 
@@ -67,17 +114,26 @@ const postSchema = new mongoose.Schema(
       min: 0,
     },
 
+    saveCount: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+
     isDeleted: {
       type: Boolean,
       default: false,
     },
   },
   {
-    timestamps: true, // createdAt, updatedAt 자동 생성
+    timestamps: true,
   }
 );
 
-// authorId로 유저 게시글 목록 조회 + 최신순 정렬에 유리
 postSchema.index({ authorId: 1, isDeleted: 1, _id: -1 });
+postSchema.index({ primaryCategory: 1, isDeleted: 1, _id: -1 });
+postSchema.index({ categories: 1, isDeleted: 1, _id: -1 });
+postSchema.index({ saveCount: -1, isDeleted: 1, _id: -1 });
+postSchema.index({ likeCount: -1, isDeleted: 1, _id: -1 });
 
 module.exports = mongoose.model("Post", postSchema);
