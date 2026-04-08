@@ -13,8 +13,6 @@ const {
 const { paginateByCursor } = require("../utils/pagination");
 
 /**
- * 유저 프로필 페이지 데이터 조회
- *
  * 반환:
  * - 유저 정보
  * - 게시물 목록(각 post의 media 포함)
