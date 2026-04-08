@@ -108,7 +108,7 @@ const getUserPostDetailPageData = async ({
   return {
     success: true,
     data: {
-      profile: toUserProfileSummaryResponse({ user }),
+      profile: toUserProfileSummaryResponse({ user, viewerId }),
       post,
       author: user,
       mediaList: sortByOrderAsc(post.media ?? []),

@@ -1,5 +1,6 @@
 const {
   findActiveUserSummaryByUserId,
+  findUserProfileByUserId,
 } = require("../repositories/user.repository");
 const {
   findActivePostsByAuthorId,
@@ -28,7 +29,7 @@ const getUserProfileData = async ({
   limit = 6,
 }) => {
   // 1) 대상 유저 조회
-  const user = await findActiveUserSummaryByUserId(userId);
+  const user = await findUserProfileByUserId(userId);
 
   if (!user) {
     return {

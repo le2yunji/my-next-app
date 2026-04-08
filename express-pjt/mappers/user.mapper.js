@@ -37,6 +37,9 @@ const toUserProfileResponse = ({
     ),
     bio: user.bio ?? "",
     postCount,
+    boardCount,
+    interestCategories,
+    customInterestCategories,
     followerCount,
     followingCount,
     isMe: viewerId === userId,
@@ -44,14 +47,20 @@ const toUserProfileResponse = ({
   };
 };
 
-const toUserProfileSummaryResponse = ({ user }) => ({
-  id: String(user._id ?? ""),
-  userId: user.userId ?? "",
-  name: user.name ?? "",
-  profileImage: resolveProfileImageUrl(
-    user.profileImage ?? user.profileImageUrl ?? null
-  ),
-});
+// 유저 프로필 요약 데이터
+const toUserProfileSummaryResponse = ({ user, viewerId = null }) => {
+  if (!user) return null;
+  const userId = user.userId ?? "";
+  return {
+    id: String(user._id ?? ""),
+    userId,
+    name: user.name ?? "",
+    profileImage: resolveProfileImageUrl(
+      user.profileImage ?? user.profileImageUrl ?? null
+    ),
+    isMe: viewerId === userId,
+  };
+};
 
 module.exports = {
   toUserProfileResponse,

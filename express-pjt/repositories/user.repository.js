@@ -4,7 +4,7 @@ const User = require("../models/user.model");
 const USER_SUMMARY_SELECT = "_id userId name profileImage";
 
 const USER_PROFILE_SELECT =
-  "_id userId name bio profileImage followerCount followingCount postCount";
+  "_id userId name bio profileImage followerCount followingCount postCount interestCategories customInterestCategories boardCount";
 
 /**
  * 공개용 userId 기준으로 활성 사용자 1명 조회
