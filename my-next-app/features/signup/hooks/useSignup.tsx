@@ -9,7 +9,7 @@ import {
   isValidPhone,
   isValidEmail,
   isPasswordMatch,
-} from "@/features/auth/model/validators";
+} from "@/features/auth/validation/validators";
 
 import { signupAction } from "@/app/actions/signup.action";
 import { useRouter } from "next/navigation";
@@ -69,8 +69,8 @@ export default function useSignup() {
     if (!isPasswordMatch(form.password, form.passwordConfirm)) {
       errors.passwordConfirm = AUTH_ERROR_MESSAGES.passwordConfirm;
     }
-    console.log("form.name:", JSON.stringify(form.name));
-    console.log("isValidName:", isValidName(form.name));
+    // console.log("form.name:", JSON.stringify(form.name));
+    // console.log("isValidName:", isValidName(form.name));
 
     if (Object.keys(errors).length > 0) {
       setFieldErrors(errors);

@@ -4,14 +4,14 @@ import FeedItemHeader from "./FeedItemHeader";
 import FeedItemMedia from "./FeedItemMedia";
 import FeedItemMeta from "./FeedItemMeta";
 import FeedItemActions from "./FeedItemActions";
-import { FeedItemModel } from "../../model/types";
+import { FeedItem } from "../../types/feed.type";
 import FeedItemThumbnail from "./FeedItemThumbnail";
 
 export default function FeedItem({
   post,
   priorityPost,
 }: {
-  post: FeedItemModel;
+  post: FeedItem;
   priorityPost: boolean;
 }) {
   return (

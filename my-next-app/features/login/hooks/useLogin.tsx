@@ -2,7 +2,10 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { isValidId, isValidPassword } from "@/features/auth/model/validators";
+import {
+  isValidId,
+  isValidPassword,
+} from "@/features/auth/validation/validators";
 
 import { AUTH_ERROR_MESSAGES } from "@/features/auth/constants/errorMessages";
 import type { LoginForm } from "@/types/auth";

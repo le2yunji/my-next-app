@@ -1,5 +1,5 @@
 import { getUserFeedAction } from "@/app/actions/users.action";
-import UserFeedList from "@/features/users/ui/UserFeedList";
+import UserFeedList from "@/features/users/ui/UserFeed/UserFeedList";
 
 export default async function UserFeedSection({
   userId,

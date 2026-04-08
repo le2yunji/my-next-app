@@ -1,22 +1,11 @@
 import Image from "next/image";
-
-type UserProfileModel = {
-  id: string;
-  name: string;
-  profileImage: string | null;
-  bio: string;
-  postCount: number;
-  followerCount: number;
-  followingCount: number;
-  isMe: boolean;
-  isFollowing: boolean;
-};
+import { UserProfileItem } from "@/features/users/types/user.type";
 
 export default function UserProfile({
   user,
   isOwner,
 }: {
-  user: UserProfileModel;
+  user: UserProfileItem;
   isOwner: boolean;
 }) {
   return (
@@ -25,7 +14,7 @@ export default function UserProfile({
         {user.profileImage ? (
           <Image
             src={user.profileImage}
-            alt={`${user.id} 프로필 이미지`}
+            alt={`${user.userId} 프로필 이미지`}
             fill
             className="object-cover"
             unoptimized
@@ -41,15 +30,16 @@ export default function UserProfile({
 
       <div>
         <div>
-          <p className="text-lg font-semibold">{user.id}</p>
-          <p className="text-sm text-gray-500">{user.id}</p>
+          <p className="text-lg font-semibold">{user.userId}</p>
+          <p className="text-sm text-gray-500">{user.name}</p>
+          <p>{user.bio}</p>
         </div>
         <div className="flex">
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col items-center mr-4">
             <span>게시물</span>
             <span className="text-sm text-gray-500">{user.postCount}</span>
           </div>
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col items-center mr-4">
             <span>팔로워</span>
             <span className="text-sm text-gray-500">{user.followerCount}</span>
           </div>
