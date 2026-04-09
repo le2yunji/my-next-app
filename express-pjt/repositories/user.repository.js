@@ -1,3 +1,4 @@
+// repositories/user.repository.js
 const User = require("../models/user.model");
 
 // 유저 요약 정보

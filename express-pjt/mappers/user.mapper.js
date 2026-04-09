@@ -1,3 +1,4 @@
+// mappers/user.mapper.js
 const { resolveProfileImageUrl } = require("../constants/image-paths");
 
 // 게시물 작성자/댓글 작성자 같은 간단한 유저 정보를 응답용으로 변환
@@ -15,14 +16,7 @@ const toAuthorResponse = (user) => {
 };
 
 // 상세 프로필 응답 생성 함수
-const toUserProfileResponse = ({
-  user,
-  viewerId = null,
-  postCount = 0,
-  followerCount = 0,
-  followingCount = 0,
-  isFollowing = false,
-}) => {
+const toUserProfileResponse = ({ user, viewerId = null }) => {
   if (!user) return null;
 
   return {
@@ -33,18 +27,14 @@ const toUserProfileResponse = ({
       user.profileImage ?? user.profileImageUrl ?? null
     ),
     bio: user.bio ?? "",
-
-    postCount,
+    postCount: user.postCount,
     boardCount: user.boardCount ?? 0,
-
     interestCategories: user.interestCategories ?? [],
     customInterestCategories: user.customInterestCategories ?? [],
-
-    followerCount,
-    followingCount,
-
+    followerCount: user.followerCount,
+    followingCount: user.followingCount,
     isMe: viewerId ? String(viewerId) === String(user._id) : false,
-    isFollowing,
+    isFollowing: existsFollowRelation(String(viewerId), user._id),
   };
 };
 

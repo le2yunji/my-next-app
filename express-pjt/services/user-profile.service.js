@@ -1,15 +1,19 @@
+// services/user-profile.service.js
 const {
   findActiveUserSummaryByUserId,
   findUserProfileByUserId,
 } = require("../repositories/user.repository");
+
 const {
   findActivePostsByAuthorId,
 } = require("../repositories/post.repository");
+
 const {
   countFollowersByUserMongoId,
   countFollowingsByUserMongoId,
   existsFollowRelation,
 } = require("../repositories/follow.repository");
+
 const { paginateByCursor } = require("../utils/pagination");
 
 /**
