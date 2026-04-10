@@ -1,8 +1,8 @@
 // mappers/user.mapper.js
 const { resolveProfileImageUrl } = require("../constants/image-paths");
 
-// 게시물 작성자/댓글 작성자 같은 간단한 유저 정보를 응답용으로 변환
-const toAuthorResponse = (user) => {
+// 간단한 유저 정보를 응답용으로 변환
+const toUserResponse = (user) => {
   if (!user) return null;
 
   return {
@@ -16,7 +16,12 @@ const toAuthorResponse = (user) => {
 };
 
 // 상세 프로필 응답 생성 함수
-const toUserProfileResponse = ({ user, viewerId = null }) => {
+// isFollowing은 service 레이어에서 계산 후 전달받음
+const toUserProfileResponse = ({
+  user,
+  viewerId = null,
+  isFollowing = false,
+}) => {
   if (!user) return null;
 
   return {
@@ -34,7 +39,7 @@ const toUserProfileResponse = ({ user, viewerId = null }) => {
     followerCount: user.followerCount,
     followingCount: user.followingCount,
     isMe: viewerId ? String(viewerId) === String(user._id) : false,
-    isFollowing: existsFollowRelation(String(viewerId), user._id),
+    isFollowing,
   };
 };
 
@@ -55,6 +60,6 @@ const toUserProfileSummaryResponse = ({ user, viewerId = null }) => {
 
 module.exports = {
   toUserProfileResponse,
-  toAuthorResponse,
+  toUserResponse,
   toUserProfileSummaryResponse,
 };

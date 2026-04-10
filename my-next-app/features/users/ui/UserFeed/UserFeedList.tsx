@@ -1,11 +1,31 @@
 "use client";
 
 import { getUserFeedAction } from "@/app/actions/users.action";
-import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
+import { useInfiniteScrollList } from "@/hooks/useInfiniteScrollList";
 import { FeedItem } from "@/features/users/types/feed.type";
 import FeedThumbnail from "@/features/users/ui/UserFeed/UserFeedThumbnail";
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+
+function MultiPhotoBadge({ count }: { count: number }) {
+  return (
+    <div className="absolute top-2 right-2 flex items-center gap-1 rounded-full bg-black/50 px-2 py-1 text-[11px] font-medium leading-none text-white backdrop-blur-sm">
+      <svg
+        viewBox="0 0 24 24"
+        className="h-3.5 w-3.5"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <rect x="7" y="7" width="10" height="10" rx="2" />
+        <path d="M5 15V7a2 2 0 0 1 2-2h8" />
+      </svg>
+      <span>{count}</span>
+    </div>
+  );
+}
 
 export default function UserFeedList({
   userId,
@@ -18,59 +38,25 @@ export default function UserFeedList({
   initialCursor: string | null;
   initialHasNext: boolean;
 }) {
-  const [items, setItems] = useState<FeedItem[]>(initialItems);
-  const [loading, setLoading] = useState(false);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [cursor, setCursor] = useState<string | null>(initialCursor);
-  const [hasNext, setHasNext] = useState(initialHasNext);
-
-  const fetchNext = useCallback(async () => {
-    if (!hasNext || loading) return;
-
-    setLoading(true);
-    setErrorMsg(null);
-
-    try {
-      const data = await getUserFeedAction({
-        userId,
-        limit: 9,
-        cursor,
-      });
-
-      setItems((prev) => {
-        const seen = new Set(prev.map((item) => item.id));
-        const merged = [...prev];
-
-        for (const item of data.items) {
-          if (!seen.has(item.id)) merged.push(item);
-        }
-
-        return merged;
-      });
-
-      setCursor(data.nextCursor);
-      setHasNext(data.hasNext);
-    } catch {
-      setErrorMsg("게시물을 불러오지 못했습니다.");
-    } finally {
-      setLoading(false);
-    }
-  }, [cursor, hasNext, loading, userId]);
-
-  const { sentinelRef, isIntersecting } = useIntersectionObserver({
-    enabled: hasNext && !loading,
-    rootMargin: "200px",
-  });
-
-  useEffect(() => {
-    if (isIntersecting) {
-      fetchNext();
-    }
-  }, [isIntersecting, fetchNext]);
+  const { items, loading, errorMsg, sentinelRef } =
+    useInfiniteScrollList<FeedItem>({
+      initialItems,
+      initialCursor,
+      initialHasNext,
+      limit: 9,
+      getKey: (item) => item.id,
+      fetchPage: ({ cursor, limit }) =>
+        getUserFeedAction({
+          userId,
+          cursor,
+          limit,
+        }),
+      errorMessage: "게시물을 불러오지 못했습니다.",
+      rootMargin: "200px",
+    });
 
   return (
     <section className="w-full px-5 pb-10">
-      {/* BoardList와 톤 맞춘 상단 헤더 */}
       <div className="mb-5 flex items-center justify-between">
         <h2 className="text-[13px] font-semibold uppercase tracking-[0.12em] text-[#6B7280]">
           {items.length} posts
@@ -89,7 +75,7 @@ export default function UserFeedList({
       ) : null}
 
       {items.length === 0 && !loading ? (
-        <div className="rounded-[24px] bg-[#F7F5F2] px-4 py-10 text-center">
+        <div className="rounded-3xl bg-[#F7F5F2] px-4 py-10 text-center">
           <p className="text-sm text-[#9CA3AF]">아직 게시물이 없습니다.</p>
         </div>
       ) : null}
@@ -103,14 +89,15 @@ export default function UserFeedList({
             >
               <FeedThumbnail
                 src={post.thumbnail?.url}
-                alt={`${post.author}의 게시물`}
+                alt={
+                  typeof post.author === "string"
+                    ? `${post.author}의 게시물`
+                    : "게시물 썸네일"
+                }
               />
 
-              {/* 여러 장 게시물 표시 */}
               {post.mediaCount > 1 && (
-                <div className="absolute top-2 right-2 rounded-full bg-black/55 px-2 py-1 text-[11px] font-medium leading-none text-white backdrop-blur-sm">
-                  {post.mediaCount}
-                </div>
+                <MultiPhotoBadge count={post.mediaCount} />
               )}
             </Link>
           </li>

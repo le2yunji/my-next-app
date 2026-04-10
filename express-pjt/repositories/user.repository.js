@@ -10,7 +10,7 @@ const USER_PROFILE_SELECT =
 /**
  * 공개용 userId 기준으로 활성 사용자 1명 조회
  */
-const findActiveUserSummaryByUserId = (userId) => {
+const findUserByUserId = (userId) => {
   return User.findOne({
     userId,
     isDeleted: false,
@@ -48,7 +48,7 @@ const findActiveUsersSummaryByMongoIds = (mongoIds = []) => {
 };
 
 module.exports = {
-  findActiveUserSummaryByUserId,
+  findUserByUserId,
   findUserProfileByUserId,
   findActiveUsersSummaryByMongoIds,
 };

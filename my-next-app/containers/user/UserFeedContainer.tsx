@@ -1,7 +1,7 @@
 // components/user/UserFeedContainer.tsx
 import { Suspense } from "react";
 import UserFeedSection from "@/features/users/ui/UserFeed/UserFeedSection";
-import UserProfileSection from "@/features/users/ui/UserProfileSection";
+import UserProfileSection from "@/features/users/ui/UserProfile/UserProfileSection";
 import { getMeServer } from "@/lib/auth/getMeServer";
 
 export default async function UserFeedContainer({

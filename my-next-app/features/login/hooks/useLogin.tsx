@@ -3,8 +3,11 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import {
+  isValidEmail,
   isValidId,
+  isValidName,
   isValidPassword,
+  isValidPhone,
 } from "@/features/auth/validation/validators";
 
 import { AUTH_ERROR_MESSAGES } from "@/features/auth/constants/errorMessages";
@@ -41,8 +44,13 @@ export default function useLogin() {
 
     const errors: { identifier?: string; password?: string } = {};
 
-    if (!isValidId(form.identifier))
+    if (
+      !isValidId(form.identifier) ||
+      !isValidEmail(form.identifier) ||
+      !isValidPhone(form.identifier)
+    )
       errors.identifier = AUTH_ERROR_MESSAGES.identifier;
+
     if (!isValidPassword(form.password))
       errors.password = AUTH_ERROR_MESSAGES.password;
 

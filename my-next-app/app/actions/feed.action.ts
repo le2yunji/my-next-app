@@ -1,6 +1,5 @@
 "use server";
 import apiClient from "@/app/utils/api-client";
-import { PostResponse } from "@/features/feed/model/types";
 
 export const getFeedAction = async (params: {
   limit?: number;
@@ -10,23 +9,25 @@ export const getFeedAction = async (params: {
   if (params.limit != null) qs.set("limit", String(params.limit));
   if (params.cursor) qs.set("cursor", params.cursor);
 
-  const res = await apiClient.get(`/api/feed?${qs.toString()}`, {
+  const url = `/api/feed?${qs.toString()}`;
+  const res = await apiClient.get(url, {
     cache: "no-store", // 커서 페이지네이션은 캐시 안 함
+    credentials: "include",
   });
 
   if (!res.ok) {
-    let data: any = {};
+    let data;
     try {
       data = await res.json();
     } catch {
-      return {
-        isError: true,
-        message:
-          data?.message ??
-          `피드를 불러오는데 실패했습니다. (HTTP ${res.status})`,
-        ...data,
-      };
+      // JSON 파싱 실패 시 data는 빈 객체 유지
     }
+    return {
+      isError: true,
+      message:
+        data?.message ?? `피드를 불러오는데 실패했습니다. (HTTP ${res.status})`,
+      ...data,
+    };
   }
 
   try {

@@ -1,5 +1,5 @@
 // mappers/post-detail.mapper.js
-const { toAuthorResponse } = require("./user.mapper");
+const { toUserResponse } = require("./user.mapper");
 const { toAbsoluteUrl } = require("../constants/image-paths");
 
 // 게시물 상세의 media 항목 하나를 프론트 응답용 형태로 변환
@@ -23,7 +23,7 @@ const toPostMediaResponse = (media) => {
 const toCommentResponse = ({ comment, author }) => {
   return {
     id: String(comment._id ?? comment.id ?? ""),
-    author: author ? toAuthorResponse(author) : null,
+    author: author ? toUserResponse(author) : null,
     content: comment.content,
     parentCommentId: comment.parentCommentId
       ? String(comment.parentCommentId)
@@ -61,7 +61,7 @@ const toSinglePostDetailResponse = ({
   );
   return {
     id: String(post._id ?? post.id ?? ""),
-    author: toAuthorResponse(author),
+    author: toUserResponse(author),
     content: post.content,
     media: sortedMedia.map(toPostMediaResponse),
     likeCount: post.likeCount,

@@ -26,7 +26,7 @@ export const isValidPassword = (password: string): boolean => {
  */
 export const isPasswordMatch = (
   password: string,
-  confirmPassword: string
+  confirmPassword: string,
 ): boolean => {
   return password === confirmPassword && password.length > 0;
 };

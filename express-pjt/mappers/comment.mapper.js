@@ -1,9 +1,9 @@
-const { toAuthorResponse } = require("./user.mapper");
+const { toUserResponse } = require("./user.mapper");
 
 const toCommentResponse = ({ comment, author }) => {
   return {
     id: String(comment._id ?? comment.id ?? ""),
-    author: author ? toAuthorResponse(author) : null,
+    author: author ? toUserResponse(author) : null,
     content: comment.isDeleted ? "삭제된 댓글입니다." : comment.content,
     parentCommentId: comment.parentCommentId
       ? String(comment.parentCommentId)

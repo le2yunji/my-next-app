@@ -1,6 +1,6 @@
 // services/user-profile.service.js
 const {
-  findActiveUserSummaryByUserId,
+  findUserByUserId,
   findUserProfileByUserId,
 } = require("../repositories/user.repository");
 

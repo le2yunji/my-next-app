@@ -1,12 +1,11 @@
 "use client";
 
 import { getFeedAction } from "@/app/actions/feed.action";
-import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useInfiniteScrollList } from "@/hooks/useInfiniteScrollList";
 
-import FeedItem from "@/features/feed/ui/FeedItem/FeedItem";
+import FeedListItem from "@/features/feed/ui/FeedItem/FeedItem";
 import { shouldPriorityPostImage } from "@/features/feed/lib/feedImagePolicy";
-import { FeedItemModel } from "@/features/feed/model/types";
+import type { FeedItem } from "@/features/feed/types/feed.type";
 
 const PAGE_SIZE = 10;
 
@@ -15,69 +14,44 @@ export default function FeedList({
   initialCursor,
   initialHasNext,
 }: {
-  initialItems: FeedItemModel[];
+  initialItems: FeedItem[];
   initialCursor: string | null;
   initialHasNext: boolean;
 }) {
-  const [items, setItems] = useState<FeedItemModel[]>(initialItems ?? []);
-  const [cursor, setCursor] = useState<string | null>(initialCursor);
-  const [hasNext, setHasNext] = useState<boolean>(initialHasNext);
-  const [loading, setLoading] = useState(false);
+  const { items, loading, errorMsg, hasNext, sentinelRef } =
+    useInfiniteScrollList<FeedItem>({
+      initialItems: initialItems ?? [],
+      initialCursor,
+      initialHasNext,
+      limit: PAGE_SIZE,
+      getKey: (item) => item.id,
+      fetchPage: async ({ cursor, limit }) => {
+        const result = await getFeedAction({ limit, cursor });
 
-  const prevIntersectingRef = useRef(false);
-
-  const fetchNext = useCallback(async () => {
-    if (!hasNext || loading) return;
-
-    setLoading(true);
-    try {
-      const result = await getFeedAction({ limit: PAGE_SIZE, cursor });
-
-      if ("isError" in result) {
-        console.error(result.message);
-        return;
-      }
-
-      const nextFeedItems = result.items as FeedItemModel[];
-
-      setItems((prev) => {
-        const seen = new Set(prev.map((item) => item.id));
-        const merged = [...prev];
-
-        for (const item of nextFeedItems) {
-          if (!seen.has(item.id)) {
-            seen.add(item.id);
-            merged.push(item);
-          }
+        if ("isError" in result) {
+          throw new Error(result.message);
         }
-        return merged;
-      });
 
-      setCursor(result.nextCursor ?? null);
-      setHasNext(Boolean(result.hasNext));
-    } finally {
-      setLoading(false);
-    }
-  }, [cursor, hasNext, loading]);
-
-  const { sentinelRef, isIntersecting } = useIntersectionObserver({
-    enabled: hasNext && !loading,
-    rootMargin: "100px",
-  });
-
-  useEffect(() => {
-    if (isIntersecting && hasNext && !loading) {
-      fetchNext();
-    }
-    prevIntersectingRef.current = isIntersecting;
-  }, [isIntersecting, hasNext, loading, fetchNext]);
+        return {
+          items: result.items as FeedItem[],
+          nextCursor: result.nextCursor ?? null,
+          hasNext: Boolean(result.hasNext),
+        };
+      },
+      errorMessage: "피드를 불러오지 못했습니다.",
+      rootMargin: "100px",
+    });
 
   return (
     <main className="mt-10">
-      <div className="max-w-142.5 w-140 ml-10">
+      <div className="ml-10 w-140 max-w-142.5">
+        {errorMsg ? (
+          <p className="p-4 text-center text-sm text-red-500">{errorMsg}</p>
+        ) : null}
+
         <ul>
           {items.map((post, idx) => (
-            <FeedItem
+            <FeedListItem
               key={post.id}
               post={post}
               priorityPost={shouldPriorityPostImage(idx)}

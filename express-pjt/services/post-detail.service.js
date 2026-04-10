@@ -59,6 +59,8 @@ const getUserPostDetailPageData = async ({
     };
   }
 
+  // userPosts : 유저의 전체 게시물 id 목록
+  // previewComment : 현재 게시물의 대표 댓글 1개
   const [userPosts, previewComment] = await Promise.all([
     Post.find({
       authorId: user._id,

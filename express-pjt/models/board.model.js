@@ -1,3 +1,4 @@
+// models/board.model.js
 const mongoose = require("mongoose");
 
 const boardSchema = new mongoose.Schema(
@@ -50,7 +51,7 @@ const boardSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 // 내 보드 목록 조회 / 최신 수정순 정렬

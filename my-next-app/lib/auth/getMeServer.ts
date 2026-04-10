@@ -18,8 +18,6 @@ export const getMeServer = async () => {
     cache: "no-store",
   });
 
-  console.log("cookieHeader: ", cookieHeader);
-
   const data = await res.json();
 
   if (!res.ok) {

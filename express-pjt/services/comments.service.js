@@ -3,7 +3,7 @@ const {
   increasePostCommentCount,
 } = require("../repositories/post.repository");
 const {
-  findActiveUserSummaryByUserId,
+  findUserByUserId,
   findActiveUsersSummaryByMongoIds,
 } = require("../repositories/user.repository");
 const {
@@ -18,7 +18,7 @@ const {
   validateParentCommentId,
   validateCommentContent,
 } = require("../validators/comment.validator");
-const { buildCommentThreads } = require("../utils/comment-thread.util");
+const { buildCommentThreads } = require("../utils/comment-thread");
 
 /**
  * 게시물의 댓글 목록 조회
@@ -164,7 +164,7 @@ const createPostCommentData = async ({
   // 5) 게시물 / 작성자 동시에 조회
   const [post, author] = await Promise.all([
     findActivePostById(postId),
-    findActiveUserSummaryByUserId(authorId),
+    findUserByUserId(authorId),
   ]);
 
   // 게시물이 없으면 생성 불가

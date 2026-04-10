@@ -2,6 +2,8 @@ const usersRouter = require("express").Router();
 const usersController = require("../controllers/users.controller");
 const postsController = require("../controllers/posts.controller");
 const commentsController = require("../controllers/comments.controller");
+const boardController = require("../controllers/board.controller");
+
 const {
   authenticate,
   optionalAuthenticate,
@@ -10,7 +12,7 @@ const {
 usersRouter.get(
   "/:userId/profile",
   optionalAuthenticate,
-  usersController.getUserProfile
+  usersController.getUserProfile,
 );
 
 // usersRouter.post(
@@ -22,18 +24,31 @@ usersRouter.get(
 usersRouter.get(
   "/:userId/feed",
   optionalAuthenticate,
-  usersController.getUserFeed
+  usersController.getUserFeed,
 );
 
 usersRouter.get(
   "/:userId/posts/:postId",
   optionalAuthenticate,
-  postsController.getPostDetail
+  postsController.getPostDetail,
 );
+
+usersRouter.get(
+  "/:userId/boards",
+  optionalAuthenticate,
+  boardController.getUserBoards,
+);
+
+usersRouter.get(
+  "/:userId/boards/:boardId",
+  optionalAuthenticate,
+  boardController.getUserBoardPage,
+);
+
 usersRouter.get(
   "/:userId/posts/:postId/comments",
   optionalAuthenticate,
-  commentsController.getPostComments
+  commentsController.getPostComments,
 );
 
 module.exports = usersRouter;

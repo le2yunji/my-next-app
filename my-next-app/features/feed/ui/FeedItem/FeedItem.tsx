@@ -7,7 +7,7 @@ import FeedItemActions from "./FeedItemActions";
 import { FeedItem } from "../../types/feed.type";
 import FeedItemThumbnail from "./FeedItemThumbnail";
 
-export default function FeedItem({
+export default function FeedListItem({
   post,
   priorityPost,
 }: {

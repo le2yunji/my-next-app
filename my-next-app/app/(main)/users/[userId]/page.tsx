@@ -12,7 +12,7 @@ export default async function UserFeedPage({
 
   return (
     <>
-      <div style={{ padding: 40 }}>
+      <div className="p-10">
         {userId}
         <h1>원본 상세 페이지</h1>
       </div>

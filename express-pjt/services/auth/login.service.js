@@ -27,8 +27,6 @@ async function login({ identifier, password }) {
     throw err;
   }
 
-  const isMatch = await bcrypt.compare(password, user.passwordHash);
-
   if (!identifier) {
     const err = new Error("아이디, 이메일 또는 휴대폰 번호를 입력해 주세요.");
     err.status = 400;
@@ -40,6 +38,8 @@ async function login({ identifier, password }) {
     err.status = 400;
     throw err;
   }
+
+  const isMatch = await bcrypt.compare(password, user.passwordHash);
   if (!isMatch) {
     const err = new Error("비밀번호가 올바르지 않습니다.");
     err.status = 401;

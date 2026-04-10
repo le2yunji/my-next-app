@@ -2,12 +2,15 @@
 
 import apiClient from "@/app/utils/api-client";
 
+// 피드 상세
 export const getPostDetailAction = async (params: {
   userId: string;
   postId: string;
 }) => {
   const url = `/api/users/${params.userId}/posts/${params.postId}`;
-  const res = await apiClient.get(url);
+  const res = await apiClient.get(url, {
+    credentials: "include",
+  });
 
   let data;
 

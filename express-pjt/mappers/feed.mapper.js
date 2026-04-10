@@ -1,5 +1,5 @@
 // mappers/feed.mapper.js
-const { toAuthorResponse } = require("./user.mapper");
+const { toUserResponse } = require("./user.mapper");
 const { toAbsoluteUrl } = require("../constants/image-paths");
 
 function attachAbsoluteMediaUrl(items = []) {
@@ -24,7 +24,7 @@ function toPostThumbnailItem(p) {
   return {
     id: String(p._id ?? p.id),
     content: p.content ?? "",
-    author: p.authorId ? toAuthorResponse(p.authorId) : null,
+    author: p.authorId ? toUserResponse(p.authorId) : null,
     createdAt: p.createdAt,
     likeCount: p.likeCount ?? 0,
     commentCount: p.commentCount ?? 0,

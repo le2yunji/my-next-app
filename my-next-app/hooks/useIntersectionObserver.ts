@@ -16,7 +16,10 @@ export function useIntersectionObserver({
   const [isIntersecting, setIsIntersecting] = useState(false);
 
   useEffect(() => {
-    if (!enabled) return;
+    if (!enabled) {
+      setIsIntersecting(false);
+      return;
+    }
 
     const target = sentinelRef.current;
     if (!target) return;
@@ -24,7 +27,7 @@ export function useIntersectionObserver({
     const observer = new IntersectionObserver(
       (entries) => {
         const entry = entries[0];
-        setIsIntersecting(entry.isIntersecting);
+        setIsIntersecting(Boolean(entry?.isIntersecting));
       },
       { root, rootMargin, threshold }
     );
