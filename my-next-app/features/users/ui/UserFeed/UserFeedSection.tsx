@@ -1,23 +1,50 @@
 import { getUserFeedAction } from "@/app/actions/users.action";
-import UserFeedList from "@/features/users/ui/UserFeed/UserFeedList";
+import { getUserBoardsAction } from "@/app/actions/boards.action";
+import UserPostList from "@/features/users/ui/UserPost/UserPostList";
+import UserBoardList from "@/features/users/ui/UserBoard/UserBoardList";
 
 export default async function UserFeedSection({
   userId,
   isOwner,
-  me,
+  tab,
 }: {
   userId: string;
   isOwner: boolean;
-  me: string;
+  tab: string;
 }) {
-  const initialFeed = await getUserFeedAction({ userId, limit: 9 });
+  if (tab === "posts") {
+    const initialFeed = await getUserFeedAction({ userId, limit: 9 });
 
+    return (
+      <UserPostList
+        userId={userId}
+        initialItems={initialFeed.items}
+        initialCursor={initialFeed.nextCursor}
+        initialHasNext={initialFeed.hasNext}
+      />
+    );
+  }
+
+  if (tab === "boards") {
+    const result = await getUserBoardsAction({ userId, limit: 6 });
+    const items = "isError" in result ? [] : result.items;
+    const nextCursor = "isError" in result ? null : result.nextCursor;
+    const hasNext = "isError" in result ? false : result.hasNext;
+
+    return (
+      <UserBoardList
+        userId={userId}
+        initialItems={items}
+        initialCursor={nextCursor}
+        initialHasNext={hasNext}
+      />
+    );
+  }
+
+  // tab === "saved"
   return (
-    <UserFeedList
-      userId={userId}
-      initialItems={initialFeed.items}
-      initialCursor={initialFeed.nextCursor}
-      initialHasNext={initialFeed.hasNext}
-    />
+    <div className="px-5 py-10 text-center text-sm text-[#9CA3AF]">
+      저장된 항목이 없습니다.
+    </div>
   );
 }

@@ -3,21 +3,31 @@
 import apiClient from "@/app/utils/api-client";
 
 export const getPostCommentsAction = async (params: {
-  userId: string;
   postId: string;
+  cursor?: string | null;
+  limit?: number;
 }) => {
-  const url = `/api/users/${params.userId}/posts/${params.postId}/comments`;
-  const res = await apiClient.get(url);
+  const qs = new URLSearchParams();
+  if (params.cursor) qs.set("cursor", params.cursor);
+  if (params.limit != null) qs.set("limit", String(params.limit));
+
+  const url = `/api/posts/${params.postId}/comments?${qs.toString()}`;
+
+  let res: Response;
+  try {
+    res = await apiClient.get(url, {
+      cache: "no-store",
+      credentials: "include",
+    });
+  } catch {
+    return { isError: true, message: "네트워크 오류가 발생했습니다." };
+  }
 
   let data;
-
   try {
     data = await res.json();
   } catch {
-    data = {
-      isError: true,
-      message: "서버 응답 형식이 올바르지 않습니다.",
-    };
+    return { isError: true, message: "서버 응답 형식이 올바르지 않습니다." };
   }
 
   if (!res.ok) {
@@ -26,6 +36,44 @@ export const getPostCommentsAction = async (params: {
       message:
         data?.message ??
         `댓글 목록을 불러오는데 실패했습니다. (HTTP ${res.status})`,
+      ...data,
+    };
+  }
+
+  return data;
+};
+
+export const createPostCommentAction = async (params: {
+  postId: string;
+  content: string;
+  parentCommentId?: string | null;
+}) => {
+  let res;
+  try {
+    res = await apiClient.post(
+      `/api/posts/${params.postId}/comments`,
+      {
+        content: params.content,
+        parentCommentId: params.parentCommentId ?? null,
+      },
+      { credentials: "include" },
+    );
+  } catch {
+    return { isError: true, message: "네트워크 오류가 발생했습니다." };
+  }
+
+  let data;
+  try {
+    data = await res.json();
+  } catch {
+    return { isError: true, message: "서버 응답 형식이 올바르지 않습니다." };
+  }
+
+  if (!res.ok) {
+    return {
+      isError: true,
+      message:
+        data?.message ?? `댓글 작성에 실패했습니다. (HTTP ${res.status})`,
       ...data,
     };
   }

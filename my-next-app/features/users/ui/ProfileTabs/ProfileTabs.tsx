@@ -69,12 +69,12 @@ export default function ProfileTabs({ activeId }: { activeId: string }) {
               buttonRefs.current[index] = el;
             }}
             onClick={() => {
-              // 현재 쿼리스트링 복사
               const params = new URLSearchParams(searchParams.toString());
-              // tab 쿼리값을 현재 탭 id로 변경
               params.set("tab", tab.id);
-              // 현재 경로에 쿼리만 바꿔서 URL 업데이트
-              router.replace(`${pathname}?${params.toString()}`);
+              // router.replace 대신 history API 사용:
+              // router.replace는 intercepting route를 트리거해서 모달이 뜨는 버그가 있음
+              window.history.replaceState(null, "", `${pathname}?${params.toString()}`);
+              router.refresh();
             }}
             className={`relative z-10 inline-flex items-center justify-center gap-1 flex-1 rounded-xl px-4.5 py-3.5 h-12 cursor-pointer transition-colors duration-300 ${
               isActive

@@ -14,21 +14,28 @@ export const getUserFeedAction = async (params: {
   if (params.cursor) qs.set("cursor", params.cursor);
 
   const url = `/api/users/${params.userId}/feed?${qs.toString()}`;
+  let res: Response;
+  try {
+    res = await apiClient.get(url, { next: { revalidate: 120 } }); // 자주 안 바뀌므로 120초
+  } catch {
+    return { isError: true, message: "네트워크 오류가 발생했습니다." };
+  }
+
   let data;
   try {
-    const res = await apiClient.get(url, { next: { revalidate: 120 } }); // 자주 안 바뀌므로 120초
     data = await res.json();
-    if (!res.ok) {
-      return {
-        isError: true,
-        message:
-          data?.message ??
-          `유저 피드를 불러오는데 실패했습니다. (HTTP ${res.status})`,
-        ...data,
-      };
-    }
   } catch {
-    data = { isError: true, message: "서버 응답 형식이 올바르지 않습니다." };
+    return { isError: true, message: "서버 응답 형식이 올바르지 않습니다." };
+  }
+
+  if (!res.ok) {
+    return {
+      isError: true,
+      message:
+        data?.message ??
+        `유저 피드를 불러오는데 실패했습니다. (HTTP ${res.status})`,
+      ...data,
+    };
   }
 
   return data;
@@ -44,24 +51,31 @@ export const getUserBoardsAction = async (params: {
   cursor?: string | null;
 }) => {
   const url = `/api/users/${params.userId}/boards`;
-  let data;
+  let res: Response;
   try {
-    const res = await apiClient.get(url, {
+    res = await apiClient.get(url, {
       credentials: "include",
       next: { revalidate: 60 },
     });
+  } catch {
+    return { isError: true, message: "네트워크 오류가 발생했습니다." };
+  }
+
+  let data;
+  try {
     data = await res.json();
-    if (!res.ok) {
-      return {
-        isError: true,
-        message:
-          data?.message ??
-          `보드 목록을 불러오는데 실패했습니다. (HTTP ${res.status})`,
-        ...data,
-      };
-    }
   } catch {
     return { isError: true, message: "서버 응답 형식이 올바르지 않습니다." };
+  }
+
+  if (!res.ok) {
+    return {
+      isError: true,
+      message:
+        data?.message ??
+        `보드 목록을 불러오는데 실패했습니다. (HTTP ${res.status})`,
+      ...data,
+    };
   }
 
   // 백엔드 응답 { user, boards } → 컴포넌트가 기대하는 { items, nextCursor, hasNext } 로 변환
@@ -71,7 +85,7 @@ export const getUserBoardsAction = async (params: {
       id: string;
       title: string;
       itemCount: number;
-      previewImages?: { url: string }[];
+      previewImages?: { id: string; url: string }[];
       [key: string]: unknown;
     }) => ({
       _id: board.id,

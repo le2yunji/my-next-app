@@ -3,24 +3,23 @@
 import apiClient from "@/app/utils/api-client";
 
 // 피드 상세
-export const getPostDetailAction = async (params: {
+export default async function getPostDetailAction(params: {
   userId: string;
   postId: string;
-}) => {
+}) {
   const url = `/api/users/${params.userId}/posts/${params.postId}`;
-  const res = await apiClient.get(url, {
-    credentials: "include",
-  });
+  let res: Response;
+  try {
+    res = await apiClient.get(url, { credentials: "include" });
+  } catch {
+    return { isError: true, message: "네트워크 오류가 발생했습니다." };
+  }
 
   let data;
-
   try {
     data = await res.json();
   } catch {
-    data = {
-      isError: true,
-      message: "서버 응답 형식이 올바르지 않습니다.",
-    };
+    return { isError: true, message: "서버 응답 형식이 올바르지 않습니다." };
   }
 
   if (!res.ok) {
@@ -34,4 +33,4 @@ export const getPostDetailAction = async (params: {
   }
 
   return data;
-};
+}

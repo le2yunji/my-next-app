@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { UserProfileItem } from "@/features/users/types/user.type";
+import Badge from "@/components/common/Badge";
 
 export default function UserProfile({
   user,
@@ -12,7 +13,7 @@ export default function UserProfile({
     <section className="px-5 pt-8 pb-6">
       <div className="flex items-start gap-5">
         {/* 프로필 이미지 */}
-        <div className="relative h-28 w-28 shrink-0 overflow-hidden rounded-full border-[5px] border-[#E9B088] bg-[#E5E7EB] shadow-sm">
+        <div className="relative h-28 w-28 shrink-0 overflow-hidden rounded-full bg-[#E5E7EB] shadow-sm">
           {user.profileImage ? (
             <Image
               src={user.profileImage}
@@ -83,40 +84,46 @@ export default function UserProfile({
             </div>
           </div>
 
-          {/* 통계 */}
           <div className="mt-6 flex items-center">
-            <ProfileStat label="Posts" value={user.postCount} />
-            <Divider />
-            <ProfileStat label="Followers" value={user.followerCount} />
-            <Divider />
-            <ProfileStat label="Following" value={user.followingCount} />
+            <ProfileStat label="게시물" value={user.postCount} />
+            <ProfileStat label="팔로워" value={user.followerCount} />
+            <ProfileStat label="팔로잉" value={user.followingCount} />
           </div>
         </div>
       </div>
 
       {/* 소개 */}
       {user.bio ? (
-        <p className="mt-7 max-w-[520px] text-[16px] leading-8 text-[#374151]">
+        <p className="mt-7 max-w-130 text-[16px] leading-8 text-[#374151]">
           {user.bio}
         </p>
       ) : null}
+
+      <div className="flex gap-1.5">
+        {user.interestCategories
+          ? user.interestCategories.map((category) => (
+              <Badge key={category}>{category}</Badge>
+            ))
+          : null}
+        {user.customInterestCategories
+          ? user.customInterestCategories.map((category) => (
+              <Badge key={category}>{category}</Badge>
+            ))
+          : null}
+      </div>
     </section>
   );
 }
 
 function ProfileStat({ label, value }: { label: string; value: number }) {
   return (
-    <div className="min-w-[86px] text-center">
-      <p className="text-[18px] font-semibold leading-6 text-[#111827]">
+    <div className="flex gap-2 items-center min-w-21.5 text-center">
+      <p className="text-[16px] text-[#6B7280]">{label}</p>
+      <p className="text-[16px] font-semibold leading-6 text-[#111827]">
         {formatCount(value)}
       </p>
-      <p className="mt-1 text-[14px] text-[#6B7280]">{label}</p>
     </div>
   );
-}
-
-function Divider() {
-  return <div className="mx-3 h-14 w-px bg-[#E5E7EB]" />;
 }
 
 function formatCount(value: number) {

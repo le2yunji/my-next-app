@@ -17,20 +17,25 @@ export const signupAction = async (
   password: string,
   passwordConfirm: string
 ): Promise<SignupResult> => {
-  const res = await apiClient.post("/api/auth/signup", {
-    name,
-    email,
-    phone,
-    id,
-    password,
-    passwordConfirm,
-  });
+  let res: Response;
+  try {
+    res = await apiClient.post("/api/auth/signup", {
+      name,
+      email,
+      phone,
+      id,
+      password,
+      passwordConfirm,
+    });
+  } catch {
+    return { isError: true, message: "네트워크 오류가 발생했습니다." };
+  }
 
   let data;
   try {
     data = await res.json();
   } catch {
-    data = { isError: true, message: "서버 응답 형식이 올바르지 않습니다." };
+    return { isError: true, message: "서버 응답 형식이 올바르지 않습니다." };
   }
 
   if (!res.ok) {

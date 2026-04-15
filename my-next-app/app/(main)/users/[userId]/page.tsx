@@ -5,10 +5,13 @@ import UserFeedContainer from "@/containers/user/UserFeedContainer";
 
 export default async function UserFeedPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ userId: string }>;
+  searchParams: Promise<{ tab?: string }>;
 }) {
   const { userId } = await params;
+  const { tab = "boards" } = await searchParams;
 
   return (
     <>
@@ -16,7 +19,7 @@ export default async function UserFeedPage({
         {userId}
         <h1>원본 상세 페이지</h1>
       </div>
-      <UserFeedContainer userId={userId} />
+      <UserFeedContainer userId={userId} tab={tab} />
     </>
   );
 }

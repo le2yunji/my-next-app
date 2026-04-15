@@ -4,7 +4,7 @@ import FeedItemHeader from "./FeedItemHeader";
 import FeedItemMedia from "./FeedItemMedia";
 import FeedItemMeta from "./FeedItemMeta";
 import FeedItemActions from "./FeedItemActions";
-import { FeedItem } from "../../types/feed.type";
+import { FeedItem } from "@/features/feed/types/feed.type";
 import FeedItemThumbnail from "./FeedItemThumbnail";
 
 export default function FeedListItem({
@@ -37,6 +37,7 @@ export default function FeedListItem({
       <div>{post.content}</div>
 
       <FeedItemMeta
+        postId={post.id}
         likeCount={post.likeCount}
         commentCount={post.commentCount}
         createdAt={post.createdAt}

@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getPostDetailAction } from "@/app/actions/posts.action";
+import getPostDetailAction from "@/app/actions/posts.action";
 import Image from "next/image";
 
 export default async function UserDetailPost({

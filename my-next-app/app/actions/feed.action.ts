@@ -10,18 +10,24 @@ export const getFeedAction = async (params: {
   if (params.cursor) qs.set("cursor", params.cursor);
 
   const url = `/api/feed?${qs.toString()}`;
-  const res = await apiClient.get(url, {
-    cache: "no-store", // 커서 페이지네이션은 캐시 안 함
-    credentials: "include",
-  });
+  let res: Response;
+  try {
+    res = await apiClient.get(url, {
+      cache: "no-store", // 커서 페이지네이션은 캐시 안 함
+      credentials: "include",
+    });
+  } catch {
+    return { isError: true, message: "네트워크 오류가 발생했습니다." };
+  }
+
+  let data;
+  try {
+    data = await res.json();
+  } catch {
+    return { isError: true, message: "서버 응답 형식이 올바르지 않습니다." };
+  }
 
   if (!res.ok) {
-    let data;
-    try {
-      data = await res.json();
-    } catch {
-      // JSON 파싱 실패 시 data는 빈 객체 유지
-    }
     return {
       isError: true,
       message:
@@ -30,9 +36,5 @@ export const getFeedAction = async (params: {
     };
   }
 
-  try {
-    return await res.json();
-  } catch {
-    return { isError: true, message: "서버 응답 형식이 올바르지 않습니다." };
-  }
+  return data;
 };

@@ -10,9 +10,7 @@ function toBoardCardItem(board: UserBoardItem): BoardCardItem {
   return {
     id: board._id,
     title: board.title,
-    description: board.description,
     saveCount: board.saveCount,
-    category: board.category,
     previewImages: board.previewImages ?? [],
   };
 }

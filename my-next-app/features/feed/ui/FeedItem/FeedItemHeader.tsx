@@ -2,12 +2,12 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { FeedItemModel } from "../../model/types";
+import type { FeedAuthor } from "@/features/feed/types/feed.type";
 
 export default function FeedItemHeader({
   author,
 }: {
-  author: FeedItemModel["author"];
+  author: FeedAuthor;
 }) {
   if (!author) return null;
   const profileSrc = `${author.profileImage}`;

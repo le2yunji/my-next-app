@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { shouldPriorityMedia } from "@/features/feed/lib/feedImagePolicy";
-import { FeedItemModel } from "../../model/types";
+import type { PostMediaDto } from "@/features/feed/dto/post.dto";
 
 export default function FeedItemMedia({
   postId,
@@ -10,7 +10,7 @@ export default function FeedItemMedia({
   priorityPost,
 }: {
   postId: string;
-  media: NonNullable<FeedItemModel["media"]>;
+  media: PostMediaDto[];
   priorityPost: boolean;
 }) {
   return (
