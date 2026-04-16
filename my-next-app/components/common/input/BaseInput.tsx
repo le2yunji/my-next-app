@@ -24,7 +24,7 @@ export const BaseInput = ({
     if (error) {
       return "border-red focus:border-red focus:ring-red/40";
     }
-    return "border-light-gray focus:border-rust focus:ring-rust/40";
+    return "border-light-gray focus:border-sand focus:ring-sand/40";
   };
 
   const paddingLeft = leftElement ? "pl-14" : "pl-5";

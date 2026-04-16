@@ -13,5 +13,5 @@
 
 html,
 body {
-  font-family: var(--font-sans);
+  @apply font-sans;
 }
