@@ -11,7 +11,9 @@ const {
   isValidPhone,
   normalizeText,
   normalizePhone,
+  isValidCustomCategory,
 } = require("../../utils/regex");
+const { INTEREST_CATEGORIES } = require("../../constants/interest-categories");
 
 async function signup({
   userId,
@@ -20,6 +22,8 @@ async function signup({
   phone,
   password,
   passwordConfirm,
+  interestCategories,
+  customInterestCategories,
 }) {
   if (!userId) throw createAppError(AUTH_ERROR.ID_REQUIRED);
   if (!name) throw createAppError(AUTH_ERROR.NAME_REQUIRED);
@@ -35,10 +39,22 @@ async function signup({
   if (!isValidPhone(phone)) throw createAppError(AUTH_ERROR.INVALID_PHONE);
   if (!isValidPassword(password))
     throw createAppError(AUTH_ERROR.INVALID_PASSWORD);
-
   if (password !== passwordConfirm) {
     throw createAppError(AUTH_ERROR.PASSWORD_CONFIRM_MISMATCH);
   }
+
+  if (interestCategories) {
+    if (!interestCategories.every((c) => INTEREST_CATEGORIES.includes(c)))
+      throw createAppError(AUTH_ERROR.INVALID_INTEREST_CATEGORY);
+  }
+  if (customInterestCategories) {
+    if (!customInterestCategories.every((c) => isValidCustomCategory(c)))
+      throw createAppError(AUTH_ERROR.INVALID_CUSTOM_CATEGORY);
+  }
+  const totalCategories =
+    (interestCategories?.length ?? 0) + (customInterestCategories?.length ?? 0);
+  if (totalCategories > 10)
+    throw createAppError(AUTH_ERROR.INTEREST_CATEGORY_LIMIT);
 
   const normalizedId = normalizeText(userId);
   const normalizedName = normalizeText(name);
@@ -64,6 +80,8 @@ async function signup({
     email: normalizedEmail,
     phone: normalizedPhone,
     passwordHash,
+    interestCategories,
+    customInterestCategories,
   });
 
   const savedUser = await user.save();
@@ -73,6 +91,8 @@ async function signup({
     name: savedUser.name,
     email: savedUser.email,
     phone: savedUser.phone,
+    interestCategories: savedUser.interestCategories,
+    customInterestCategories: savedUser.customInterestCategories,
     createdAt: savedUser.createdAt,
   };
 }

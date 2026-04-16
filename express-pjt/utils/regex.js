@@ -20,6 +20,9 @@ const normalizePhone = (phone) => phone.replace(/[^0-9]/g, ""); // 전화번호�
 
 const normalizeText = (input) => input.trim().toLowerCase(); // 앞뒤 공백 제거 후 소문자로 변환해 비교하기 쉽게 정규화
 
+const isValidCustomCategory = (item) =>
+  /^(?!\s)(?!.*\s$)(?!.*\s{2,})[가-힣a-zA-Z0-9\s]{1,20}$/.test(item); // 앞뒤·연속 공백 없이, 한글/영문/숫자/단일 공백만 허용하는 1~20자 커스텀 카테고리
+
 module.exports = {
   isValidId,
   isValidEmail,
@@ -28,4 +31,5 @@ module.exports = {
   isValidName,
   normalizePhone,
   normalizeText,
+  isValidCustomCategory,
 };

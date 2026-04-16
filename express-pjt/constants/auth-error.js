@@ -80,6 +80,24 @@ const AUTH_ERROR = {
     message: "이미 사용 중인 휴대폰 번호입니다.",
     status: 409,
   },
+
+  INVALID_INTEREST_CATEGORY: {
+    code: "INVALID_INTEREST_CATEGORY",
+    message: "유효하지 않은 관심사 카테고리가 포함되어 있습니다.",
+    status: 400,
+  },
+  INVALID_CUSTOM_CATEGORY: {
+    code: "INVALID_CUSTOM_CATEGORY",
+    message:
+      "커스텀 관심사는 앞뒤·연속 공백 없이 한글/영문/숫자만 허용하는 1~20자여야 합니다.",
+    status: 400,
+  },
+  INTEREST_CATEGORY_LIMIT: {
+    code: "INTEREST_CATEGORY_LIMIT",
+    message:
+      "관심사 카테고리와 커스텀 관심사는 합산 최대 10개까지 등록할 수 있습니다.",
+    status: 400,
+  },
 };
 
 module.exports = { AUTH_ERROR };
