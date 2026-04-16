@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { getMeClient } from "@/features/auth/api/getMe";
-import { useAuthStore } from "@/store/auth.store";
+import { useAuthStore } from "@/stores/auth.store";
 
 export default function AuthInitializer() {
   const setUser = useAuthStore((state) => state.setUser);

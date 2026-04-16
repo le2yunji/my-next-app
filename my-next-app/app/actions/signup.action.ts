@@ -6,7 +6,6 @@ type SignupResult = {
   isError?: boolean;
   message?: string;
   id?: string;
-  [key: string]: any; // 임시로 쓰는 코드
 };
 
 export const signupAction = async (
@@ -15,7 +14,9 @@ export const signupAction = async (
   phone: string,
   id: string,
   password: string,
-  passwordConfirm: string
+  passwordConfirm: string,
+  interestCategories: string[],
+  customInterestCategories: string[],
 ): Promise<SignupResult> => {
   let res: Response;
   try {
@@ -26,6 +27,8 @@ export const signupAction = async (
       id,
       password,
       passwordConfirm,
+      interestCategories,
+      customInterestCategories,
     });
   } catch {
     return { isError: true, message: "네트워크 오류가 발생했습니다." };

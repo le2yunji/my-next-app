@@ -5,6 +5,8 @@ export interface SignupForm {
   phone: string;
   password: string;
   passwordConfirm: string;
+  interestCategories: string[];
+  customInterestCategories: string[];
 }
 
 export type LoginForm = {
