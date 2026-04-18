@@ -5,7 +5,6 @@ import { useState } from "react";
 import {
   isValidEmail,
   isValidId,
-  isValidName,
   isValidPassword,
   isValidPhone,
 } from "@/features/auth/validation/validators";
@@ -45,8 +44,8 @@ export default function useLogin() {
     const errors: { identifier?: string; password?: string } = {};
 
     if (
-      !isValidId(form.identifier) ||
-      !isValidEmail(form.identifier) ||
+      !isValidId(form.identifier) &&
+      !isValidEmail(form.identifier) &&
       !isValidPhone(form.identifier)
     )
       errors.identifier = AUTH_ERROR_MESSAGES.identifier;

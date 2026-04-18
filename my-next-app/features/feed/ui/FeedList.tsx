@@ -1,11 +1,10 @@
 "use client";
 
 import { getFeedAction } from "@/app/actions/feed.action";
-import { useInfiniteScrollList } from "@/hooks/useInfiniteScrollList";
-
 import FeedListItem from "@/features/feed/ui/FeedItem/FeedItem";
 import { shouldPriorityPostImage } from "@/features/feed/lib/feedImagePolicy";
-import type { FeedItem } from "@/features/feed/types/feed.type";
+import { useInfiniteScrollList } from "@/hooks/useInfiniteScrollList";
+import { FeedItem } from "@/features/feed/types/feed.type";
 
 const PAGE_SIZE = 10;
 
@@ -44,7 +43,7 @@ export default function FeedList({
 
   return (
     <main className="mt-10">
-      <div className="ml-10 w-140 max-w-142.5">
+      <div className="w-full px-4 md:ml-10 md:w-140 md:max-w-142.5 md:px-0">
         {errorMsg ? (
           <p className="p-4 text-center text-sm text-red-500">{errorMsg}</p>
         ) : null}

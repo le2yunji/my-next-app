@@ -5,11 +5,9 @@ import UserProfile from "@/features/users/ui/UserProfile/UserProfile";
 export default async function UserProfileSection({
   userId,
   isOwner,
-  me,
 }: {
   userId: string;
   isOwner: boolean;
-  me: string;
 }) {
   const user = await getUserProfileAction({ userId });
 

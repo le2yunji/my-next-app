@@ -5,14 +5,14 @@ import apiClient from "@/app/utils/api-client";
 type SignupResult = {
   isError?: boolean;
   message?: string;
-  id?: string;
+  userId?: string;
 };
 
 export const signupAction = async (
   name: string,
   email: string,
   phone: string,
-  id: string,
+  userId: string,
   password: string,
   passwordConfirm: string,
   interestCategories: string[],
@@ -24,7 +24,7 @@ export const signupAction = async (
       name,
       email,
       phone,
-      id,
+      userId,
       password,
       passwordConfirm,
       interestCategories,

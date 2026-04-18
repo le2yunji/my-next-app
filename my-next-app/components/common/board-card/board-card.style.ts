@@ -29,7 +29,7 @@ export const boardCardStyles: Record<BoardCardSize, BoardCardStyle> = {
     container:
       "rounded-[24px] bg-white p-3.5 shadow-[0_4px_14px_rgba(15,23,42,0.05)]",
     collageWrap: "mb-4",
-    title: "text-[18px] font-semibold leading-6 text-[#111827]",
+    title: "text-[14px] font-semibold leading-5 text-[#111827] sm:text-[18px] sm:leading-6",
     description: "",
     metaRow: "mt-2 flex items-center justify-between gap-3",
     saveText: "text-[14px] text-[#6B7280]",

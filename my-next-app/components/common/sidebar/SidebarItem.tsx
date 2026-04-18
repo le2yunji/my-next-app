@@ -26,32 +26,46 @@ type Props = {
   href: string;
   label: string;
   icon: IconKey;
+  variant?: "sidebar" | "bottom";
 };
 
-export default function SidebarItem({ href, label, icon }: Props) {
+export default function SidebarItem({
+  href,
+  label,
+  icon,
+  variant = "sidebar",
+}: Props) {
   const pathname = usePathname();
   const isActive = pathname === href;
   const Icon = iconMap[icon];
 
+  if (variant === "bottom") {
+    return (
+      <Link
+        href={href}
+        className={`flex flex-1 flex-col items-center justify-center gap-0.5 py-2 transition-colors ${
+          isActive ? "text-black" : "text-gray-400"
+        }`}
+      >
+        <Icon size={26} strokeWidth={isActive ? 2 : 1.6} />
+      </Link>
+    );
+  }
+
   return (
     <Link
       href={href}
-      className={`
-        flex items-center gap-3 rounded-lg px-4 py-3 transition-colors
-        ${
-          isActive
-            ? "bg-black text-white dark:bg-white dark:text-black"
-            : "text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
-        }
-      `}
+      className={`flex items-center gap-3 rounded-lg px-4 py-3 transition-colors md:justify-center md:px-2 lg:justify-start lg:px-4 ${
+        isActive ? "bg-black text-white" : "text-gray-600 hover:bg-gray-100"
+      }`}
     >
       <Icon
-        size={20}
+        size={22}
         strokeWidth={1.6}
-        className={`${isActive ? "text-white" : ""}`}
+        className={isActive ? "text-white" : ""}
       />
       <span
-        className={`text-[15px] font-medium ${isActive ? "text-white" : ""}`}
+        className={`hidden lg:block text-[15px] font-medium ${isActive ? "text-white" : ""}`}
       >
         {label}
       </span>

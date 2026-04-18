@@ -51,10 +51,10 @@ export default function ProfileTabs({ activeId }: { activeId: string }) {
   return (
     <div
       ref={containerRef}
-      className="bg-warm-white rounded-2xl p-2 flex gap-2 relative"
+      className="bg-warm-white rounded-2xl p-1.5 flex gap-1 relative sm:p-2 sm:gap-2"
     >
       <div
-        className="absolute top-2 bottom-2 rounded-xl bg-white shadow-sm transition-all duration-300 ease-in-out"
+        className="absolute top-1.5 bottom-1.5 rounded-xl bg-white shadow-sm transition-all duration-300 ease-in-out sm:top-2 sm:bottom-2"
         style={{ width: sliderStyle.width, left: sliderStyle.left }}
       />
 
@@ -76,16 +76,17 @@ export default function ProfileTabs({ activeId }: { activeId: string }) {
               window.history.replaceState(null, "", `${pathname}?${params.toString()}`);
               router.refresh();
             }}
-            className={`relative z-10 inline-flex items-center justify-center gap-1 flex-1 rounded-xl px-4.5 py-3.5 h-12 cursor-pointer transition-colors duration-300 ${
+            className={`relative z-10 inline-flex items-center justify-center gap-1 flex-1 rounded-xl px-2 py-2 h-9 cursor-pointer transition-colors duration-300 sm:px-4.5 sm:py-3.5 sm:h-12 ${
               isActive
                 ? "text-cool-gray font-bold"
                 : "text-cool-gray/50 font-medium"
             }`}
           >
-            <span className="inline-flex items-center justify-center w-5 h-5">
-              <Icon size={20} />
+            <span className="inline-flex items-center justify-center w-4 h-4 sm:w-5 sm:h-5">
+              <Icon size={16} className="sm:hidden" />
+              <Icon size={20} className="hidden sm:block" />
             </span>
-            <span className="text-sm">{tab.label}</span>
+            <span className="hidden text-sm sm:inline">{tab.label}</span>
           </button>
         );
       })}

@@ -1,5 +1,4 @@
 "use client";
-
 import FeedItemHeader from "./FeedItemHeader";
 import FeedItemMedia from "./FeedItemMedia";
 import FeedItemMeta from "./FeedItemMeta";
@@ -34,7 +33,7 @@ export default function FeedListItem({
         />
       ) : null}
 
-      <div>{post.content}</div>
+      <div className="mt-2">{post.content}</div>
 
       <FeedItemMeta
         postId={post.id}

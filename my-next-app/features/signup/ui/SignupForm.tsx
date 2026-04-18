@@ -31,7 +31,10 @@ export default function SignupForm() {
     if (currentStep === 3 && !form.id) {
       router.replace("/signup?step=1");
     }
-  }, [currentStep, form.name, form.id, router]);
+    if (currentStep === 3 && form.id && !form.password) {
+      router.replace("/signup?step=2");
+    }
+  }, [currentStep, form.name, form.id, form.password, router]);
 
   return (
     <div>

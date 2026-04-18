@@ -12,9 +12,10 @@ export const SecondaryButton = ({
   size = "md",
   active = false,
   disabled = false,
+  ignoreSize = false,
   className = "",
   ...props
-}: SecondaryButtonProps) => {
+}: SecondaryButtonProps & { ignoreSize?: boolean }) => {
   const baseClasses =
     "inline-flex items-center justify-center gap-1 " +
     "cursor-pointer transition-all duration-200 ease-in-out " +
@@ -45,7 +46,7 @@ export const SecondaryButton = ({
     sm: "w-4 h-4",
   };
 
-  const classes = `${baseClasses} ${activeClasses} ${hoverClasses} ${sizeClasses[size]} ${getFontClasses()} border ${className}`;
+  const classes = `${baseClasses} ${activeClasses} ${hoverClasses} ${ignoreSize ? "" : sizeClasses[size]} ${getFontClasses()} border ${className}`;
 
   return (
     <button className={classes} disabled={disabled} type="button" {...props}>

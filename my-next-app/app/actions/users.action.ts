@@ -1,7 +1,9 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import apiClient from "@/app/utils/api-client";
 import { getUserProfile } from "../services/user.service";
+import { getMeServer } from "@/lib/auth/getMeServer";
 
 // 유저 피드 페이지 (썸네일만)
 export const getUserFeedAction = async (params: {
@@ -92,7 +94,7 @@ export const getUserBoardsAction = async (params: {
       title: board.title,
       saveCount: board.itemCount,
       previewImages: board.previewImages ?? [],
-    })
+    }),
   );
 
   return {
@@ -100,4 +102,38 @@ export const getUserBoardsAction = async (params: {
     nextCursor: null,
     hasNext: false,
   };
+};
+
+export const toggleFollowAction = async (params: {
+  targetUserId: string;
+}): Promise<{ isFollowing: boolean } | { isError: true; message: string }> => {
+  const me = await getMeServer();
+  if (!me) {
+    return { isError: true, message: "로그인이 필요합니다." };
+  }
+
+  let res: Response;
+  try {
+    res = await apiClient.post(`/api/users/${params.targetUserId}/follow`);
+  } catch {
+    return { isError: true, message: "네트워크 오류가 발생했습니다." };
+  }
+
+  let data;
+  try {
+    data = await res.json();
+  } catch {
+    return { isError: true, message: "서버 응답 형식이 올바르지 않습니다." };
+  }
+
+  if (!res.ok) {
+    return {
+      isError: true,
+      message: data?.message ?? "팔로우 요청에 실패했습니다.",
+    };
+  }
+
+  revalidatePath(`/api/users/${params.targetUserId}`);
+
+  return { isFollowing: data.isFollowing };
 };

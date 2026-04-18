@@ -51,7 +51,7 @@ export default function Step3Categories() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <p className="mb-3 font-semibold text-near-black">관심 카테고리</p>
+        <p className="mb-3 text-near-black">관심 카테고리</p>
         <div className="flex flex-wrap gap-2">
           {INTEREST_CATEGORIES.map((category) => {
             const isSelected = form.interestCategories.includes(category);
@@ -74,9 +74,7 @@ export default function Step3Categories() {
       </div>
 
       <div>
-        <p className="mb-3 font-semibold text-near-black">
-          직접 입력 카테고리
-        </p>
+        <p className="mb-3 text-near-black">찾으시는 키워드가 없으신가요 ?</p>
         <div className="flex gap-2">
           <input
             type="text"

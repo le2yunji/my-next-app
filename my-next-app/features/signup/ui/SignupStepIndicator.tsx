@@ -1,3 +1,5 @@
+import { Fragment } from "react";
+
 const STEPS = ["기본 정보", "계정 정보", "관심 카테고리"];
 
 type Props = {
@@ -6,22 +8,20 @@ type Props = {
 
 export default function SignupStepIndicator({ currentStep }: Props) {
   return (
-    <div className="mb-8 flex items-center justify-between">
+    <div className="mb-8 flex items-center">
       {STEPS.map((label, index) => {
         const step = index + 1;
         const isCompleted = step < currentStep;
         const isActive = step === currentStep;
 
         return (
-          <div key={step} className="flex flex-1 items-center">
+          <Fragment key={step}>
             <div className="flex flex-col items-center gap-1.5">
               <div
                 className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold transition-colors ${
-                  isCompleted
+                  isCompleted || isActive
                     ? "bg-black text-white"
-                    : isActive
-                      ? "bg-black text-white"
-                      : "bg-light-gray text-silver"
+                    : "bg-light-gray text-silver"
                 }`}
               >
                 {isCompleted ? (
@@ -58,7 +58,7 @@ export default function SignupStepIndicator({ currentStep }: Props) {
                 }`}
               />
             )}
-          </div>
+          </Fragment>
         );
       })}
     </div>
