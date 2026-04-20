@@ -4,7 +4,6 @@ import FeedItemMedia from "./FeedItemMedia";
 import FeedItemMeta from "./FeedItemMeta";
 import FeedItemActions from "./FeedItemActions";
 import { FeedItem } from "@/features/feed/types/feed.type";
-import FeedItemThumbnail from "./FeedItemThumbnail";
 
 export default function FeedListItem({
   post,
@@ -15,15 +14,7 @@ export default function FeedListItem({
 }) {
   return (
     <li className="mt-20">
-      <FeedItemHeader author={post.author} />
-
-      {post.thumbnail ? (
-        <FeedItemThumbnail
-          postId={post.id}
-          thumbnail={post.thumbnail}
-          priorityPost={priorityPost}
-        />
-      ) : null}
+      <FeedItemHeader author={post.author} createdAt={post.createdAt} />
 
       {post.media?.length ? (
         <FeedItemMedia
@@ -34,14 +25,15 @@ export default function FeedListItem({
       ) : null}
 
       <div className="mt-2">{post.content}</div>
-
-      <FeedItemMeta
-        postId={post.id}
-        likeCount={post.likeCount}
-        commentCount={post.commentCount}
-        createdAt={post.createdAt}
-      />
-      <FeedItemActions postId={post.id} />
+      <div className="flex items-baseline justify-between">
+        <FeedItemMeta
+          postId={post.id}
+          likeCount={post.likeCount}
+          commentCount={post.commentCount}
+          thumbnailUrl={post.media?.[0]?.url}
+        />
+        <FeedItemActions postId={post.id} />
+      </div>
     </li>
   );
 }

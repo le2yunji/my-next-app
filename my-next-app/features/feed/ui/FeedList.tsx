@@ -42,7 +42,7 @@ export default function FeedList({
     });
 
   return (
-    <main className="mt-10">
+    <main className="w-full">
       <div className="w-full px-4 md:ml-10 md:w-140 md:max-w-142.5 md:px-0">
         {errorMsg ? (
           <p className="p-4 text-center text-sm text-red-500">{errorMsg}</p>

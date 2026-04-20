@@ -1,14 +1,17 @@
 // widgets/comments-sheet/ui/BottomSheet.tsx
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { X } from "lucide-react";
 
 type BottomSheetProps = {
   children: React.ReactNode;
+  imgUrl?: string;
 };
 
-export default function BottomSheet({ children }: BottomSheetProps) {
+export default function BottomSheet({ children, imgUrl }: BottomSheetProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [closing, setClosing] = useState(false);
@@ -36,12 +39,12 @@ export default function BottomSheet({ children }: BottomSheetProps) {
 
     setTimeout(() => {
       router.back();
-    }, 250); // transition duration과 맞춰주기
+    }, 250);
   };
 
   return (
     <div className="fixed inset-0 z-50">
-      {/* backdrop */}
+      {/* 공통 배경 딤 */}
       <div
         onClick={handleClose}
         className={`absolute inset-0 bg-black/40 transition-opacity duration-250 ${
@@ -49,9 +52,9 @@ export default function BottomSheet({ children }: BottomSheetProps) {
         }`}
       />
 
-      {/* sheet */}
+      {/* ── 모바일: 하단 슬라이드업 시트 (md 미만) ── */}
       <div
-        className={`absolute bottom-0 left-0 right-0 rounded-t-3xl bg-white shadow-2xl transition-transform duration-250 ease-out
+        className={`absolute bottom-0 left-0 right-0 rounded-t-3xl bg-white shadow-2xl transition-transform duration-250 ease-out md:hidden
           ${open ? "translate-y-0" : "translate-y-full"}`}
         onClick={(e) => e.stopPropagation()}
       >
@@ -61,6 +64,50 @@ export default function BottomSheet({ children }: BottomSheetProps) {
 
         <div className="max-h-[80vh] overflow-y-auto px-4 pb-[calc(env(safe-area-inset-bottom)+16px)]">
           {children}
+        </div>
+      </div>
+
+      {/* ── 태블릿/데스크탑: 이미지 + 댓글 패널 모달 (md+) ── */}
+      <div className="absolute inset-0 hidden items-center justify-center p-4 md:flex">
+        <div
+          className={`flex max-h-[90vh] w-full max-w-225 overflow-hidden rounded-2xl bg-white shadow-2xl transition-opacity duration-250
+            ${open ? "opacity-100" : "opacity-0"}`}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* 왼쪽: 이미지 영역 */}
+          {imgUrl ? (
+            <div className="flex w-[55%] shrink-0 items-center justify-center bg-black">
+              <img
+                src={imgUrl}
+                alt=""
+                className="max-h-[90vh] w-full object-contain"
+              />
+            </div>
+          ) : (
+            // 이미지 없을 때 플레이스홀더
+            <div className="flex w-[40%] shrink-0 items-center justify-center bg-linen">
+              <div className="h-20 w-20 rounded-full bg-silver/30" />
+            </div>
+          )}
+
+          {/* 오른쪽: 댓글 패널 */}
+          <div className="flex flex-1 flex-col overflow-hidden">
+            {/* 헤더 */}
+            <div className="flex items-center justify-between border-b border-linen px-5 py-4">
+              <span className="text-[15px] font-bold">댓글</span>
+              <button
+                type="button"
+                onClick={handleClose}
+                className="text-cool-gray transition-opacity hover:opacity-70"
+                aria-label="닫기"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* 댓글 목록 */}
+            <div className="flex-1 overflow-y-auto px-5 py-4">{children}</div>
+          </div>
         </div>
       </div>
     </div>

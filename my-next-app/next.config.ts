@@ -16,6 +16,10 @@ const nextConfig: NextConfig = {
         port: "8080",
         pathname: "/static/**",
       },
+      {
+        protocol: "https",
+        hostname: "i.pravatar.cc",
+      },
     ],
   },
 };

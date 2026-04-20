@@ -19,7 +19,7 @@ export const PrimaryButton = ({
 
   return (
     <button
-      className={`${baseClasses} ${ignoreSize ? "" : sizeClasses[size]} ${className}`}
+      className={`${baseClasses} ${ignoreSize ? "w-fill h-full" : sizeClasses[size]} ${className}`}
       disabled={disabled}
       type="button"
       {...props}

@@ -56,7 +56,7 @@ export default function SidebarItem({
     <Link
       href={href}
       className={`flex items-center gap-3 rounded-lg px-4 py-3 transition-colors md:justify-center md:px-2 lg:justify-start lg:px-4 ${
-        isActive ? "bg-black text-white" : "text-gray-600 hover:bg-gray-100"
+        isActive ? "bg-black text-white" : "text-gray-600 hover:bg-linen"
       }`}
     >
       <Icon

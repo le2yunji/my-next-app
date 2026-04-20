@@ -1,12 +1,14 @@
 import { sidebarItems } from "./sidebarConfig";
 import SidebarItem from "./SidebarItem";
 import Logo from "./Logo";
+import CreatePostButton from "./CreatePostButton";
+import SidebarUserAvatar from "./SidebarUserAvatar";
 
 export default function Sidebar() {
   return (
     <>
       {/* 태블릿+ : 왼쪽 사이드바 (md: 아이콘만 / lg+: 아이콘+텍스트) */}
-      <aside className="hidden md:flex sticky top-0 h-screen flex-col bg-warm-white py-6 md:w-20 md:px-2 lg:w-50 lg:px-3">
+      <aside className="sticky top-0 hidden h-screen flex-col bg-warm-white py-6 md:flex md:w-20 md:px-2 lg:w-50 lg:px-3">
         <div className="mb-8 flex items-center justify-center px-2 lg:justify-start lg:px-4">
           {/* 태블릿(md): 컴팩트 로고, 데스크탑(lg+): 풀 로고 */}
           <Logo variant="compact-plain" className="lg:hidden" />
@@ -23,6 +25,12 @@ export default function Sidebar() {
             />
           ))}
         </nav>
+
+        {/* 하단 영역: 새 게시물 버튼 + 내 프로필 아바타 */}
+        <div className="mt-auto flex flex-col gap-1 px-2 lg:px-0">
+          <CreatePostButton />
+          <SidebarUserAvatar />
+        </div>
       </aside>
 
       {/* 모바일 : 상단 로고 바 */}

@@ -5,11 +5,26 @@ import CommentsPanel from "@/widgets/comments-sheet/ui/CommentsPanel";
 
 export default function CommentsBottomSheet({
   params,
+  searchParams,
 }: {
   params: Promise<{ postId: string }>;
+  searchParams: Promise<{ img?: string }>;
 }) {
+  return <BottomSheetWrapper params={params} searchParams={searchParams} />;
+}
+
+async function BottomSheetWrapper({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ postId: string }>;
+  searchParams: Promise<{ img?: string }>;
+}) {
+  const { postId } = await params;
+  const { img } = await searchParams;
+
   return (
-    <BottomSheet>
+    <BottomSheet imgUrl={img}>
       <Suspense
         fallback={
           <p className="py-6 text-center text-sm text-gray-400">
@@ -17,17 +32,8 @@ export default function CommentsBottomSheet({
           </p>
         }
       >
-        <CommentsPanelWrapper params={params} />
+        <CommentsPanel postId={postId} />
       </Suspense>
     </BottomSheet>
   );
-}
-
-async function CommentsPanelWrapper({
-  params,
-}: {
-  params: Promise<{ postId: string }>;
-}) {
-  const { postId } = await params;
-  return <CommentsPanel postId={postId} />;
 }

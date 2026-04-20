@@ -1,9 +1,9 @@
-import Image from "next/image";
 import { UserProfileItem } from "@/features/users/types/user.type";
 import Badge from "@/components/common/Badge";
 import { PrimaryButton } from "@/components/common/button/PrimaryButton";
 import { SecondaryButton } from "@/components/common/button/SecondaryButton";
 import FollowButton from "./FollowButton";
+import Avatar from "@/components/common/Avatar";
 
 export default function UserProfile({
   user,
@@ -15,23 +15,13 @@ export default function UserProfile({
   return (
     <section className="px-4 pt-5 pb-6 sm:px-5 sm:pt-8">
       <div className="flex items-start gap-3 sm:gap-5">
-        {/* 프로필 이미지 */}
-        <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-full bg-[#E5E7EB] shadow-sm sm:h-20 sm:w-20 md:h-28 md:w-28">
-          {user.profileImage ? (
-            <Image
-              src={user.profileImage}
-              alt={`${user.userId} 프로필 이미지`}
-              fill
-              className="object-cover"
-              unoptimized
-              sizes="112px"
-            />
-          ) : (
-            <div className="flex h-full w-full items-center justify-center text-sm font-medium text-[#9CA3AF]">
-              No Image
-            </div>
-          )}
-        </div>
+        {/* 프로필 이미지: 기본 lg → sm:xl → md:2xl */}
+        <Avatar
+          src={user.profileImage}
+          alt={`${user.userId} 프로필 이미지`}
+          size="xxl"
+          className="h-16 w-16 shadow-sm sm:h-20 sm:w-20 md:h-28 md:w-28"
+        />
 
         {/* 우측 정보 */}
         <div className="min-w-0 flex-1 pt-1 sm:pt-2">

@@ -15,6 +15,5 @@ export type FeedItem = {
   commentCount: number;
   createdAt: string;
   media: PostMediaDto[];
-  thumbnail: PostMediaDto | null;
   mediaCount: number;
 };
