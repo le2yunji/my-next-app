@@ -19,7 +19,6 @@ function attachAbsoluteMediaUrl(items = []) {
 
 function toPostThumbnailItem(p) {
   const media = p.media ?? [];
-  const thumb = media[0] ?? null;
 
   return {
     id: String(p._id ?? p.id),
@@ -28,17 +27,12 @@ function toPostThumbnailItem(p) {
     createdAt: p.createdAt,
     likeCount: p.likeCount ?? 0,
     commentCount: p.commentCount ?? 0,
-    thumbnail: thumb
-      ? {
-          type: thumb.type,
-          url:
-            thumb.thumbnailUrl ??
-            thumb.displayUrl ??
-            thumb.fullUrl ??
-            thumb.url ??
-            null,
-        }
-      : null,
+    // media[0]이 썸네일 역할, 전체 배열로 스와이프 캐러셀 지원
+    media: media.map((m) => ({
+      type: m.type,
+      url: m.displayUrl ?? m.fullUrl ?? m.url ?? null,
+      order: m.order,
+    })),
     mediaCount: media.length,
   };
 }

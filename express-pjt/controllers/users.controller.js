@@ -1,5 +1,6 @@
 // controllers/users.controller.js
 const { getUserProfileData } = require("../services/user-profile.service");
+const { toggleFollow } = require("../services/follow.service");
 const { toUserProfileResponse } = require("../mappers/user.mapper");
 const { toUserPostItemResponse } = require("../mappers/posts.mapper");
 
@@ -32,6 +33,8 @@ async function getUserProfile(req, res) {
     }
 
     const { user, counts, relationship } = result.data;
+
+    console.log(result.data);
 
     return res.status(200).json({
       profile: toUserProfileResponse({
@@ -84,7 +87,7 @@ async function getUserFeed(req, res) {
 
     return res.status(200).json({
       items: posts.map(({ post, mediaList }) =>
-        toUserPostItemResponse({ post, mediaList })
+        toUserPostItemResponse({ post, mediaList }),
       ),
       nextCursor: pageInfo.nextCursor,
       hasNext: pageInfo.hasNext,
@@ -95,4 +98,27 @@ async function getUserFeed(req, res) {
   }
 }
 
-module.exports = { getUserProfile, getUserFeed };
+async function followUser(req, res) {
+  try {
+    const followerMongoId = req.user.mongoId;
+    const targetUserId = req.params.userId;
+
+    const { isFollowing } = await toggleFollow({
+      followerMongoId,
+      targetUserId,
+    });
+
+    return res.status(200).json({ isFollowing });
+  } catch (error) {
+    if (error.status === 404) {
+      return res.status(404).json({ message: error.message });
+    }
+    if (error.status === 400) {
+      return res.status(400).json({ message: error.message });
+    }
+    console.error("[FOLLOW_USER ERROR]", error);
+    return res.status(500).json({ message: "internal server error" });
+  }
+}
+
+module.exports = { getUserProfile, getUserFeed, followUser };

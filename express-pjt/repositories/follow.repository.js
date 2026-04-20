@@ -29,8 +29,30 @@ const existsFollowRelation = ({ followerMongoId, followingMongoId }) => {
   });
 };
 
+/**
+ * 팔로우 생성
+ */
+const createFollowRelation = ({ followerMongoId, followingMongoId }) => {
+  return Follow.create({
+    followerId: followerMongoId,
+    followingId: followingMongoId,
+  });
+};
+
+/**
+ * 팔로우 삭제
+ */
+const deleteFollowRelation = ({ followerMongoId, followingMongoId }) => {
+  return Follow.deleteOne({
+    followerId: followerMongoId,
+    followingId: followingMongoId,
+  });
+};
+
 module.exports = {
   countFollowersByUserMongoId,
   countFollowingsByUserMongoId,
   existsFollowRelation,
+  createFollowRelation,
+  deleteFollowRelation,
 };

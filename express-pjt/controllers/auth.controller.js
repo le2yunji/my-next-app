@@ -36,7 +36,7 @@ async function signup(req, res, next) {
 async function login(req, res, next) {
   try {
     const { accessToken, refreshToken, user } = await loginService.login(
-      req.body
+      req.body,
     );
 
     res.cookie("accessToken", accessToken, accessTokenCookieOptions);

@@ -4,11 +4,6 @@ const User = require("../../models/user.model");
 const { AUTH_ERROR } = require("../../constants/auth-error");
 const { createAppError } = require("../../utils/app-error");
 const {
-  isValidId,
-  isValidPassword,
-  isValidName,
-  isValidEmail,
-  isValidPhone,
   normalizeText,
   normalizePhone,
   isValidCustomCategory,
@@ -21,34 +16,21 @@ async function signup({
   email,
   phone,
   password,
-  passwordConfirm,
   interestCategories,
   customInterestCategories,
 }) {
-  if (!userId) throw createAppError(AUTH_ERROR.ID_REQUIRED);
-  if (!name) throw createAppError(AUTH_ERROR.NAME_REQUIRED);
-  if (!email) throw createAppError(AUTH_ERROR.EMAIL_REQUIRED);
-  if (!phone) throw createAppError(AUTH_ERROR.PHONE_REQUIRED);
-  if (!password) throw createAppError(AUTH_ERROR.PASSWORD_REQUIRED);
-  if (!passwordConfirm)
-    throw createAppError(AUTH_ERROR.PASSWORD_CONFIRM_REQUIRED);
-
-  if (!isValidId(userId)) throw createAppError(AUTH_ERROR.INVALID_ID);
-  if (!isValidName(name)) throw createAppError(AUTH_ERROR.INVALID_NAME);
-  if (!isValidEmail(email)) throw createAppError(AUTH_ERROR.INVALID_EMAIL);
-  if (!isValidPhone(phone)) throw createAppError(AUTH_ERROR.INVALID_PHONE);
-  if (!isValidPassword(password))
-    throw createAppError(AUTH_ERROR.INVALID_PASSWORD);
-  if (password !== passwordConfirm) {
-    throw createAppError(AUTH_ERROR.PASSWORD_CONFIRM_MISMATCH);
-  }
-
   if (interestCategories) {
-    if (!interestCategories.every((c) => INTEREST_CATEGORIES.includes(c)))
+    if (
+      !Array.isArray(interestCategories) ||
+      !interestCategories.every((c) => INTEREST_CATEGORIES.includes(c))
+    )
       throw createAppError(AUTH_ERROR.INVALID_INTEREST_CATEGORY);
   }
   if (customInterestCategories) {
-    if (!customInterestCategories.every((c) => isValidCustomCategory(c)))
+    if (
+      !Array.isArray(customInterestCategories) ||
+      !customInterestCategories.every((c) => isValidCustomCategory(c))
+    )
       throw createAppError(AUTH_ERROR.INVALID_CUSTOM_CATEGORY);
   }
   const totalCategories =
@@ -57,19 +39,27 @@ async function signup({
     throw createAppError(AUTH_ERROR.INTEREST_CATEGORY_LIMIT);
 
   const normalizedId = normalizeText(userId);
-  const normalizedName = normalizeText(name);
+  const normalizedName = name.trim();
   const normalizedEmail = normalizeText(email);
   const normalizedPhone = normalizePhone(phone);
 
-  // 기존 회원 확인
-  const existingIdUser = await User.findOne({ userId: normalizedId });
-  if (existingIdUser) throw createAppError(AUTH_ERROR.DUPLICATE_ID);
+  // 기존 회원 확인 (탈퇴 회원 제외)
+  const existingUser = await User.findOne({
+    isDeleted: false,
+    $or: [
+      { userId: normalizedId },
+      { email: normalizedEmail },
+      { phone: normalizedPhone },
+    ],
+  }).select("userId email phone");
 
-  const existingEmailUser = await User.findOne({ email: normalizedEmail });
-  if (existingEmailUser) throw createAppError(AUTH_ERROR.DUPLICATE_EMAIL);
-
-  const existingPhoneUser = await User.findOne({ phone: normalizedPhone });
-  if (existingPhoneUser) throw createAppError(AUTH_ERROR.DUPLICATE_PHONE);
+  if (existingUser) {
+    if (existingUser.userId === normalizedId)
+      throw createAppError(AUTH_ERROR.DUPLICATE_ID);
+    if (existingUser.email === normalizedEmail)
+      throw createAppError(AUTH_ERROR.DUPLICATE_EMAIL);
+    throw createAppError(AUTH_ERROR.DUPLICATE_PHONE);
+  }
 
   // 비밀번호 해시화
   const passwordHash = await bcrypt.hash(password, 10);

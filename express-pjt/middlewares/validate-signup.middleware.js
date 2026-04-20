@@ -8,18 +8,18 @@ const {
 
 function validateSignup(req, res, next) {
   try {
-    const { name, id, email, phone, password, passwordConfirm } = req.body;
+    const { name, userId, email, phone, password, passwordConfirm } = req.body;
 
     // 필수값 검사
-    if (!id || !password || !passwordConfirm) {
+    if (!userId || !name || !email || !phone || !password || !passwordConfirm) {
       return res.status(400).json({
         isError: true,
-        message: "이름, 아이디, 비밀번호, 비밀번호 확인은 필수 입력값입니다.",
+        message: "아이디, 이름, 이메일, 휴대폰 번호, 비밀번호, 비밀번호 확인은 필수 입력값입니다.",
       });
     }
 
     // 아이디 형식 검사
-    if (!isValidId(id)) {
+    if (!isValidId(userId)) {
       return res.status(400).json({
         isError: true,
         message: "아이디 형식이 올바르지 않습니다.",
@@ -27,7 +27,7 @@ function validateSignup(req, res, next) {
     }
 
     // 이름 형식 검사
-    if (name && !isValidName(name)) {
+    if (!isValidName(name)) {
       return res.status(400).json({
         isError: true,
         message: "이름 형식이 올바르지 않습니다.",
@@ -49,16 +49,16 @@ function validateSignup(req, res, next) {
       });
     }
 
-    // 6. 이메일 형식 검사
-    if (email && !isValidEmail(email)) {
+    // 이메일 형식 검사
+    if (!isValidEmail(email)) {
       return res.status(400).json({
         isError: true,
         message: "이메일 형식이 올바르지 않습니다.",
       });
     }
 
-    // 7. 휴대폰 번호 형식 검사
-    if (phone && !isValidPhone(phone)) {
+    // 휴대폰 번호 형식 검사
+    if (!isValidPhone(phone)) {
       return res.status(400).json({
         isError: true,
         message: "휴대폰 번호 형식이 올바르지 않습니다.",

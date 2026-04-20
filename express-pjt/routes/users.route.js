@@ -51,4 +51,6 @@ usersRouter.get(
   commentsController.getPostComments,
 );
 
+usersRouter.post("/:userId/follow", authenticate, usersController.followUser);
+
 module.exports = usersRouter;
