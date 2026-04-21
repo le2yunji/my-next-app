@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { SignupForm } from "@/types/auth";
+import type { SignupForm } from "@/features/signup/types/signup.type";
 
 type SignupState = {
   form: SignupForm;

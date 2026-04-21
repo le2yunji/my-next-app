@@ -10,7 +10,7 @@ import {
 } from "@/features/auth/validation/validators";
 
 import { AUTH_ERROR_MESSAGES } from "@/features/auth/constants/errorMessages";
-import type { LoginForm } from "@/types/auth";
+import type { LoginForm } from "@/features/login/types/login.type";
 import { loginApi } from "@/features/login/api/login";
 
 export default function useLogin() {

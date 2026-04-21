@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import ProfileTabs from "@/features/users/ui/ProfileTabs/ProfileTabs";
 import { getMeServer } from "@/lib/auth/getMeServer";
 import UserProfileSection from "@/features/users/ui/UserProfile/UserProfileSection";
-import UserFeedSection from "@/features/users/ui/UserFeed/UserFeedSection";
+import UserFeedSection from "@/features/feeds/ui/UserFeedSection";
 
 export default async function UserFeedContainer({
   userId,
@@ -17,7 +17,7 @@ export default async function UserFeedContainer({
   const isOwner = me?.userId === userId;
 
   return (
-    <>
+    <div className="px-2 md:px-10 ">
       <UserProfileSection userId={userId} isOwner={isOwner} />
 
       <div className="px-5 mb-4">
@@ -27,6 +27,6 @@ export default async function UserFeedContainer({
       <Suspense fallback={<div>피드 리스트 loading...</div>}>
         <UserFeedSection userId={userId} isOwner={isOwner} tab={tab} />
       </Suspense>
-    </>
+    </div>
   );
 }

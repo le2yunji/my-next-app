@@ -1,5 +1,5 @@
 import { getFeedAction } from "@/app/actions/feed.action";
-import FeedList from "@/features/feed/ui/FeedList";
+import FeedList from "@/features/home/ui/FeedList";
 
 const PAGE_SIZE = 10;
 

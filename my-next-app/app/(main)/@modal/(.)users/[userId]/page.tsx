@@ -1,6 +1,6 @@
 // app/(main)/@modal/(.)users/[userId]/page.tsx
 import UserFeedContainer from "@/containers/user/UserFeedContainer";
-import UserFeedModal from "@/containers/user/UserFeedModal";
+import UserFeedModal from "@/features/feeds/ui/UserFeedModal";
 
 export default async function UserFeedPage({
   params,

@@ -15,7 +15,3 @@ export interface BaseButtonProps extends React.ButtonHTMLAttributes<HTMLButtonEl
   size?: ButtonSize;
 }
 
-export interface LoginRequest {
-  id: string;
-  password: string;
-}

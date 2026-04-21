@@ -1,7 +1,7 @@
 // app/(main)/@sheet/(.)posts/[postId]/comments/page.tsx
 import { Suspense } from "react";
-import BottomSheet from "@/widgets/comments-sheet/ui/BottomSheet";
-import CommentsPanel from "@/widgets/comments-sheet/ui/CommentsPanel";
+import BottomSheet from "@/features/comments/ui/BottomSheet";
+import CommentsPanel from "@/features/comments/ui/CommentsPanel";
 
 export default function CommentsBottomSheet({
   params,

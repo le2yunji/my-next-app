@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Plus } from "lucide-react";
-import CreatePostModal from "@/features/post/ui/CreatePostModal";
+import CreatePostModal from "@/features/posts/ui/CreatePostModal";
 
 export default function CreatePostButton() {
   const [open, setOpen] = useState(false);
@@ -17,7 +17,9 @@ export default function CreatePostButton() {
         aria-label="새 게시물"
       >
         <Plus size={20} strokeWidth={2.2} />
-        <span className="hidden text-[14px] font-semibold lg:block">새 게시물</span>
+        <span className="hidden text-[14px] font-semibold lg:block">
+          새 게시물
+        </span>
       </button>
 
       {open && <CreatePostModal onClose={() => setOpen(false)} />}
