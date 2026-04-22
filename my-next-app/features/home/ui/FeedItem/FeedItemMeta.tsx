@@ -6,11 +6,14 @@ import { useState } from "react";
 
 export default function FeedItemMeta({
   postId,
+  authorHandle,
   likeCount,
   commentCount,
   thumbnailUrl,
 }: {
   postId: string;
+  /** 작성자의 userId (handle). 댓글 시트/페이지에서 프로필 조회에 사용 */
+  authorHandle: string;
   likeCount: number;
   commentCount: number;
   thumbnailUrl?: string;
@@ -41,10 +44,10 @@ export default function FeedItemMeta({
       <button
         type="button"
         onClick={() => {
-          const qs = thumbnailUrl
-            ? `?img=${encodeURIComponent(thumbnailUrl)}`
-            : "";
-          router.push(`/posts/${postId}/comments${qs}`);
+          const params = new URLSearchParams();
+          if (thumbnailUrl) params.set("img", thumbnailUrl);
+          params.set("userId", authorHandle);
+          router.push(`/posts/${postId}/comments?${params.toString()}`);
         }}
         className="flex items-center gap-1"
       >

@@ -1,5 +1,5 @@
 export type UserProfileItem = {
-  id: string;
+  _id: string;
   userId: string;
   name: string;
   profileImage: string | null;

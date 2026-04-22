@@ -28,6 +28,7 @@ export default function FeedListItem({
       <div className="flex items-baseline justify-between">
         <FeedItemMeta
           postId={post.id}
+          authorHandle={post.author.userId}
           likeCount={post.likeCount}
           commentCount={post.commentCount}
           thumbnailUrl={post.media?.[0]?.url}

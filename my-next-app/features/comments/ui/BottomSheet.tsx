@@ -1,17 +1,26 @@
 // widgets/comments-sheet/ui/BottomSheet.tsx
-/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { X } from "lucide-react";
+import { UserProfileItem } from "@/features/users/types/user.type";
+import type { PostMediaDto } from "@/features/home/dto/post.dto";
+import PostMediaCarousel from "@/features/posts/ui/PostMediaCarousel";
 
 type BottomSheetProps = {
+  postId: string;
   children: React.ReactNode;
-  imgUrl?: string;
+  postAuthor?: UserProfileItem | null;
+  media?: PostMediaDto[];
 };
 
-export default function BottomSheet({ children, imgUrl }: BottomSheetProps) {
+export default function BottomSheet({
+  postId,
+  children,
+  postAuthor,
+  media,
+}: BottomSheetProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [closing, setClosing] = useState(false);
@@ -75,12 +84,12 @@ export default function BottomSheet({ children, imgUrl }: BottomSheetProps) {
           onClick={(e) => e.stopPropagation()}
         >
           {/* 왼쪽: 이미지 영역 */}
-          {imgUrl ? (
+          {media?.length ? (
             <div className="flex w-[55%] shrink-0 items-center justify-center bg-black">
-              <img
-                src={imgUrl}
-                alt=""
-                className="max-h-[90vh] w-full object-contain"
+              <PostMediaCarousel
+                postId={postId}
+                media={media}
+                className="w-full"
               />
             </div>
           ) : (
@@ -94,7 +103,9 @@ export default function BottomSheet({ children, imgUrl }: BottomSheetProps) {
           <div className="flex flex-1 flex-col overflow-hidden">
             {/* 헤더 */}
             <div className="flex items-center justify-between border-b border-linen px-5 py-4">
-              <span className="text-[15px] font-bold">댓글</span>
+              <span className="text-[15px] font-bold">
+                {postAuthor ? `${postAuthor.userId}` : "댓글"}
+              </span>
               <button
                 type="button"
                 onClick={handleClose}

@@ -45,7 +45,7 @@ export default function CommentItem({ comment, onReply }: Props) {
           <>
             <div className="flex items-baseline gap-2">
               <span className="text-sm font-semibold text-near-black">
-                @{comment.author.userId}
+                {comment.author.userId}
               </span>
               <span className="text-xs text-silver">
                 {formatRelativeTime(comment.createdAt)}
@@ -60,7 +60,7 @@ export default function CommentItem({ comment, onReply }: Props) {
               <button
                 type="button"
                 onClick={() => onReply(comment.id, comment.author.userId)}
-                className="mt-1 text-xs text-cool-gray hover:text-near-black"
+                className="mt-1 text-sm text-cool-gray hover:text-near-black"
               >
                 답글 달기
               </button>

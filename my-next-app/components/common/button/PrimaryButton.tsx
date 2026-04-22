@@ -19,7 +19,8 @@ export const PrimaryButton = ({
 
   return (
     <button
-      className={`${baseClasses} ${ignoreSize ? "w-fill h-full" : sizeClasses[size]} ${className}`}
+      // ignoreSize 시 size·font 클래스 모두 외부 className에 위임
+      className={`${baseClasses} ${ignoreSize ? "" : sizeClasses[size]} ${className}`}
       disabled={disabled}
       type="button"
       {...props}

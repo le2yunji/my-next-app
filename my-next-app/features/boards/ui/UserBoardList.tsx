@@ -1,12 +1,12 @@
 "use client";
 
 import { getUserBoardsAction } from "@/app/actions/users.action";
-import BoardCard from "@/components/common/board-card";
+import BoardCard from "@/components/common/board";
 import { useInfiniteScrollList } from "@/hooks/useInfiniteScrollList";
-import type { BoardItem as BoardCardItem } from "@/types/board";
 import type { UserBoardListItem } from "@/features/boards/types/board.type";
+import { BoardItem } from "@/components/common/board/board.type";
 
-function toBoardCardItem(board: UserBoardListItem): BoardCardItem {
+function toBoardCardItem(board: UserBoardListItem): BoardItem {
   return {
     id: board._id,
     title: board.title,

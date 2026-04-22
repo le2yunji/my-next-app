@@ -3,85 +3,84 @@
 import { Suspense } from "react";
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
-import { getPostCommentsAction } from "@/app/actions/comments.action";
-import { getMeServer } from "@/lib/auth/getMeServer";
-import CommentList from "@/features/comments/ui/CommentList";
+import CommentsSkeleton from "@/features/comments/ui/CommentsSkeleton";
+import CommentsContent from "@/features/comments/ui/CommentsContent";
+import { getUserProfileAction } from "@/app/actions/users.action";
+import FollowButton from "@/features/users/ui/UserProfile/FollowButton";
+import Avatar from "@/components/common/Avatar";
+import Image from "next/image";
+import getPostDetailAction from "@/app/actions/posts.action";
 
 export default async function CommentsPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ postId: string }>;
+  searchParams: Promise<{ userId?: string }>;
 }) {
-  const { postId } = await params;
+  const [{ postId }, { userId }] = await Promise.all([params, searchParams]);
 
+  const [author, postData] = await Promise.all([
+    userId ? getUserProfileAction({ userId }) : null,
+    userId ? getPostDetailAction({ userId, postId }) : null, // 추가
+  ]);
   return (
-    <div className="flex h-screen flex-col md:h-auto md:min-h-screen">
+    <div className="flex h-screen flex-col md:h-auto md:min-h-screenm ml-10">
       {/* 헤더 */}
       <header className="flex items-center gap-3 border-b border-linen px-4 py-4">
         <Link
-          href={`/posts/${postId}`}
+          href={`/`}
           className="text-cool-gray transition-opacity hover:opacity-70"
           aria-label="뒤로가기"
         >
           <ChevronLeft size={22} />
         </Link>
-        <h1 className="text-[15px] font-bold text-near-black">댓글</h1>
+        <div className="flex items-center gap-2">
+          <Avatar
+            src={author ? author.profileImage : null}
+            alt={author ? `${author.userId}의 프로필 사진` : "알수없음"}
+            size="xs"
+            className="mt-0.5 shrink-0"
+          />
+          <h1 className="text-[15px] font-bold text-near-black">
+            {author?.userId ? `${author.userId}` : "댓글"}
+          </h1>
+        </div>
+
+        <FollowButton
+          targetUserId={author._id}
+          initialIsFollowing={false}
+          size={"sm"}
+        />
       </header>
+
+      {/* 사진 1행 나열 */}
+      {postData?.post?.media?.length ? (
+        <div
+          className="flex gap-2 overflow-x-auto px-4 py-4 scrollbar-hide"
+          style={{ scrollbarWidth: "none" }}
+        >
+          {postData.post.media.map((m: { url: string; order: number }) => (
+            <div
+              key={m.order}
+              className="relative aspect-square h-90 w-90 shrink-0 overflow-hidden rounded-md bg-[#ECE7E1]"
+            >
+              <Image
+                src={m.url}
+                alt=""
+                fill
+                className="object-cover"
+                unoptimized
+              />
+            </div>
+          ))}
+        </div>
+      ) : null}
 
       {/* 댓글 목록 + 입력창 */}
       <Suspense fallback={<CommentsSkeleton />}>
-        <CommentsContent postId={postId} />
+        <CommentsContent postId={postId} author={author} />
       </Suspense>
-    </div>
-  );
-}
-
-async function CommentsContent({ postId }: { postId: string }) {
-  const [data, me] = await Promise.all([
-    getPostCommentsAction({ postId }),
-    getMeServer(),
-  ]);
-
-  if (data?.isError) {
-    return (
-      <p className="py-12 text-center text-sm text-red-500">{data.message}</p>
-    );
-  }
-
-  const threads = data?.items ?? [];
-
-  return (
-    <>
-      {/* 댓글 수 */}
-      <div className="px-4 py-3">
-        <span className="text-sm font-semibold text-cool-gray">
-          댓글 {threads.length > 0 ? `${threads.length}개` : ""}
-        </span>
-      </div>
-
-      {/* 댓글 목록 + 입력창 (클라이언트 컴포넌트) */}
-      <CommentList
-        threads={threads}
-        postId={postId}
-        currentUserProfileImage={me?.profileImage ?? null}
-      />
-    </>
-  );
-}
-
-function CommentsSkeleton() {
-  return (
-    <div className="flex-1 px-4 py-6">
-      {[...Array(4)].map((_, i) => (
-        <div key={i} className="mb-5 flex gap-3">
-          <div className="h-8 w-8 shrink-0 rounded-full bg-linen" />
-          <div className="flex-1 space-y-2">
-            <div className="h-3 w-20 rounded bg-linen" />
-            <div className="h-3 w-full rounded bg-linen" />
-            <div className="h-3 w-2/3 rounded bg-linen" />
-          </div>
-        </div>
-      ))}
     </div>
   );
 }

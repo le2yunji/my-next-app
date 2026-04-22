@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import getPostDetailAction from "@/app/actions/posts.action";
+import PostMediaCarousel from "./PostMediaCarousel";
 
 export default async function PostDetail({
   params,
@@ -52,27 +52,9 @@ export default async function PostDetail({
         </p>
       </div>
 
-      {/* 미디어 그리드 */}
+      {/* 미디어 캐러셀 */}
       {post.media && post.media.length > 0 ? (
-        <ul className="grid grid-cols-3 gap-2.5 px-5">
-          {post.media.map(
-            (media: { url: string; type: string; order: number }) => (
-              <li key={`${post._id}-${media.order}`}>
-                <div className="relative aspect-square w-full overflow-hidden rounded-[18px] bg-[#ECE7E1]">
-                  <Image
-                    src={media.url}
-                    fill
-                    alt=""
-                    className="object-cover"
-                    unoptimized
-                    sizes="(max-width: 768px) 30vw, 180px"
-                  />
-                  <div className="pointer-events-none absolute inset-0 rounded-[18px] ring-1 ring-black/4" />
-                </div>
-              </li>
-            ),
-          )}
-        </ul>
+        <PostMediaCarousel postId={post._id} media={post.media} />
       ) : (
         <div className="mx-5 rounded-3xl bg-[#F7F5F2] px-4 py-10 text-center">
           <p className="text-sm text-[#9CA3AF]">미디어가 없습니다.</p>

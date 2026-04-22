@@ -46,7 +46,8 @@ export const SecondaryButton = ({
     sm: "w-4 h-4",
   };
 
-  const classes = `${baseClasses} ${activeClasses} ${hoverClasses} ${ignoreSize ? "" : sizeClasses[size]} ${getFontClasses()} border ${className}`;
+  // ignoreSize 시 폰트 클래스도 외부 className에 위임
+  const classes = `${baseClasses} ${activeClasses} ${hoverClasses} ${ignoreSize ? "" : `${sizeClasses[size]} ${getFontClasses()}`} border ${className}`;
 
   return (
     <button className={classes} disabled={disabled} type="button" {...props}>

@@ -1,4 +1,5 @@
-// widgets/comments-sheet/ui/CommentsPanel.tsx
+// features/comments/ui/CommentsPanel.tsx
+// 삭제 예정
 import { getPostCommentsAction } from "@/app/actions/comments.action";
 
 type Author = {
