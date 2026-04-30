@@ -29,10 +29,9 @@ type Props = {
   href: string;
   label: string;
   icon: IconKey;
-  // "sidebar": 좌측 사이드바, "bottom": 모바일 하단 탭바
   variant?: "sidebar" | "bottom";
-  // true이면 비로그인 클릭 시 로그인 페이지로 유도
   authRequired?: boolean;
+  badge?: number;
 };
 
 export default function SidebarItem({
@@ -41,6 +40,7 @@ export default function SidebarItem({
   icon,
   variant = "sidebar",
   authRequired = false,
+  badge,
 }: Props) {
   const pathname = usePathname();
   const router = useRouter();
@@ -68,16 +68,23 @@ export default function SidebarItem({
     }
   };
 
+  const showBadge = !!badge && badge > 0;
+
   if (variant === "bottom") {
     return (
       <Link
         href={resolvedHref}
         onClick={handleAuthClick}
-        className={`flex flex-1 flex-col items-center justify-center gap-0.5 py-2 transition-colors ${
+        className={`relative flex flex-1 flex-col items-center justify-center gap-0.5 py-2 transition-colors ${
           isActive ? "text-black" : "text-gray-400"
         }`}
       >
         <Icon size={26} strokeWidth={isActive ? 2 : 1.6} />
+        {showBadge && (
+          <span className="absolute top-1.5 right-1/4 flex h-4 min-w-4 items-center justify-center rounded-full bg-rust px-0.5 text-[10px] font-bold text-white">
+            {badge > 99 ? "99+" : badge}
+          </span>
+        )}
       </Link>
     );
   }
@@ -90,11 +97,18 @@ export default function SidebarItem({
         isActive ? "bg-black text-white" : "text-gray-600 hover:bg-linen"
       }`}
     >
-      <Icon
-        size={22}
-        strokeWidth={1.6}
-        className={isActive ? "text-white" : ""}
-      />
+      <span className="relative">
+        <Icon
+          size={22}
+          strokeWidth={1.6}
+          className={isActive ? "text-white" : ""}
+        />
+        {showBadge && (
+          <span className="absolute -top-1.5 -right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-rust px-0.5 text-[10px] font-bold text-white">
+            {badge > 99 ? "99+" : badge}
+          </span>
+        )}
+      </span>
       <span
         className={`hidden lg:block text-[15px] font-medium ${isActive ? "text-white" : ""}`}
       >

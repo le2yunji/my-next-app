@@ -3,6 +3,7 @@
 import { cookies } from "next/headers";
 import apiClient from "@/app/utils/api-client";
 
+// 서버 액션에서 쿠키 인증을 전달하기 위한 헬퍼
 async function getCookieHeader() {
   const cookieStore = await cookies();
   return cookieStore
@@ -11,10 +12,14 @@ async function getCookieHeader() {
     .join("; ");
 }
 
-export const getNotificationsAction = async (params: {
-  cursor?: string | null;
-  limit?: number;
-} = {}) => {
+// 알림 목록 조회 (커서 기반 페이지네이션)
+// cursor: 마지막으로 받은 알림의 ID, 없으면 첫 페이지
+export const getNotificationsAction = async (
+  params: {
+    cursor?: string | null;
+    limit?: number;
+  } = {},
+) => {
   const qs = new URLSearchParams();
   if (params.cursor) qs.set("cursor", params.cursor);
   if (params.limit) qs.set("limit", String(params.limit));
@@ -31,14 +36,21 @@ export const getNotificationsAction = async (params: {
   }
 
   let data;
-  try { data = await res.json(); } catch {
+  try {
+    data = await res.json();
+  } catch {
     return { isError: true, message: "서버 응답 형식이 올바르지 않습니다." };
   }
 
-  if (!res.ok) return { isError: true, message: data?.message ?? "알림 목록을 불러오지 못했습니다." };
+  if (!res.ok)
+    return {
+      isError: true,
+      message: data?.message ?? "알림 목록을 불러오지 못했습니다.",
+    };
   return data;
 };
 
+// 미읽음 알림 수 조회 — 사이드바 뱃지 폴링에서 사용
 export const getUnreadCountAction = async () => {
   let res: Response;
   try {
@@ -52,7 +64,9 @@ export const getUnreadCountAction = async () => {
   }
 
   let data;
-  try { data = await res.json(); } catch {
+  try {
+    data = await res.json();
+  } catch {
     return { isError: true, count: 0 };
   }
 
@@ -60,24 +74,35 @@ export const getUnreadCountAction = async () => {
   return data;
 };
 
+// 특정 알림 1개 읽음 처리 — 알림 아이템 클릭 시 호출
 export const markNotificationReadAction = async (notificationId: string) => {
   try {
     const cookieHeader = await getCookieHeader();
-    await apiClient.patch(`/api/notifications/${notificationId}/read`, undefined, {
-      headers: { Cookie: cookieHeader },
-    });
-  } catch { /* 읽음 처리 실패는 조용히 무시 */ }
+    await apiClient.patch(
+      `/api/notifications/${notificationId}/read`,
+      undefined,
+      {
+        headers: { Cookie: cookieHeader },
+      },
+    );
+  } catch {
+    /* 읽음 처리 실패는 조용히 무시 */
+  }
 };
 
+// 모든 알림 읽음 처리 — "모두 읽음" 버튼 클릭 시 호출
 export const markAllNotificationsReadAction = async () => {
   try {
     const cookieHeader = await getCookieHeader();
     await apiClient.patch("/api/notifications/read-all", undefined, {
       headers: { Cookie: cookieHeader },
     });
-  } catch { /* 조용히 무시 */ }
+  } catch {
+    /* 조용히 무시 */
+  }
 };
 
+// 알림 수신 설정 조회 — 설정 페이지 마운트 시 호출
 export const getNotificationPreferencesAction = async () => {
   let res: Response;
   try {
@@ -91,21 +116,35 @@ export const getNotificationPreferencesAction = async () => {
   }
 
   let data;
-  try { data = await res.json(); } catch {
+  try {
+    data = await res.json();
+  } catch {
     return { isError: true, message: "서버 응답 형식이 올바르지 않습니다." };
   }
 
-  if (!res.ok) return { isError: true, message: data?.message ?? "설정을 불러오지 못했습니다." };
+  if (!res.ok)
+    return {
+      isError: true,
+      message: data?.message ?? "설정을 불러오지 못했습니다.",
+    };
   return data;
 };
 
+// 알림 수신 설정 업데이트 — 토글 변경 시 호출
+// preferences: { POST_LIKE: true, FOLLOW: false, ... } 형태로 변경할 타입만 전달
 export const updateNotificationPreferencesAction = async (
   preferences: Partial<Record<string, boolean>>,
 ) => {
   try {
     const cookieHeader = await getCookieHeader();
-    await apiClient.patch("/api/users/me/notification-preferences", preferences, {
-      headers: { Cookie: cookieHeader },
-    });
-  } catch { /* 조용히 무시 */ }
+    await apiClient.patch(
+      "/api/users/me/notification-preferences",
+      preferences,
+      {
+        headers: { Cookie: cookieHeader },
+      },
+    );
+  } catch {
+    /* 조용히 무시 */
+  }
 };

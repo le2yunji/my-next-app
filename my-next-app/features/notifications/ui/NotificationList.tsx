@@ -1,163 +1,81 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
 
-import { useState } from "react";
-import { Heart, MessageCircle, User, Bookmark } from "lucide-react";
-import Image from "next/image";
+import { useEffect, useTransition, useCallback } from "react";
+import {
+  getNotificationsAction,
+  markAllNotificationsReadAction,
+  markNotificationReadAction,
+} from "@/app/actions/notifications.action";
+import { useNotificationStore } from "@/stores/notification.store";
+import { type NotificationItem } from "@/features/notifications/types/notification.type";
+import { NotifItem } from "@/features/notifications/ui/NotifItem";
+import { useInfiniteScrollList } from "@/hooks/useInfiniteScrollList";
 
-type NotifType = "like" | "comment" | "follow" | "save";
+const PAGE_SIZE = 20;
 
-type Notification = {
-  id: string;
-  type: NotifType;
-  authorName: string;
-  authorAvatar: string;
-  text: string;
-  time: string;
-  postImgUrl: string | null;
-  read: boolean;
+type Props = {
+  initialItems: NotificationItem[];
+  initialCursor: string | null;
+  initialHasNext: boolean;
 };
 
-// 백엔드 알림 API 연동 전까지 사용하는 mock 데이터
-const MOCK_NOTIFS: Notification[] = [
-  {
-    id: "n1",
-    type: "like",
-    authorName: "haein_c",
-    authorAvatar: "/static/images/profiles/1.webp",
-    text: "회원님의 게시물을 좋아합니다.",
-    time: "방금 전",
-    postImgUrl: null,
-    read: false,
-  },
-  {
-    id: "n2",
-    type: "follow",
-    authorName: "yujin_s",
-    authorAvatar: "/static/images/profiles/2.webp",
-    text: "회원님을 팔로우하기 시작했습니다.",
-    time: "10분 전",
-    postImgUrl: null,
-    read: false,
-  },
-  {
-    id: "n3",
-    type: "comment",
-    authorName: "sooyeon_l",
-    authorAvatar: "/static/images/profiles/3.webp",
-    text: '댓글: "너무 예뻐요! 어디예요?"',
-    time: "1시간 전",
-    postImgUrl: null,
-    read: false,
-  },
-  {
-    id: "n4",
-    type: "like",
-    authorName: "minjun_k",
-    authorAvatar: "/static/images/profiles/4.webp",
-    text: "회원님의 게시물을 좋아합니다.",
-    time: "3시간 전",
-    postImgUrl: null,
-    read: true,
-  },
-  {
-    id: "n5",
-    type: "save",
-    authorName: "junho_p",
-    authorAvatar: "/static/images/profiles/5.webp",
-    text: "회원님의 게시물을 저장했습니다.",
-    time: "1일 전",
-    postImgUrl: null,
-    read: true,
-  },
-  {
-    id: "n6",
-    type: "follow",
-    authorName: "haein_c",
-    authorAvatar: "/static/images/profiles/6.webp",
-    text: "회원님을 팔로우하기 시작했습니다.",
-    time: "2일 전",
-    postImgUrl: null,
-    read: true,
-  },
-];
+export default function NotificationList({
+  initialItems,
+  initialCursor,
+  initialHasNext,
+}: Props) {
+  const resetUnread = useNotificationStore((s) => s.resetUnread);
+  const [isPending, startTransition] = useTransition();
 
-const NOTIF_ICON: Record<
-  NotifType,
-  { Icon: React.ElementType; color: string }
-> = {
-  like: { Icon: Heart, color: "bg-red" },
-  comment: { Icon: MessageCircle, color: "bg-slate" },
-  follow: { Icon: User, color: "bg-sand" },
-  save: { Icon: Bookmark, color: "bg-cool-gray" },
-};
-
-function NotifItem({ notif }: { notif: Notification }) {
-  const { Icon, color } = NOTIF_ICON[notif.type];
-
-  return (
-    <div
-      className={`flex items-center gap-3 border-b border-linen px-5 py-3 ${
-        notif.read ? "" : "bg-near-black/3"
-      }`}
-    >
-      {/* 아바타 + 타입 뱃지 */}
-      <div className="relative shrink-0">
-        <Image
-          src={notif.authorAvatar}
-          alt={notif.authorName}
-          width={44}
-          height={44}
-          className="h-11 w-11 rounded-full object-cover"
-          loading="eager"
-          unoptimized
-        />
-        <span
-          className={`absolute -bottom-0.5 -right-0.5 flex h-5 w-5 items-center justify-center rounded-full border-2 border-warm-white ${color}`}
-        >
-          <Icon size={10} strokeWidth={2} className="text-white" />
-        </span>
-      </div>
-
-      {/* 텍스트 */}
-      <div className="min-w-0 flex-1">
-        <p className="text-[13.5px] leading-snug">
-          <span className="font-semibold">{notif.authorName}</span>{" "}
-          <span className="text-slate">{notif.text}</span>
-        </p>
-        <p className="mt-0.5 text-[11px] text-silver">{notif.time}</p>
-      </div>
-
-      {/* 게시물 썸네일 */}
-      {notif.postImgUrl && (
-        <Image
-          src={notif.postImgUrl}
-          alt=""
-          width={44}
-          height={44}
-          className="shrink-0 rounded-lg object-cover"
-          loading="eager"
-          unoptimized
-        />
-      )}
-
-      {/* 읽지 않은 표시 */}
-      {!notif.read && (
-        <span className="h-2 w-2 shrink-0 rounded-full bg-near-black" />
-      )}
-    </div>
+  // getNotificationsAction 응답을 훅의 CursorPageResult 형태로 변환
+  const fetchPage = useCallback(
+    async ({ cursor, limit }: { cursor: string | null; limit: number }) => {
+      const res = await getNotificationsAction({ cursor, limit });
+      if (res.isError) throw new Error(res.message);
+      return {
+        items: res.items as NotificationItem[],
+        nextCursor: res.nextCursor ?? null,
+        hasNext: res.hasNext ?? false,
+      };
+    },
+    [],
   );
-}
 
-export default function NotificationList() {
-  const [notifs, setNotifs] = useState<Notification[]>(MOCK_NOTIFS);
+  const { items, loading, sentinelRef, setItems } = useInfiniteScrollList({
+    initialItems,
+    initialCursor,
+    initialHasNext,
+    limit: PAGE_SIZE,
+    getKey: (n) => n.id,
+    fetchPage,
+  });
 
-  const unread = notifs.filter((n) => !n.read);
-  const read = notifs.filter((n) => n.read);
+  // 페이지 진입 시 사이드바 뱃지 초기화 (resetUnread는 Zustand 안정적 setter)
+  useEffect(() => {
+    resetUnread();
+  }, [resetUnread]);
 
-  const markAllRead = () => {
-    setNotifs((prev) => prev.map((n) => ({ ...n, read: true })));
+  const handleMarkAllRead = () => {
+    startTransition(async () => {
+      await markAllNotificationsReadAction();
+      // 낙관적 업데이트
+      setItems((prev) => prev.map((n) => ({ ...n, isRead: true })));
+    });
   };
+
+  const handleRead = (id: string) => {
+    startTransition(async () => {
+      await markNotificationReadAction(id);
+      // 해당 알림만 읽음으로 변경
+      setItems((prev) =>
+        prev.map((n) => (n.id === id ? { ...n, isRead: true } : n)),
+      );
+    });
+  };
+
+  // 읽음/미읽음 분리해서 섹션별로 렌더링
+  const unread = items.filter((n) => !n.isRead);
+  const read = items.filter((n) => n.isRead);
 
   return (
     <div className="mx-auto max-w-lg pb-20 pt-6">
@@ -167,42 +85,52 @@ export default function NotificationList() {
         {unread.length > 0 && (
           <button
             type="button"
-            onClick={markAllRead}
-            className="text-[13px] text-cool-gray hover:text-near-black"
+            onClick={handleMarkAllRead}
+            disabled={isPending}
+            className="text-[13px] text-cool-gray hover:text-near-black disabled:opacity-50"
           >
             모두 읽음
           </button>
         )}
       </div>
 
-      {/* 새 알림 */}
-      {unread.length > 0 && (
-        <section className="mb-4">
-          <p className="px-5 pb-2.5 text-[12px] font-semibold uppercase tracking-wide text-silver">
-            새로운 알림
-          </p>
-          {unread.map((n) => (
-            <NotifItem key={n.id} notif={n} />
-          ))}
-        </section>
-      )}
-
-      {/* 이전 알림 */}
-      {read.length > 0 && (
-        <section>
-          <p className="px-5 pb-2.5 text-[12px] font-semibold uppercase tracking-wide text-silver">
-            이전 알림
-          </p>
-          {read.map((n) => (
-            <NotifItem key={n.id} notif={n} />
-          ))}
-        </section>
-      )}
-
-      {notifs.length === 0 && (
+      {items.length === 0 && !loading ? (
         <p className="py-20 text-center text-sm text-silver">
           알림이 없습니다.
         </p>
+      ) : (
+        <>
+          {/* 새 알림 */}
+          {unread.length > 0 && (
+            <section className="mb-4">
+              <p className="px-5 pb-2.5 text-[12px] font-semibold uppercase tracking-wide text-silver">
+                새로운 알림
+              </p>
+              {unread.map((n) => (
+                <NotifItem key={n.id} notif={n} onRead={handleRead} />
+              ))}
+            </section>
+          )}
+
+          {/* 이전 알림 */}
+          {read.length > 0 && (
+            <section>
+              {unread.length > 0 && (
+                <p className="px-5 pb-2.5 text-[12px] font-semibold uppercase tracking-wide text-silver">
+                  이전 알림
+                </p>
+              )}
+              {read.map((n) => (
+                <NotifItem key={n.id} notif={n} onRead={handleRead} />
+              ))}
+            </section>
+          )}
+
+          {/* 무한스크롤 센티널 — 이 요소가 뷰포트에 들어오면 다음 페이지 로드 */}
+          <div ref={sentinelRef} className="py-4 text-center">
+            {loading && <p className="text-sm text-silver">불러오는 중...</p>}
+          </div>
+        </>
       )}
     </div>
   );
