@@ -3,6 +3,10 @@ const { getUserProfileData } = require("../services/user-profile.service");
 const { toggleFollow } = require("../services/follow.service");
 const { toUserProfileResponse } = require("../mappers/user.mapper");
 const { toUserPostItemResponse } = require("../mappers/posts.mapper");
+const {
+  getNotificationPreferencesData,
+  updateNotificationPreferencesData,
+} = require("../services/notification.service");
 
 // 유저 프로필 + 유저 게시물 첫 페이지까지 함께 반환
 async function getUserProfile(req, res) {
@@ -121,4 +125,33 @@ async function followUser(req, res) {
   }
 }
 
-module.exports = { getUserProfile, getUserFeed, followUser };
+async function getNotificationPreferences(req, res) {
+  try {
+    const prefs = await getNotificationPreferencesData(req.user.mongoId);
+    return res.status(200).json({ isError: false, preferences: prefs });
+  } catch (error) {
+    console.error("[GET_NOTIFICATION_PREFERENCES ERROR]", error);
+    return res.status(500).json({ message: "internal server error" });
+  }
+}
+
+async function updateNotificationPreferences(req, res) {
+  try {
+    await updateNotificationPreferencesData({
+      mongoId: req.user.mongoId,
+      preferences: req.body,
+    });
+    return res.status(200).json({ isError: false });
+  } catch (error) {
+    console.error("[UPDATE_NOTIFICATION_PREFERENCES ERROR]", error);
+    return res.status(500).json({ message: "internal server error" });
+  }
+}
+
+module.exports = {
+  getUserProfile,
+  getUserFeed,
+  followUser,
+  getNotificationPreferences,
+  updateNotificationPreferences,
+};

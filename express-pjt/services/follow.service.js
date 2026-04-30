@@ -5,6 +5,7 @@ const {
   deleteFollowRelation,
 } = require("../repositories/follow.repository");
 const { findUserByUserId } = require("../repositories/user.repository");
+const { createNotificationIfAllowed } = require("./notification.service");
 
 /**
  * 팔로우 토글 (팔로우 중이면 언팔로우, 아니면 팔로우)
@@ -45,6 +46,16 @@ const toggleFollow = async ({ followerMongoId, targetUserId }) => {
   } else {
     // 팔로우 관계가 없으면 새로 팔로우 생성
     await createFollowRelation({ followerMongoId, followingMongoId });
+
+    // 팔로우 시에만 알림 (언팔로우는 알림 없음)
+    createNotificationIfAllowed({
+      type: "FOLLOW",
+      senderId: followerMongoId,
+      recipientId: followingMongoId,
+      targetId: null,
+      targetType: "USER",
+    }).catch((err) => console.error("FOLLOW notification error:", err));
+
     return { isFollowing: true };
   }
 };

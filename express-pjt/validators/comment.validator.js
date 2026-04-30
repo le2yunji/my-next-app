@@ -83,10 +83,25 @@ const validateParentCommentId = (parentCommentId) => {
   return { valid: true };
 };
 
+const validateCommentId = (commentId) => {
+  if (!isValidObjectId(commentId)) {
+    return {
+      valid: false,
+      error: {
+        code: "INVALID_COMMENT_ID",
+        message: "유효하지 않은 댓글 id입니다.",
+      },
+    };
+  }
+
+  return { valid: true };
+};
+
 module.exports = {
   isValidObjectId,
   validatePostId,
   validateAuthorId,
   validateParentCommentId,
   validateCommentContent,
+  validateCommentId,
 };

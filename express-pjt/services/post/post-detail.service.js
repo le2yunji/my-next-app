@@ -1,11 +1,12 @@
 const mongoose = require("mongoose");
-const User = require("../models/user.model");
-const Post = require("../models/post.model");
-const Comment = require("../models/comment.model");
-const { toUserProfileSummaryResponse } = require("../mappers/user.mapper");
-
-// PostLike 모델이 있으면 주석 해제
-// const PostLike = require("../models/post-like.model");
+const User = require("../../models/user.model");
+const Post = require("../../models/post.model");
+const Comment = require("../../models/comment.model");
+const PostLike = require("../../models/post-like.model");
+const {
+  countCommentsByPostId,
+} = require("../../repositories/comment.repository");
+const { toUserProfileSummaryResponse } = require("../../mappers/user.mapper");
 
 const isValidObjectId = (value) => mongoose.Types.ObjectId.isValid(value);
 
@@ -61,7 +62,8 @@ const getUserPostDetailPageData = async ({
 
   // userPosts : 유저의 전체 게시물 id 목록
   // previewComment : 현재 게시물의 대표 댓글 1개
-  const [userPosts, previewComment] = await Promise.all([
+  // commentCount : 실제 댓글 수 (삭제 제외)
+  const [userPosts, previewComment, commentCount] = await Promise.all([
     Post.find({
       authorId: user._id,
       isDeleted: false,
@@ -76,10 +78,12 @@ const getUserPostDetailPageData = async ({
     })
       .sort({ createdAt: 1, _id: 1 })
       .lean(),
+
+    countCommentsByPostId(post._id),
   ]);
 
   const postIndex = userPosts.findIndex(
-    (item) => String(item._id) === String(post._id)
+    (item) => String(item._id) === String(post._id),
   );
 
   const prevPost = postIndex > 0 ? userPosts[postIndex - 1] : null;
@@ -97,21 +101,23 @@ const getUserPostDetailPageData = async ({
         .lean()
     : null;
 
+  // 비로그인(viewerId 없음)이면 false, 로그인 상태면 좋아요 도큐먼트 존재 여부로 판단
   let likedByMe = false;
 
-  // PostLike 모델이 있을 때만 사용
-  // if (viewerId && isValidObjectId(viewerId)) {
-  //   likedByMe = !!(await PostLike.exists({
-  //     postId: post._id,
-  //     userId: viewerId,
-  //   }));
-  // }
+  if (viewerId && isValidObjectId(viewerId)) {
+    // PostLike.exists()는 조건에 맞는 도큐먼트가 있으면 { _id } 객체, 없으면 null 반환
+    // !! 로 boolean 변환
+    likedByMe = !!(await PostLike.exists({
+      postId: post._id,
+      userId: viewerId,
+    }));
+  }
 
   return {
     success: true,
     data: {
       profile: toUserProfileSummaryResponse({ user, viewerId }),
-      post,
+      post: { ...post, commentCount },
       author: user,
       mediaList: sortByOrderAsc(post.media ?? []),
       likedByMe,

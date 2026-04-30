@@ -1,5 +1,9 @@
 const Post = require("../models/post.model");
 
+/** 
+ * postId로 게시글 하나 조회
+ - 댓글 작성, 좋아요 등 특정 게시글에 대한 액션 전에 "유효한 글인지" 확인할 때 서비스 레이어에서 호출
+ */
 const findActivePostById = (postId) => {
   return Post.findOne({
     _id: postId,
@@ -21,12 +25,30 @@ const findActivePostsByAuthorId = (authorId) => {
     .lean();
 };
 
-const increasePostCommentCount = (postId, amount = 1) => {
-  return Post.updateOne({ _id: postId }, { $inc: { commentCount: amount } });
+/**
+ * 게시물 등록
+ */
+const createPost = (postData) => {
+  return Post.create(postData);
+};
+
+// likeCount 1 증가
+const incrementPostLikeCount = (postId) => {
+  return Post.updateOne({ _id: postId }, { $inc: { likeCount: 1 } });
+};
+
+// likeCount 1 감소 (0 미만 방지)
+const decrementPostLikeCount = (postId) => {
+  return Post.updateOne(
+    { _id: postId, likeCount: { $gt: 0 } },
+    { $inc: { likeCount: -1 } }
+  );
 };
 
 module.exports = {
   findActivePostById,
   findActivePostsByAuthorId,
-  increasePostCommentCount,
+  createPost,
+  incrementPostLikeCount,
+  decrementPostLikeCount,
 };

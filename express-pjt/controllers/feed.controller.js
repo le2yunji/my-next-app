@@ -8,13 +8,14 @@ const {
 // 홈 피드 목록 : 요약 Data
 async function getFeed(req, res) {
   try {
-    // const viewerId = req.user?.mongoId || null;
+    const viewerId = req.user?.mongoId || null;
+    console.log("[GET_FEED] viewerId:", viewerId, "| req.user:", req.user);
 
     const parsed = parseInt(req.query.limit || "10", 10);
     const limit = Math.min(Number.isNaN(parsed) ? 10 : parsed, 50);
     const cursor = req.query.cursor || null;
 
-    const result = await getFeedListData({ cursor, limit });
+    const result = await getFeedListData({ cursor, limit, viewerId });
 
     if (!result.success) {
       return res.status(400).json({

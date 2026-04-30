@@ -1,9 +1,6 @@
+const { findActivePostById } = require("../repositories/post.repository");
 const {
-  findActivePostById,
-  increasePostCommentCount,
-} = require("../repositories/post.repository");
-const {
-  findUserByUserId,
+  findActiveUserByMongoId,
   findActiveUsersSummaryByMongoIds,
 } = require("../repositories/user.repository");
 const {
@@ -11,14 +8,21 @@ const {
   findActiveParentComment,
   createCommentDoc,
   increaseCommentReplyCount,
+  findCommentById,
+  deleteCommentById,
+  deleteRepliesByParentId,
+  decreaseCommentReplyCount,
+  updateCommentContent,
 } = require("../repositories/comment.repository");
 const {
   validatePostId,
   validateAuthorId,
   validateParentCommentId,
   validateCommentContent,
+  validateCommentId,
 } = require("../validators/comment.validator");
 const { buildCommentThreads } = require("../utils/comment-thread");
+const { createNotificationIfAllowed } = require("./notification.service");
 
 /**
  * 게시물의 댓글 목록 조회
@@ -110,8 +114,7 @@ const getPostCommentsData = async ({ postId, cursor = null, limit = 10 }) => {
  *    - 같은 게시물의 댓글인지
  *    - 대댓글의 대댓글은 아닌지
  * 5. 댓글 생성
- * 6. 게시물 commentCount 증가
- * 7. 대댓글이면 부모 댓글 replyCount 증가
+ * 6. 대댓글이면 부모 댓글 replyCount 증가
  *
  * 규칙:
  * - parentCommentId가 없으면 원댓글
@@ -164,7 +167,7 @@ const createPostCommentData = async ({
   // 5) 게시물 / 작성자 동시에 조회
   const [post, author] = await Promise.all([
     findActivePostById(postId),
-    findUserByUserId(authorId),
+    findActiveUserByMongoId(authorId),
   ]);
 
   // 게시물이 없으면 생성 불가
@@ -237,15 +240,19 @@ const createPostCommentData = async ({
     parentCommentId: validatedParentCommentId,
     depth,
     replyCount: 0,
-    isDeleted: false,
   });
 
-  // 8) 게시물 전체 댓글 수 증가
-  await increasePostCommentCount(postId, 1);
-
-  // 9) 대댓글이면 부모 댓글의 replyCount 증가
+  // 8) 대댓글이면 부모 댓글의 replyCount 증가 + 부모 작성자에게 알림
   if (validatedParentCommentId) {
     await increaseCommentReplyCount(validatedParentCommentId, 1);
+
+    createNotificationIfAllowed({
+      type: "COMMENT_REPLY",
+      senderId: authorId,
+      recipientId: parentComment.authorId,
+      targetId: createdComment._id,
+      targetType: "COMMENT",
+    }).catch((err) => console.error("COMMENT_REPLY notification error:", err));
   }
 
   // 10) 생성 결과 반환
@@ -258,7 +265,127 @@ const createPostCommentData = async ({
   };
 };
 
+/**
+ * 댓글 / 대댓글 삭제
+ *
+ * 1. commentId 형식 검증
+ * 2. 댓글 존재 여부 + 해당 게시물의 댓글인지 확인
+ * 3. 요청자가 작성자인지 확인
+ * 4. 댓글 삭제
+ * 5. 대댓글이면 부모 댓글 replyCount 감소, 원댓글이면 대댓글 cascade 삭제
+ */
+const deletePostCommentData = async ({ postId, commentId, requesterId }) => {
+  const postIdValidation = validatePostId(postId);
+  if (!postIdValidation.valid) {
+    return { success: false, error: postIdValidation.error };
+  }
+
+  const commentIdValidation = validateCommentId(commentId);
+  if (!commentIdValidation.valid) {
+    return { success: false, error: commentIdValidation.error };
+  }
+
+  const comment = await findCommentById(commentId);
+
+  if (!comment) {
+    return {
+      success: false,
+      error: { code: "COMMENT_NOT_FOUND", message: "댓글을 찾을 수 없습니다." },
+    };
+  }
+
+  if (String(comment.postId) !== String(postId)) {
+    return {
+      success: false,
+      error: {
+        code: "COMMENT_POST_MISMATCH",
+        message: "해당 게시물의 댓글이 아닙니다.",
+      },
+    };
+  }
+
+  if (String(comment.authorId) !== String(requesterId)) {
+    return {
+      success: false,
+      error: { code: "FORBIDDEN", message: "본인 댓글만 삭제할 수 있습니다." },
+    };
+  }
+
+  await deleteCommentById(commentId);
+
+  if (comment.parentCommentId) {
+    // 대댓글이면 부모의 replyCount 감소
+    await decreaseCommentReplyCount(comment.parentCommentId, 1);
+  } else {
+    // 원댓글이면 대댓글도 cascade 삭제
+    await deleteRepliesByParentId(commentId);
+  }
+
+  return { success: true };
+};
+
+/**
+ * 댓글 내용 수정
+ * 1. postId / commentId 형식 검증
+ * 2. 댓글 존재 + 해당 게시물의 댓글인지 확인
+ * 3. 요청자가 작성자인지 확인
+ * 4. 내용 검증 후 업데이트
+ */
+const updatePostCommentData = async ({
+  postId,
+  commentId,
+  requesterId,
+  content,
+}) => {
+  const postIdValidation = validatePostId(postId);
+  if (!postIdValidation.valid)
+    return { success: false, error: postIdValidation.error };
+
+  const commentIdValidation = validateCommentId(commentId);
+  if (!commentIdValidation.valid)
+    return { success: false, error: commentIdValidation.error };
+
+  const contentValidation = validateCommentContent(content);
+  if (!contentValidation.valid)
+    return { success: false, error: contentValidation.error };
+
+  const comment = await findCommentById(commentId);
+
+  if (!comment) {
+    return {
+      success: false,
+      error: { code: "COMMENT_NOT_FOUND", message: "댓글을 찾을 수 없습니다." },
+    };
+  }
+
+  if (String(comment.postId) !== String(postId)) {
+    return {
+      success: false,
+      error: {
+        code: "COMMENT_POST_MISMATCH",
+        message: "해당 게시물의 댓글이 아닙니다.",
+      },
+    };
+  }
+
+  if (String(comment.authorId) !== String(requesterId)) {
+    return {
+      success: false,
+      error: { code: "FORBIDDEN", message: "본인 댓글만 수정할 수 있습니다." },
+    };
+  }
+
+  const updated = await updateCommentContent(
+    commentId,
+    contentValidation.normalizedContent,
+  );
+
+  return { success: true, data: { comment: updated } };
+};
+
 module.exports = {
   getPostCommentsData,
   createPostCommentData,
+  deletePostCommentData,
+  updatePostCommentData,
 };

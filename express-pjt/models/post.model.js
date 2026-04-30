@@ -38,7 +38,7 @@ const postMediaSchema = new mongoose.Schema(
   },
   {
     _id: false,
-  }
+  },
 );
 
 const postSchema = new mongoose.Schema(
@@ -60,12 +60,12 @@ const postSchema = new mongoose.Schema(
     media: {
       type: [postMediaSchema],
       default: [],
-      validate: {
-        validator: function (value) {
-          return value.length <= 10;
-        },
-        message: "미디어는 최대 10개까지 가능합니다.",
-      },
+      // validate: {
+      //   validator: function (value) {
+      //     return value.length <= 10;
+      //   },
+      //   message: "미디어는 최대 10개까지 가능합니다.",
+      // },
     },
 
     primaryCategory: {
@@ -83,32 +83,26 @@ const postSchema = new mongoose.Schema(
         },
       ],
       default: [],
-      validate: {
-        validator: function (value) {
-          return value.length <= 3;
-        },
-        message: "카테고리는 최대 3개까지 가능합니다.",
-      },
+      // validate: {
+      //   validator: function (value) {
+      //     return value.length <= 3;
+      //   },
+      //   message: "카테고리는 최대 3개까지 가능합니다.",
+      // },
     },
 
     customCategories: {
       type: [String],
       default: [],
-      validate: {
-        validator: function (value) {
-          return value.length <= 3;
-        },
-        message: "직접 입력 카테고리는 최대 3개까지 가능합니다.",
-      },
+      // validate: {
+      //   validator: function (value) {
+      //     return value.length <= 3;
+      //   },
+      //   message: "직접 입력 카테고리는 최대 3개까지 가능합니다.",
+      // },
     },
 
     likeCount: {
-      type: Number,
-      default: 0,
-      min: 0,
-    },
-
-    commentCount: {
       type: Number,
       default: 0,
       min: 0,
@@ -127,7 +121,7 @@ const postSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 postSchema.index({ authorId: 1, isDeleted: 1, _id: -1 });

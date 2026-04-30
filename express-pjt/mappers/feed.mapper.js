@@ -27,6 +27,7 @@ function toPostThumbnailItem(p) {
     createdAt: p.createdAt,
     likeCount: p.likeCount ?? 0,
     commentCount: p.commentCount ?? 0,
+    isLiked: p.isLiked ?? false,
     // media[0]이 썸네일 역할, 전체 배열로 스와이프 캐러셀 지원
     media: media.map((m) => ({
       type: m.type,

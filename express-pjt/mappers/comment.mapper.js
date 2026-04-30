@@ -1,6 +1,6 @@
 const { toUserResponse } = require("./user.mapper");
 
-const toCommentResponse = ({ comment, author }) => {
+const toCommentResponse = ({ comment, author, isLiked = false }) => {
   return {
     id: String(comment._id ?? comment.id ?? ""),
     author: author ? toUserResponse(author) : null,
@@ -10,21 +10,34 @@ const toCommentResponse = ({ comment, author }) => {
       : null,
     depth: comment.depth ?? 0,
     replyCount: comment.replyCount ?? 0,
+    likeCount: comment.likeCount ?? 0,
+    isLiked,
     isDeleted: comment.isDeleted ?? false,
     createdAt: comment.createdAt,
     updatedAt: comment.updatedAt,
   };
 };
 
-const toCommentThreadResponse = ({ comment, author, replies = [] }) => {
+// likedCommentIdSet: 현재 뷰어가 좋아요한 commentId Set (비로그인 시 빈 Set)
+const toCommentThreadResponse = (
+  { comment, author, replies = [] },
+  likedCommentIdSet = new Set(),
+) => {
+  const commentId = String(comment._id ?? comment.id ?? "");
   return {
-    comment: toCommentResponse({ comment, author }),
-    replies: replies.map((reply) =>
-      toCommentResponse({
+    comment: toCommentResponse({
+      comment,
+      author,
+      isLiked: likedCommentIdSet.has(commentId),
+    }),
+    replies: replies.map((reply) => {
+      const replyId = String(reply.comment._id ?? reply.comment.id ?? "");
+      return toCommentResponse({
         comment: reply.comment,
         author: reply.author,
-      })
-    ),
+        isLiked: likedCommentIdSet.has(replyId),
+      });
+    }),
   };
 };
 

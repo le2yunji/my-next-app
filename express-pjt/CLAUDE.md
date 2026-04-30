@@ -37,23 +37,26 @@ Exported via [env.js](env.js) and imported by name throughout the app (not via `
 This is an Express.js REST API backend for a SNS app. It connects to MongoDB via Mongoose and serves a Next.js frontend at `http://localhost:3000`.
 
 **Request lifecycle:**
+
 ```
 index.js → /api → loggerMiddleware → routes/index.js
   → /auth     → routes/auth.route.js     → controllers/auth.controller.js
   → /feed     → routes/feed.route.js     → controllers/feed.controller.js
   → /users    → routes/users.route.js    → controllers/users.controller.js
-                                            controllers/posts.controller.js
+                                            controllers/post.controller.js
                                             controllers/board.controller.js
                                             controllers/comments.controller.js
 ```
 
 **Layered pattern (controller → service → repository → model):**
+
 - Controllers handle HTTP req/res and delegate to services
 - Services contain business logic and call repositories
 - Repositories are thin wrappers over Mongoose model calls
 - Models define Mongoose schemas
 
 **Auth flow:**
+
 - JWT-based with `accessToken` + `refreshToken` stored as `httpOnly` cookies
 - `authenticate` middleware: requires valid access token, attaches `req.user = { mongoId, userId }`
 - `optionalAuthenticate` middleware: passes through even without a token (sets `req.user = null`)
@@ -61,6 +64,7 @@ index.js → /api → loggerMiddleware → routes/index.js
 - Token payloads include a `type` field (`"access"` or `"refresh"`) that must be validated
 
 **Error handling pattern:**
+
 - Domain errors are defined as objects in [constants/auth-error.js](constants/auth-error.js) with `{ code, message, status }`
 - Throw via `createAppError(AUTH_ERROR.SOME_ERROR)` from [utils/app-error.js](utils/app-error.js)
 - All controller functions use `try/catch` and forward errors to `next(error)`
@@ -68,10 +72,12 @@ index.js → /api → loggerMiddleware → routes/index.js
 - All API responses include an `isError` boolean field
 
 **Static assets:**
+
 - Served at `/static` from the `public/` directory
 - Default profile image path stored in DB as `static/images/profiles/default.webp`
 
 **Key data models:**
+
 - `User` — userId, email, passwordHash, interestCategories[], followerCount, followingCount, postCount, boardCount, isDeleted (soft delete)
 - `Follow` — followerId (ObjectId ref User), followingId (ObjectId ref User)
 - `Post`, `Board`, `BoardItems`, `Comment`, `PostLike` — standard SNS content
@@ -91,6 +97,7 @@ const passwordHash = await bcrypt.hash(password, 10);
 주석은 "무엇을 하는지"보다 "왜 하는지"를 위주로 짧게 작성한다. 자명한 코드에는 달지 않는다.
 
 **Input validation:**
+
 - HTTP-layer validation in `middlewares/validate-*.middleware.js` (format checks via regex utils)
 - Business logic validation in services (duplicate checks, category limits, etc.)
 - Regex helpers and normalizers live in [utils/regex.js](utils/regex.js)

@@ -47,8 +47,29 @@ const findActiveUsersSummaryByMongoIds = (mongoIds = []) => {
     .lean();
 };
 
+/**
+ * MongoDB _id 기준으로 활성 사용자 1명 조회
+ *
+ * 사용 예:
+ * - authenticate 미들웨어가 붙여준 mongoId로 작성자 확인
+ */
+const findActiveUserByMongoId = (mongoId) => {
+  return User.findOne({
+    _id: mongoId,
+    isDeleted: false,
+  })
+    .select(USER_SUMMARY_SELECT)
+    .lean();
+};
+
+const increaseUserPostCount = (mongoId, amount = 1) => {
+  return User.updateOne({ _id: mongoId }, { $inc: { postCount: amount } });
+};
+
 module.exports = {
   findUserByUserId,
   findUserProfileByUserId,
   findActiveUsersSummaryByMongoIds,
+  findActiveUserByMongoId,
+  increaseUserPostCount,
 };

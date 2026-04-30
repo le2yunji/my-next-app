@@ -1,5 +1,7 @@
 const { verifyAccessToken } = require("../services/token.service");
 
+// 로그인 필수 엔드포인트용
+// 토큰이 없다면 401 차단
 function authenticate(req, res, next) {
   try {
     const accessToken = req.cookies.accessToken;
@@ -43,7 +45,8 @@ function authenticate(req, res, next) {
   }
 }
 
-// 조회용 미들웨어
+// 조회용
+// req.user = null, 통과
 function optionalAuthenticate(req, _res, next) {
   try {
     const accessToken = req.cookies.accessToken;

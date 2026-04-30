@@ -83,10 +83,18 @@ const userSchema = new mongoose.Schema(
       type: Boolean, // true / false 타입
       default: false, // 기본은 삭제되지 않은 상태
     },
+    notificationPreferences: {
+      COMMENT_LIKE: { type: Boolean, default: true },
+      COMMENT_REPLY: { type: Boolean, default: true },
+      FOLLOW: { type: Boolean, default: true },
+      POST_LIKE: { type: Boolean, default: true },
+      BOARD_LIKE: { type: Boolean, default: true },
+      POST_SCRAP: { type: Boolean, default: true },
+    },
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 module.exports = mongoose.model("User", userSchema);
