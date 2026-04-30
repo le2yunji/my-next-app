@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Heart } from "lucide-react";
 import CommentItem, { type CommentItemData } from "./CommentItem";
 import CommentInput from "./CommentInput";
 
@@ -29,7 +28,7 @@ type Props = {
   postId: string;
   currentUserId?: string | null;
   currentUserProfileImage?: string | null;
-  isAuthenticated: boolean;
+  isLoggedIn: boolean;
 };
 
 export default function CommentList({
@@ -37,7 +36,7 @@ export default function CommentList({
   postId,
   currentUserId,
   currentUserProfileImage,
-  isAuthenticated,
+  isLoggedIn,
 }: Props) {
   // 답글 대상: { commentId, userId } | null
   const [replyTarget, setReplyTarget] = useState<{
@@ -63,6 +62,7 @@ export default function CommentList({
                     comment={comment}
                     postId={postId}
                     currentUserId={currentUserId}
+                    isLoggedIn={!!isLoggedIn}
                     onReply={(commentId, userId) =>
                       setReplyTarget({ commentId, userId })
                     }
@@ -79,6 +79,7 @@ export default function CommentList({
                               comment={reply}
                               postId={postId}
                               currentUserId={currentUserId}
+                              isLoggedIn={!!isLoggedIn}
                             />
                           </li>
                         ))}
@@ -91,7 +92,7 @@ export default function CommentList({
       </div>
 
       {/* 댓글 입력창 */}
-      {isAuthenticated ? (
+      {isLoggedIn ? (
         <CommentInput
           postId={postId}
           currentUserProfileImage={currentUserProfileImage}

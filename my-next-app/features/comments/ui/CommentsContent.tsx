@@ -44,7 +44,7 @@ export default async function CommentsContent({
         postId={postId}
         currentUserId={me?._id ? String(me._id) : null}
         currentUserProfileImage={me?.profileImage ?? null}
-        isAuthenticated={!!me}
+        isLoggedIn={!!me}
       />
     </>
   );

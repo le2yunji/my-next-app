@@ -12,10 +12,12 @@ export default function FeedList({
   initialItems,
   initialCursor,
   initialHasNext,
+  isLoggedIn,
 }: {
   initialItems: FeedItems[];
   initialCursor: string | null;
   initialHasNext: boolean;
+  isLoggedIn: boolean;
 }) {
   const { items, loading, errorMsg, hasNext, sentinelRef } =
     useInfiniteScrollList<FeedItems>({
@@ -54,6 +56,7 @@ export default function FeedList({
               key={post.id}
               post={post}
               priorityPost={shouldPriorityPostImage(idx)}
+              isLoggedIn={isLoggedIn}
             />
           ))}
         </ul>

@@ -7,9 +7,11 @@ import PostMediaCarousel from "@/features/posts/ui/PostMediaCarousel";
 
 export default function FeedItem({
   post,
+  isLoggedIn,
 }: {
   post: FeedItems;
   priorityPost: boolean;
+  isLoggedIn: boolean;
 }) {
   return (
     <li className="mt-20">
@@ -31,6 +33,7 @@ export default function FeedItem({
           likeCount={post.likeCount}
           isLiked={post.isLiked}
           commentCount={post.commentCount}
+          isLoggedIn={!!isLoggedIn}
         />
         <FeedItemActions postId={post.id} />
       </div>

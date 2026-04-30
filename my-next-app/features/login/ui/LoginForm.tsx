@@ -2,22 +2,12 @@
 
 import { TextInput } from "@/components/common/input/TextInput";
 import useLogin from "../hooks/useLogin";
-import { useRouter } from "next/navigation";
 import { PrimaryButton } from "@/components/common/button/PrimaryButton";
 import Link from "next/link";
 
 export default function LoginForm() {
-  const router = useRouter();
-
-  const {
-    form,
-    setForm,
-    onChangeField,
-    onSubmit,
-    loading,
-    error,
-    fieldErrors,
-  } = useLogin();
+  const { form, onChangeField, onSubmit, loading, error, fieldErrors } =
+    useLogin();
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();

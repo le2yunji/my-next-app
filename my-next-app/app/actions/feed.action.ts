@@ -49,12 +49,5 @@ export const getFeedAction = async (params: {
     };
   }
 
-  console.log(
-    "[getFeedAction] isLiked 샘플:",
-    data?.items?.slice(0, 2).map((i: { id: string; isLiked: boolean }) => ({
-      id: i.id,
-      isLiked: i.isLiked,
-    })),
-  );
   return data;
 };

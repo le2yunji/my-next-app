@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import {
   isValidEmail,
@@ -16,9 +16,11 @@ import { useAuthStore } from "@/stores/auth.store";
 
 export default function useLogin() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const setUser = useAuthStore((state) => state.setUser);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>("");
+  const redirect = searchParams.get("redirect") ?? "/";
 
   const [fieldErrors, setFieldErrors] = useState<{
     identifier?: string;
@@ -72,7 +74,7 @@ export default function useLogin() {
 
       // 로그인 응답에 포함된 user로 즉시 store 업데이트 (새로고침 없이 사이드바 반영)
       if (result.user) setUser(result.user);
-      router.push("/");
+      router.replace(redirect);
     } catch (err) {
       setError("로그인 중 오류가 발생했습니다.");
     } finally {

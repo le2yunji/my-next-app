@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Heart } from "lucide-react";
 import Avatar from "@/components/common/Avatar";
 import { formatRelativeTime } from "@/features/comments/utils/formatRelativeTime";
@@ -11,6 +11,7 @@ import {
   updatePostCommentAction,
   toggleCommentLikeAction,
 } from "@/app/actions/comments.action";
+import { useOptimisticToggleCount } from "@/hooks/useOptimisticToggleCount";
 
 type Author = {
   id: string;
@@ -36,6 +37,7 @@ type Props = {
   comment: CommentItemData;
   postId: string;
   currentUserId?: string | null;
+  isLoggedIn: boolean;
   onReply?: (commentId: string, userId: string) => void;
 };
 
@@ -43,9 +45,11 @@ export default function CommentItem({
   comment,
   postId,
   currentUserId,
+  isLoggedIn,
   onReply,
 }: Props) {
   const router = useRouter();
+  const pathname = usePathname();
   const isOwner = !!currentUserId && currentUserId === comment.author.id;
 
   const [isEditing, setIsEditing] = useState(false);
@@ -53,9 +57,32 @@ export default function CommentItem({
   // useTransition: 서버 액션 실행 중 버튼 비활성화를 위해 사용
   const [isPending, startTransition] = useTransition();
 
-  // 낙관적 업데이트: 서버 응답 전에 즉시 UI 반영
-  const [liked, setLiked] = useState(comment.isLiked);
-  const [likeCount, setLikeCount] = useState(comment.likeCount);
+  const {
+    active: liked,
+    count: likedCount,
+    toggle: handleLike,
+  } = useOptimisticToggleCount({
+    initialActive: comment.isLiked,
+    initialCount: comment.likeCount,
+    canToggle: isLoggedIn,
+    onBlocked: () => {
+      toast.warning("로그인이 필요합니다.");
+      //로그인 성공 후 다시 돌아올 위치를 login 페이지에 알려주는 주소
+      router.push(`/login?redirect=${encodeURIComponent(pathname)}`);
+    },
+
+    onToggle: async () => {
+      const result = await toggleCommentLikeAction({
+        postId,
+        commentId: comment.id,
+      });
+      if ("isError" in result) return result;
+      return {
+        active: result.liked,
+        count: result.likeCount,
+      };
+    },
+  });
 
   const doDelete = () => {
     startTransition(async () => {
@@ -92,27 +119,6 @@ export default function CommentItem({
       });
       setIsEditing(false);
       router.refresh();
-    });
-  };
-
-  const handleLike = () => {
-    if (!currentUserId) return;
-
-    // 낙관적 업데이트
-    const nextLiked = !liked;
-    setLiked(nextLiked);
-    setLikeCount((prev) => prev + (nextLiked ? 1 : -1));
-
-    startTransition(async () => {
-      const result = await toggleCommentLikeAction({
-        postId,
-        commentId: comment.id,
-      });
-      // 실패 시 롤백
-      if (result?.isError) {
-        setLiked(liked);
-        setLikeCount(likeCount);
-      }
     });
   };
 
@@ -215,19 +221,19 @@ export default function CommentItem({
                   size={14}
                   className={liked ? "fill-rust text-rust" : "text-silver"}
                 />
-                {likeCount > 0 && (
+                {likedCount > 0 && (
                   <span
                     className={`text-xs ${liked ? "text-rust" : "text-silver"}`}
                   >
-                    {likeCount}
+                    {likedCount}
                   </span>
                 )}
               </button>
             ) : (
-              likeCount > 0 && (
+              likedCount > 0 && (
                 <span className="flex items-center gap-1 text-xs text-silver">
                   <Heart size={14} />
-                  {likeCount}
+                  {likedCount}
                 </span>
               )
             )}
