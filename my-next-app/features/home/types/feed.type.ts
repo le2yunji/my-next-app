@@ -13,6 +13,7 @@ export type FeedItems = {
   content: string;
   author: FeedAuthor;
   likeCount: number;
+  isLiked: boolean;
   commentCount: number;
   createdAt: string;
   media: PostMediaDto[];

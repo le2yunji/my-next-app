@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { getMeClient } from "@/features/auth/api/getMe";
+import { getMeClient } from "@/features/auth/api/getMeClient";
 import { useAuthStore } from "@/stores/auth.store";
 
 export default function AuthInitializer() {

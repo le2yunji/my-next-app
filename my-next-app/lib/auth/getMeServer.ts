@@ -11,18 +11,16 @@ export const getMeServer = async () => {
     .map(({ name, value }) => `${name}=${value}`)
     .join("; ");
 
-  const res = await apiClient.get(`/api/auth/me`, {
-    headers: {
-      Cookie: cookieHeader,
-    },
-    cache: "no-store",
-  });
-
-  const data = await res.json();
-
-  if (!res.ok) {
+  try {
+    const res = await apiClient.get(`/api/auth/me`, {
+      headers: {
+        Cookie: cookieHeader,
+      },
+      cache: "no-store",
+    });
+    const data = await res.json();
+    return data.user;
+  } catch {
     return null;
   }
-
-  return data.user;
 };

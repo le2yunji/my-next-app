@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { getUserBoardPageAction } from "@/app/actions/boards.action";
-import type { MappedBoardPageItem } from "@/features/users/types/board.type";
+import { MappedBoardPageItem } from "@/features/boards/types/board.type";
 
 export default async function BoardDetailPage({
   params,
@@ -90,29 +90,25 @@ function BoardItemThumbnail({
 }) {
   return (
     <li>
-      <Link
-        href={`/users/${userId}/posts/${item.postId}`}
-        className="group block"
-      >
-        <div className="relative aspect-square w-full overflow-hidden rounded-[18px] bg-[#ECE7E1]">
-          {item.thumbnailUrl ? (
-            <Image
-              src={item.thumbnailUrl}
-              alt=""
-              fill
-              unoptimized
-              className="object-cover transition duration-300 group-hover:scale-[1.03]"
-              sizes="(max-width: 768px) 30vw, 180px"
-            />
-          ) : null}
-          <div className="pointer-events-none absolute inset-0 rounded-[18px] ring-1 ring-black/4" />
-        </div>
-        {item.note ? (
-          <p className="mt-1.5 line-clamp-2 px-0.5 text-[12px] text-[#6B7280]">
-            {item.note}
-          </p>
+      <div className="relative aspect-square w-full overflow-hidden rounded-[18px] bg-[#ECE7E1]">
+        {item.thumbnailUrl ? (
+          <Image
+            src={item.thumbnailUrl}
+            alt=""
+            fill
+            unoptimized
+            className="object-cover transition duration-300 group-hover:scale-[1.03]"
+            sizes="(max-width: 768px) 30vw, 180px"
+            loading="eager"
+          />
         ) : null}
-      </Link>
+        <div className="pointer-events-none absolute inset-0 rounded-[18px] ring-1 ring-black/4" />
+      </div>
+      {item.note ? (
+        <p className="mt-1.5 line-clamp-2 px-0.5 text-[12px] text-[#6B7280]">
+          {item.note}
+        </p>
+      ) : null}
     </li>
   );
 }

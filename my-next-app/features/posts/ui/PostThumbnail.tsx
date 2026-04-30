@@ -24,6 +24,7 @@ export default function PostThumbnail({
         unoptimized
         className="object-cover transition duration-300 group-hover:scale-[1.03]"
         sizes="(max-width: 768px) 30vw, 180px"
+        loading="eager"
       />
 
       {/* 사진 느낌 살리려고 하단에 아주 약한 그라데이션만 깔아둠 */}

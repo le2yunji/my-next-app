@@ -47,6 +47,7 @@ export default async function UserDetailBoard({
                   fill
                   alt=""
                   className="object-cover"
+                  loading="eager"
                   unoptimized
                 />
               ) : null}

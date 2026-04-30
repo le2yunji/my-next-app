@@ -25,6 +25,7 @@ export default function CommentInput({
   const router = useRouter();
 
   const handleSubmit = () => {
+    // 중복 제출 방지
     const trimmed = content.trim();
     if (!trimmed || isPending) return;
 
@@ -49,7 +50,7 @@ export default function CommentInput({
   };
 
   return (
-    <div className="border-t border-linen bg-white px-4 pb-[calc(env(safe-area-inset-bottom)+12px)] pt-3">
+    <div className="sticky bottom-0 border-t border-linen bg-white px-4 pb-[calc(env(safe-area-inset-bottom)+12px)] pt-3">
       {/* 답글 대상 표시 */}
       {replyTarget && (
         <div className="mb-2 flex items-center justify-between rounded-md bg-linen px-3 py-1.5">

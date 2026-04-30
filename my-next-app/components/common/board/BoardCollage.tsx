@@ -1,6 +1,5 @@
 import Image from "next/image";
-import { BoardPreviewImage } from "@/types/board";
-import { BoardSize } from "./board.type";
+import { BoardPreviewImage, BoardSize } from "./board.type";
 
 function PreviewCell({
   image,
@@ -23,6 +22,7 @@ function PreviewCell({
           unoptimized
           className="object-cover"
           sizes={sizes}
+          loading="eager"
         />
       ) : null}
     </div>
@@ -53,7 +53,7 @@ export default function BoardCollage({
     return (
       <div
         className={`overflow-hidden rounded-[22px] bg-[#F3F4F6] ${getSingleAspect(
-          size
+          size,
         )}`}
       />
     );

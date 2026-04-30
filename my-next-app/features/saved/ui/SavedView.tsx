@@ -1,5 +1,6 @@
-import BoardCard from "@/components/common/board-card";
-import type { BoardItem } from "@/types/board";
+import Board from "@/components/common/board";
+import { BoardItem } from "@/components/common/board/board.type";
+
 import Image from "next/image";
 
 export default function SavedView({
@@ -10,7 +11,9 @@ export default function SavedView({
   userId: string;
 }) {
   // 모든 보드의 previewImages를 모아 최근 저장 섹션에 표시
-  const recentImages = boards.flatMap((board) => board.previewImages).slice(0, 12);
+  const recentImages = boards
+    .flatMap((board) => board.previewImages)
+    .slice(0, 12);
 
   return (
     <div className="mx-auto max-w-2xl px-4 pb-20 pt-6">
@@ -26,7 +29,7 @@ export default function SavedView({
           <ul className="mb-8 grid grid-cols-2 gap-3">
             {boards.map((board) => (
               <li key={board.id}>
-                <BoardCard
+                <Board
                   board={board}
                   size="md"
                   href={`/users/${userId}/boards/${board.id}`}
@@ -50,6 +53,7 @@ export default function SavedView({
                         width={400}
                         height={400}
                         unoptimized
+                        loading="eager"
                         className="block w-full object-cover"
                       />
                     </div>

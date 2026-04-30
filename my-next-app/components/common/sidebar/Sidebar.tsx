@@ -22,6 +22,7 @@ export default function Sidebar() {
               href={item.href}
               label={item.label}
               icon={item.icon}
+              authRequired={item.authRequired}
             />
           ))}
         </nav>
@@ -47,6 +48,7 @@ export default function Sidebar() {
             label={item.label}
             icon={item.icon}
             variant="bottom"
+            authRequired={item.authRequired}
           />
         ))}
       </nav>

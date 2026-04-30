@@ -1,13 +1,12 @@
 "use client";
 import FeedItemHeader from "./FeedItemHeader";
-import FeedItemMedia from "./FeedItemMedia";
 import FeedItemMeta from "./FeedItemMeta";
 import FeedItemActions from "./FeedItemActions";
 import { FeedItems } from "@/features/home/types/feed.type";
+import PostMediaCarousel from "@/features/posts/ui/PostMediaCarousel";
 
-export default function FeedListItem({
+export default function FeedItem({
   post,
-  priorityPost,
 }: {
   post: FeedItems;
   priorityPost: boolean;
@@ -17,10 +16,10 @@ export default function FeedListItem({
       <FeedItemHeader author={post.author} createdAt={post.createdAt} />
 
       {post.media?.length ? (
-        <FeedItemMedia
+        <PostMediaCarousel
           postId={post.id}
           media={post.media}
-          priorityPost={priorityPost}
+          className="w-full rounded-xl mt-3"
         />
       ) : null}
 
@@ -30,8 +29,8 @@ export default function FeedListItem({
           postId={post.id}
           authorHandle={post.author.userId}
           likeCount={post.likeCount}
+          isLiked={post.isLiked}
           commentCount={post.commentCount}
-          thumbnailUrl={post.media?.[0]?.url}
         />
         <FeedItemActions postId={post.id} />
       </div>

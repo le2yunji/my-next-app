@@ -2,7 +2,7 @@
 @import "./base/tokens.css";
 @import "./base/font.css";
 
-html,
+/* html,
 body {
   min-height: 100%;
 }
@@ -37,4 +37,4 @@ img,
 video {
   display: block;
   max-width: 100%;
-}
+} */

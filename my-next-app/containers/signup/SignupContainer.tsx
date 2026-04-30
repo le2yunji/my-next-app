@@ -1,7 +1,7 @@
 import SignupBanner from "@/features/signup/ui/SignupBanner";
 import SignupForm from "@/features/signup/ui/SignupForm";
 
-const LoginContainer = () => {
+const SignupContainer = () => {
   return (
     <div className="flex min-h-screen w-full flex-col lg:flex-row">
       <div className="hidden lg:flex lg:min-h-screen lg:w-1/2">
@@ -18,4 +18,4 @@ const LoginContainer = () => {
   );
 };
 
-export default LoginContainer;
+export default SignupContainer;

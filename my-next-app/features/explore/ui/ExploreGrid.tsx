@@ -201,6 +201,7 @@ export default function ExploreGrid() {
                   src={item.imgUrl}
                   alt={item.title}
                   fill
+                  unoptimized
                   className="block w-full object-cover transition-transform duration-300 group-hover:scale-[1.04]"
                 />
                 {/* 호버 오버레이 */}
@@ -234,6 +235,7 @@ export default function ExploreGrid() {
                   width={18}
                   height={18}
                   className="rounded-full object-cover"
+                  unoptimized
                 />
                 <span className="text-[11px] text-cool-gray">
                   {item.authorName}

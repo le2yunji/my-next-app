@@ -17,6 +17,8 @@ export default function LoginBanner() {
         sizes="(max-width: 768px) 100vw, 50vw"
         priority
         className="object-cover"
+        loading="eager"
+        unoptimized
       />
 
       <div className="absolute inset-0 bg-black/20" />

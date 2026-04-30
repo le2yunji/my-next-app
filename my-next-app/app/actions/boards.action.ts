@@ -2,7 +2,7 @@
 
 import apiClient from "@/app/utils/api-client";
 import { getMeServer } from "@/lib/auth/getMeServer";
-import type { BoardItem as PublicBoardItem } from "@/types/board";
+import type { BoardItem as PublicBoardItem } from "@/components/common/board/board.type";
 import type {
   RawApiBoard,
   RawApiBoardPageItem,

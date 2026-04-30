@@ -1,138 +1,88 @@
-import { notFound } from "next/navigation";
+// app/(main)/posts/[postId]/comments/page.tsx
+// 댓글 전체 페이지 (바텀 시트 없이 풀 페이지로 진입 시)
+import { Suspense } from "react";
+import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
+import CommentsSkeleton from "@/features/comments/ui/CommentsSkeleton";
+import CommentsContent from "@/features/comments/ui/CommentsContent";
+import { getUserProfileAction } from "@/app/actions/users.action";
+import FollowButton from "@/features/users/ui/UserProfile/FollowButton";
+import Avatar from "@/components/common/Avatar";
+import Image from "next/image";
 import getPostDetailAction from "@/app/actions/posts.action";
-import PostMediaCarousel from "./PostMediaCarousel";
 
 export default async function PostDetail({
   params,
+  searchParams,
 }: {
-  params: Promise<{ userId: string; postId: string }>;
+  params: Promise<{ postId: string }>;
+  searchParams: Promise<{ userId?: string }>;
 }) {
-  const { userId, postId } = await params;
-  const data = await getPostDetailAction({ userId, postId });
+  const [{ postId }, { userId }] = await Promise.all([params, searchParams]);
 
-  if (data?.code === "USER_NOT_FOUND" || data?.code === "POST_NOT_FOUND") {
-    notFound();
-  }
-
-  if (data?.isError) {
-    return (
-      <div className="px-5 py-10 text-center text-sm text-red-500">
-        {data.message}
-      </div>
-    );
-  }
-
-  const { post, profile, previewComment, navigation } = data;
+  const [author, postData] = await Promise.all([
+    userId ? getUserProfileAction({ userId }) : null,
+    userId ? getPostDetailAction({ userId, postId }) : null, // 추가
+  ]);
 
   return (
-    <div className="pb-10">
+    <div className="flex h-screen flex-col md:h-auto md:min-h-screenm ml-10">
       {/* 헤더 */}
-      <div className="px-5 pt-6 pb-4">
+      <header className="flex items-center gap-3 border-b border-linen px-4 py-4">
         <Link
-          href={`/users/${userId}`}
-          className="mb-4 inline-flex items-center gap-1.5 text-sm text-[#6B7280]"
+          href={`/`}
+          className="text-cool-gray transition-opacity hover:opacity-70"
+          aria-label="뒤로가기"
         >
-          <svg
-            viewBox="0 0 24 24"
-            className="h-4 w-4"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M15 18l-6-6 6-6" />
-          </svg>
-          {profile.name}
+          <ChevronLeft size={22} />
         </Link>
-
-        <p className="mt-3 text-[13px] font-semibold uppercase tracking-[0.12em] text-[#9CA3AF]">
-          {post.likeCount} likes · {post.commentCount} comments
-        </p>
-      </div>
-
-      {/* 미디어 캐러셀 */}
-      {post.media && post.media.length > 0 ? (
-        <PostMediaCarousel postId={post._id} media={post.media} />
-      ) : (
-        <div className="mx-5 rounded-3xl bg-[#F7F5F2] px-4 py-10 text-center">
-          <p className="text-sm text-[#9CA3AF]">미디어가 없습니다.</p>
+        <div className="flex items-center gap-2">
+          <Avatar
+            src={author ? author.profileImage : null}
+            alt={author ? `${author.userId}의 프로필 사진` : "알수없음"}
+            size="xs"
+            className="mt-0.5 shrink-0"
+          />
+          <h1 className="text-[15px] font-bold text-near-black">
+            {author?.userId ? `${author.userId}` : "댓글"}
+          </h1>
         </div>
-      )}
 
-      {/* 본문 */}
-      {post.content ? (
-        <div className="px-5 pt-5">
-          <p className="text-[15px] leading-relaxed text-[#111827]">
-            {post.content}
-          </p>
-        </div>
-      ) : null}
+        {/* <FollowButton
+          targetUserId={author._id}
+          initialIsFollowing={false}
+          size={"sm"}
+        /> */}
+      </header>
 
-      {/* 미리보기 댓글 */}
-      {previewComment ? (
-        <div className="mx-5 mt-5 rounded-2xl bg-[#F7F5F2] px-4 py-3">
-          <p className="text-[12px] font-semibold uppercase tracking-[0.1em] text-[#9CA3AF]">
-            Comment
-          </p>
-          <p className="mt-1 text-[13px] font-semibold text-[#374151]">
-            {previewComment.author?.id}
-          </p>
-          <p className="mt-0.5 text-[13px] text-[#6B7280]">
-            {previewComment.content}
-          </p>
-        </div>
-      ) : null}
-
-      {/* 이전 / 다음 네비게이션 */}
-      {navigation.prevPostId || navigation.nextPostId ? (
-        <div className="mx-5 mt-5 flex gap-3">
-          {navigation.prevPostId ? (
-            <Link
-              href={`/users/${userId}/posts/${navigation.prevPostId}`}
-              className="flex flex-1 items-center justify-center gap-1.5 rounded-2xl bg-[#F7F5F2] py-3 text-[13px] font-semibold text-[#374151]"
+      {/* 사진 1행 나열 */}
+      {postData?.post?.media?.length ? (
+        <div
+          className="flex gap-2 overflow-x-auto px-4 py-4 scrollbar-hide"
+          style={{ scrollbarWidth: "none" }}
+        >
+          {postData.post.media.map((m: { url: string; order: number }) => (
+            <div
+              key={m.order}
+              className="relative aspect-square h-90 w-90 shrink-0 overflow-hidden rounded-md bg-[#ECE7E1]"
             >
-              <svg
-                viewBox="0 0 24 24"
-                className="h-4 w-4"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M15 18l-6-6 6-6" />
-              </svg>
-              이전 글
-            </Link>
-          ) : (
-            <div className="flex-1" />
-          )}
-
-          {navigation.nextPostId ? (
-            <Link
-              href={`/users/${userId}/posts/${navigation.nextPostId}`}
-              className="flex flex-1 items-center justify-center gap-1.5 rounded-2xl bg-[#F7F5F2] py-3 text-[13px] font-semibold text-[#374151]"
-            >
-              다음 글
-              <svg
-                viewBox="0 0 24 24"
-                className="h-4 w-4"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M9 18l6-6-6-6" />
-              </svg>
-            </Link>
-          ) : (
-            <div className="flex-1" />
-          )}
+              <Image
+                src={m.url}
+                alt=""
+                fill
+                className="object-cover"
+                loading="eager"
+                unoptimized
+              />
+            </div>
+          ))}
         </div>
       ) : null}
+
+      {/* 댓글 목록 + 입력창 */}
+      <Suspense fallback={<CommentsSkeleton />}>
+        <CommentsContent postId={postId} author={author} />
+      </Suspense>
     </div>
   );
 }

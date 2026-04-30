@@ -5,19 +5,25 @@ type LoginResult = {
   message?: string;
   accessToken?: string;
   refreshToken?: string;
-  [key: string]: any; // 임시로 쓰는 코드
+  user?: {
+    _id: string;
+    userId: string;
+    name: string;
+    email: string;
+    phone: string;
+  };
 };
 
 export const loginApi = async (
   identifier: string,
-  password: string
+  password: string,
 ): Promise<LoginResult> => {
   const res = await apiClient.post(
     "/api/auth/login",
     { identifier, password },
     {
       credentials: "include",
-    }
+    },
   );
   let data;
   try {

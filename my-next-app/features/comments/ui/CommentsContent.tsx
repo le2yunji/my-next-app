@@ -23,13 +23,18 @@ export default async function CommentsContent({
   }
 
   const threads = data?.items ?? [];
+  // 최상위 댓글 수 + 각 스레드의 대댓글 수 합산
+  const totalCount = (threads as Array<{ replies: unknown[] }>).reduce(
+    (acc, { replies }) => acc + 1 + replies.length,
+    0,
+  );
 
   return (
     <>
       {/* 댓글 수 */}
       <div className="px-4 pt-2">
         <span className="text-sm font-semibold text-cool-gray">
-          댓글 {threads.length > 0 ? `${threads.length}개` : ""}
+          댓글 {totalCount > 0 ? `${totalCount}개` : ""}
         </span>
       </div>
 
@@ -37,7 +42,9 @@ export default async function CommentsContent({
       <CommentList
         threads={threads}
         postId={postId}
+        currentUserId={me?._id ? String(me._id) : null}
         currentUserProfileImage={me?.profileImage ?? null}
+        isAuthenticated={!!me}
       />
     </>
   );

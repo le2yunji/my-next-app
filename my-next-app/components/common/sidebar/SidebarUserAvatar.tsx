@@ -10,7 +10,7 @@ export default function SidebarUserAvatar() {
 
   return (
     <Link
-      href="/profile"
+      href={`/users/${user.userId}`}
       className="flex items-center gap-3 rounded-lg px-4 py-3 transition-colors hover:bg-linen md:justify-center md:px-2 lg:justify-start lg:px-4"
     >
       <Avatar src={null} alt={`${user.userId} 프로필`} size="xs" />

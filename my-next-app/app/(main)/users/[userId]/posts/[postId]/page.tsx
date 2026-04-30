@@ -1,29 +1,25 @@
-// app/(main)/posts/[postId]/comments/page.tsx
-// 댓글 전체 페이지 (바텀 시트 없이 풀 페이지로 진입 시)
 import { Suspense } from "react";
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import CommentsSkeleton from "@/features/comments/ui/CommentsSkeleton";
 import CommentsContent from "@/features/comments/ui/CommentsContent";
 import { getUserProfileAction } from "@/app/actions/users.action";
-import FollowButton from "@/features/users/ui/UserProfile/FollowButton";
 import Avatar from "@/components/common/Avatar";
 import Image from "next/image";
 import getPostDetailAction from "@/app/actions/posts.action";
 
-export default async function CommentsPage({
+export default async function PostDetailPage({
   params,
-  searchParams,
 }: {
-  params: Promise<{ postId: string }>;
-  searchParams: Promise<{ userId?: string }>;
+  params: Promise<{ userId: string; postId: string }>;
 }) {
-  const [{ postId }, { userId }] = await Promise.all([params, searchParams]);
+  const { userId, postId } = await params;
 
   const [author, postData] = await Promise.all([
-    userId ? getUserProfileAction({ userId }) : null,
-    userId ? getPostDetailAction({ userId, postId }) : null, // 추가
+    getUserProfileAction({ userId }),
+    getPostDetailAction({ userId, postId }),
   ]);
+
   return (
     <div className="flex h-screen flex-col md:h-auto md:min-h-screenm ml-10">
       {/* 헤더 */}
@@ -43,15 +39,9 @@ export default async function CommentsPage({
             className="mt-0.5 shrink-0"
           />
           <h1 className="text-[15px] font-bold text-near-black">
-            {author?.userId ? `${author.userId}` : "댓글"}
+            {author?.userId ?? "댓글"}
           </h1>
         </div>
-
-        <FollowButton
-          targetUserId={author._id}
-          initialIsFollowing={false}
-          size={"sm"}
-        />
       </header>
 
       {/* 사진 1행 나열 */}
@@ -70,6 +60,7 @@ export default async function CommentsPage({
                 alt=""
                 fill
                 className="object-cover"
+                loading="eager"
                 unoptimized
               />
             </div>

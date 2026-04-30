@@ -84,10 +84,7 @@ export default function PostList({
       <ul className="grid gap-2.5 grid-cols-3 md:grid-cols-4">
         {items.map((post) => (
           <li key={post._id} className="relative">
-            <Link
-              href={`/users/${userId}/posts/${post._id}`}
-              className="group block"
-            >
+            <Link href={`/users/${userId}/posts/${post._id}`} className="group block">
               <PostThumbnail src={post.thumbnail?.url} alt="게시물 썸네일" />
 
               {post.mediaCount > 1 && (

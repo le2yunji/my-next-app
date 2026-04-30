@@ -1,10 +1,10 @@
 "use client";
 
 import { getUserBoardsAction } from "@/app/actions/users.action";
-import BoardCard from "@/components/common/board";
+import Board from "@/components/common/board";
+import { BoardItem } from "@/components/common/board/board.type";
 import { useInfiniteScrollList } from "@/hooks/useInfiniteScrollList";
 import type { UserBoardListItem } from "@/features/boards/types/board.type";
-import { BoardItem } from "@/components/common/board/board.type";
 
 function toBoardCardItem(board: UserBoardListItem): BoardItem {
   return {
@@ -82,7 +82,7 @@ export default function UserBoardList({
       <ul className="grid gap-x-4 gap-y-6 grid-cols-3 md:grid-cols-4">
         {items.map((board) => (
           <li key={board._id}>
-            <BoardCard
+            <Board
               board={toBoardCardItem(board)}
               size="md"
               href={`/users/${userId}/boards/${board._id}`}

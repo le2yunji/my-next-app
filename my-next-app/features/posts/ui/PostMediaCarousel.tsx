@@ -63,7 +63,7 @@ function Carousel({
   };
 
   return (
-    <div className={`relative ${className ?? "mx-5"}`}>
+    <div className={`relative overflow-hidden ${className ?? "mx-5"}`}>
       {/* 스와이프 영역 */}
       <div
         ref={containerRef}

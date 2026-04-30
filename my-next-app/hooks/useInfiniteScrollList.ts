@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 
 type CursorPageResult<T> = {
@@ -75,17 +75,12 @@ export function useInfiniteScrollList<T>({
     }
   }, [cursor, fetchPage, getKey, hasNext, limit, loading, errorMessage]);
 
-  const { sentinelRef, isIntersecting } = useIntersectionObserver({
+  const { sentinelRef } = useIntersectionObserver({
     enabled: hasNext && !loading,
     rootMargin,
     threshold,
+    onIntersect: fetchNext,
   });
-
-  useEffect(() => {
-    if (isIntersecting) {
-      fetchNext();
-    }
-  }, [isIntersecting, fetchNext]);
 
   return {
     items,

@@ -24,17 +24,17 @@ const MOCK_NOTIFS: Notification[] = [
     id: "n1",
     type: "like",
     authorName: "haein_c",
-    authorAvatar: "https://i.pravatar.cc/150?img=25",
+    authorAvatar: "/static/images/profiles/1.webp",
     text: "회원님의 게시물을 좋아합니다.",
     time: "방금 전",
-    postImgUrl: "https://picsum.photos/seed/mute1/80/80",
+    postImgUrl: null,
     read: false,
   },
   {
     id: "n2",
     type: "follow",
     authorName: "yujin_s",
-    authorAvatar: "https://i.pravatar.cc/150?img=32",
+    authorAvatar: "/static/images/profiles/2.webp",
     text: "회원님을 팔로우하기 시작했습니다.",
     time: "10분 전",
     postImgUrl: null,
@@ -44,37 +44,37 @@ const MOCK_NOTIFS: Notification[] = [
     id: "n3",
     type: "comment",
     authorName: "sooyeon_l",
-    authorAvatar: "https://i.pravatar.cc/150?img=44",
+    authorAvatar: "/static/images/profiles/3.webp",
     text: '댓글: "너무 예뻐요! 어디예요?"',
     time: "1시간 전",
-    postImgUrl: "https://picsum.photos/seed/mute2/80/80",
+    postImgUrl: null,
     read: false,
   },
   {
     id: "n4",
     type: "like",
     authorName: "minjun_k",
-    authorAvatar: "https://i.pravatar.cc/150?img=11",
+    authorAvatar: "/static/images/profiles/4.webp",
     text: "회원님의 게시물을 좋아합니다.",
     time: "3시간 전",
-    postImgUrl: "https://picsum.photos/seed/mute3/80/80",
+    postImgUrl: null,
     read: true,
   },
   {
     id: "n5",
     type: "save",
     authorName: "junho_p",
-    authorAvatar: "https://i.pravatar.cc/150?img=67",
+    authorAvatar: "/static/images/profiles/5.webp",
     text: "회원님의 게시물을 저장했습니다.",
     time: "1일 전",
-    postImgUrl: "https://picsum.photos/seed/mute4/80/80",
+    postImgUrl: null,
     read: true,
   },
   {
     id: "n6",
     type: "follow",
     authorName: "haein_c",
-    authorAvatar: "https://i.pravatar.cc/150?img=25",
+    authorAvatar: "/static/images/profiles/6.webp",
     text: "회원님을 팔로우하기 시작했습니다.",
     time: "2일 전",
     postImgUrl: null,
@@ -109,6 +109,8 @@ function NotifItem({ notif }: { notif: Notification }) {
           width={44}
           height={44}
           className="h-11 w-11 rounded-full object-cover"
+          loading="eager"
+          unoptimized
         />
         <span
           className={`absolute -bottom-0.5 -right-0.5 flex h-5 w-5 items-center justify-center rounded-full border-2 border-warm-white ${color}`}
@@ -134,6 +136,7 @@ function NotifItem({ notif }: { notif: Notification }) {
           width={44}
           height={44}
           className="shrink-0 rounded-lg object-cover"
+          loading="eager"
           unoptimized
         />
       )}

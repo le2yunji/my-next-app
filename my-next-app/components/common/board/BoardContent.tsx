@@ -1,4 +1,4 @@
-import { BoardItem } from "@/types/board";
+import { BoardItem } from "@/components/common/board/board.type";
 import { BoardSize } from "./board.type";
 import { boardStyles } from "./board.style";
 

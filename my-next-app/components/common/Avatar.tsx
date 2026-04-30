@@ -38,7 +38,14 @@ export default function Avatar({
       )}
     >
       {src ? (
-        <Image src={src} alt={alt} fill className="object-cover" unoptimized />
+        <Image
+          src={src}
+          alt={alt}
+          fill
+          className="object-cover"
+          unoptimized
+          loading="eager"
+        />
       ) : (
         // 이미지 없을 때 기본 아이콘 폴백
         <div className="flex h-full w-full items-center justify-center text-silver">

@@ -12,9 +12,11 @@ import {
 import { AUTH_ERROR_MESSAGES } from "@/features/auth/constants/errorMessages";
 import type { LoginForm } from "@/features/login/types/login.type";
 import { loginApi } from "@/features/login/api/login";
+import { useAuthStore } from "@/stores/auth.store";
 
 export default function useLogin() {
   const router = useRouter();
+  const setUser = useAuthStore((state) => state.setUser);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>("");
 
@@ -68,6 +70,8 @@ export default function useLogin() {
         return;
       }
 
+      // 로그인 응답에 포함된 user로 즉시 store 업데이트 (새로고침 없이 사이드바 반영)
+      if (result.user) setUser(result.user);
       router.push("/");
     } catch (err) {
       setError("로그인 중 오류가 발생했습니다.");
