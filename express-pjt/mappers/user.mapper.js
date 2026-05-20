@@ -10,7 +10,7 @@ const toUserResponse = (user) => {
     userId: user.userId ?? "",
     name: user.name ?? "",
     profileImage: resolveProfileImageUrl(
-      user.profileImage ?? user.profileImageUrl ?? null
+      user.profileImage ?? user.profileImage ?? null,
     ),
   };
 };
@@ -29,7 +29,7 @@ const toUserProfileResponse = ({
     userId: user.userId ?? "",
     name: user.name ?? "",
     profileImage: resolveProfileImageUrl(
-      user.profileImage ?? user.profileImageUrl ?? null
+      user.profileImage ?? user.profileImage ?? null,
     ),
     bio: user.bio ?? "",
     postCount: user.postCount,
@@ -52,7 +52,7 @@ const toUserProfileSummaryResponse = ({ user, viewerId = null }) => {
     userId: user.userId ?? "",
     name: user.name ?? "",
     profileImage: resolveProfileImageUrl(
-      user.profileImage ?? user.profileImageUrl ?? null
+      user.profileImage ?? user.profileImage ?? null,
     ),
     isMe: viewerId ? String(viewerId) === String(user._id) : false,
   };

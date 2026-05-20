@@ -86,6 +86,7 @@ const userSchema = new mongoose.Schema(
     notificationPreferences: {
       COMMENT_LIKE: { type: Boolean, default: true },
       COMMENT_REPLY: { type: Boolean, default: true },
+      POST_COMMENT: { type: Boolean, default: true },
       FOLLOW: { type: Boolean, default: true },
       POST_LIKE: { type: Boolean, default: true },
       BOARD_LIKE: { type: Boolean, default: true },

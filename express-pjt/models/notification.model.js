@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const NOTIFICATION_TYPES = [
   "COMMENT_LIKE",
   "COMMENT_REPLY",
+  "POST_COMMENT",
   "FOLLOW",
   "POST_LIKE",
   "BOARD_LIKE",

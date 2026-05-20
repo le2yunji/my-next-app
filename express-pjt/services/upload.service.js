@@ -1,3 +1,12 @@
+// services/upload.service
+
+/**
+ *  - context 검증
+ *  - 파일 개수/크기/MIME 검증
+ *  - S3 key 생성
+ *  - presigned URL 생성
+ */
+
 const crypto = require("crypto");
 const { createPresignedPutUrl } = require("../utils/s3");
 const { S3_PUBLIC_BASE_URL } = require("../env");
@@ -20,7 +29,12 @@ const MIME_TO_EXT = {
 // context별로 허용 파일 수와 최대 크기를 분리 관리
 const CONTEXT_CONFIG = {
   post: { maxFiles: 10, maxSizeBytes: 10 * 1024 * 1024 }, // 게시글: 최대 10개, 10MB
-  profile: { maxFiles: 1, maxSizeBytes: 5 * 1024 * 1024 }, // 프로필: 최대 1개, 5MB
+  profile: { maxFiles: 1, maxSizeBytes: 10 * 1024 * 1024 }, // 프로필: 최대 1개, 10MB
+};
+
+const CONTEXT_PREFIX = {
+  post: "posts",
+  profile: "profiles",
 };
 
 // S3 Key 구조: posts/{userId}/{timestamp}-{uuid}.jpg
@@ -29,7 +43,8 @@ const buildKey = (context, mongoUserId, mimeType) => {
   const ext = MIME_TO_EXT[mimeType];
   const timestamp = Date.now();
   const uuid = crypto.randomUUID();
-  return `${context}s/${mongoUserId}/${timestamp}-${uuid}.${ext}`;
+  const prefix = CONTEXT_PREFIX[context];
+  return `${prefix}/${mongoUserId}/${timestamp}-${uuid}.${ext}`;
 };
 
 /**

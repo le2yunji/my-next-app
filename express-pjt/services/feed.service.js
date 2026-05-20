@@ -1,7 +1,7 @@
 // services/feed.service.js
 const Post = require("../models/post.model");
 const mongoose = require("mongoose");
-const { countCommentsByPostIds } = require("../repositories/comment.repository");
+const { countCommentsByPostIds } = require("../repositories/comment.repository")
 const { findLikedPostIdSet } = require("../repositories/post-like.repository");
 
 async function getFeedListData({ cursor = null, limit = 10, viewerId = null }) {

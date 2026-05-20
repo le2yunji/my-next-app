@@ -243,6 +243,7 @@ const createPostCommentData = async ({
   });
 
   // 8) 대댓글이면 부모 댓글의 replyCount 증가 + 부모 작성자에게 알림
+  //    원댓글이면 게시물 작성자에게 알림
   if (validatedParentCommentId) {
     await increaseCommentReplyCount(validatedParentCommentId, 1);
 
@@ -253,6 +254,14 @@ const createPostCommentData = async ({
       targetId: createdComment._id,
       targetType: "COMMENT",
     }).catch((err) => console.error("COMMENT_REPLY notification error:", err));
+  } else {
+    createNotificationIfAllowed({
+      type: "POST_COMMENT",
+      senderId: authorId,
+      recipientId: post.authorId,
+      targetId: post._id,
+      targetType: "POST",
+    }).catch((err) => console.error("POST_COMMENT notification error:", err));
   }
 
   // 10) 생성 결과 반환

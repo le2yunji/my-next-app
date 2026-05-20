@@ -113,6 +113,7 @@ const getNotificationPreferencesData = async (mongoId) => {
   const defaults = {
     COMMENT_LIKE: true,
     COMMENT_REPLY: true,
+    POST_COMMENT: true,
     FOLLOW: true,
     POST_LIKE: true,
     BOARD_LIKE: true,
@@ -129,6 +130,7 @@ const updateNotificationPreferencesData = async ({ mongoId, preferences }) => {
   const VALID_TYPES = [
     "COMMENT_LIKE",
     "COMMENT_REPLY",
+    "POST_COMMENT",
     "FOLLOW",
     "POST_LIKE",
     "BOARD_LIKE",
