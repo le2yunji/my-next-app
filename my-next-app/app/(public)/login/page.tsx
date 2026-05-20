@@ -1,9 +1,5 @@
-import LoginContainer from "@/containers/login/LoginContainer";
+import { LoginPage } from "@/views/login";
 
 export default function Login() {
-  return (
-    <>
-      <LoginContainer />
-    </>
-  );
+  return <LoginPage />;
 }

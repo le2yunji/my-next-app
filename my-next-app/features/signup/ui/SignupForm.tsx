@@ -2,7 +2,7 @@
 
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { useSignupStore } from "@/stores/useSignupStore";
+import { useSignupStore } from "@/features/signup/model/store";
 import SignupStepIndicator from "./SignupStepIndicator";
 import Step1BasicInfo from "./steps/Step1BasicInfo";
 import Step2AccountInfo from "./steps/Step2AccountInfo";

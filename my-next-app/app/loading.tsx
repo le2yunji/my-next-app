@@ -1,6 +1,6 @@
 // app/loading.tsx
-import React from "react";
-import Spinner from "../components/common/Spinner";
+
+import Spinner from "@/shared/ui/Spinner";
 
 export default function Loading() {
   return (

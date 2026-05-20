@@ -1,9 +1,9 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import apiClient from "@/app/utils/api-client";
-import { getUserProfile } from "../services/user.service";
-import { getMeServer } from "@/lib/auth/getMeServer";
+import apiClient from "@/shared/api/api-client";
+import { getUserProfile } from "../../entities/user/api/get-user-profile";
+import { getMeServer } from "@/entities/session/api/getMeServer";
 
 // 유저 피드 페이지 (썸네일만)
 export const getUserFeedAction = async (params: {

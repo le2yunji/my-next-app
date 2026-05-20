@@ -1,7 +1,7 @@
 import { getPostCommentsAction } from "@/app/actions/comments.action";
-import { getMeServer } from "@/lib/auth/getMeServer";
+import { getMeServer } from "@/entities/session/api/getMeServer";
 import CommentList from "@/features/comments/ui/CommentList";
-import type { UserProfileItem } from "@/features/users/types/user.type";
+import type { UserProfileItem } from "@/entities/user";
 
 export default async function CommentsContent({
   postId,

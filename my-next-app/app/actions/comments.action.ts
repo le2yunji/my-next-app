@@ -1,15 +1,7 @@
 "use server";
 
-import { cookies } from "next/headers";
-import apiClient from "@/app/utils/api-client";
-
-async function getCookieHeader() {
-  const cookieStore = await cookies();
-  return cookieStore
-    .getAll()
-    .map(({ name, value }) => `${name}=${value}`)
-    .join("; ");
-}
+import apiClient from "@/shared/api/api-client";
+import { getServerAuthHeaders } from "@/shared/lib/server/auth-headers";
 
 export const getPostCommentsAction = async (params: {
   postId: string;
@@ -24,10 +16,10 @@ export const getPostCommentsAction = async (params: {
 
   let res: Response;
   try {
-    const cookieHeader = await getCookieHeader();
+    const headers = await getServerAuthHeaders();
     res = await apiClient.get(url, {
       cache: "no-store",
-      headers: { Cookie: cookieHeader },
+      headers,
     });
   } catch {
     return { isError: true, message: "네트워크 오류가 발생했습니다." };
@@ -59,11 +51,11 @@ export const toggleCommentLikeAction = async (params: {
 }) => {
   let res;
   try {
-    const cookieHeader = await getCookieHeader();
+    const headers = await getServerAuthHeaders();
     res = await apiClient.post(
       `/api/post/${params.postId}/comments/${params.commentId}/like`,
       undefined,
-      { headers: { Cookie: cookieHeader } },
+      { headers },
     );
   } catch {
     return { isError: true, message: "네트워크 오류가 발생했습니다." };
@@ -95,10 +87,10 @@ export const deletePostCommentAction = async (params: {
 }) => {
   let res;
   try {
-    const cookieHeader = await getCookieHeader();
+    const headers = await getServerAuthHeaders();
     res = await apiClient.delete(
       `/api/post/${params.postId}/comments/${params.commentId}`,
-      { headers: { Cookie: cookieHeader } },
+      { headers },
     );
   } catch {
     return { isError: true, message: "네트워크 오류가 발생했습니다." };
@@ -130,11 +122,11 @@ export const updatePostCommentAction = async (params: {
 }) => {
   let res;
   try {
-    const cookieHeader = await getCookieHeader();
+    const headers = await getServerAuthHeaders();
     res = await apiClient.patch(
       `/api/post/${params.postId}/comments/${params.commentId}`,
       { content: params.content },
-      { headers: { Cookie: cookieHeader } },
+      { headers },
     );
   } catch {
     return { isError: true, message: "네트워크 오류가 발생했습니다." };
@@ -166,14 +158,14 @@ export const createPostCommentAction = async (params: {
 }) => {
   let res;
   try {
-    const cookieHeader = await getCookieHeader();
+    const headers = await getServerAuthHeaders();
     res = await apiClient.post(
       `/api/post/${params.postId}/comments`,
       {
         content: params.content,
         parentCommentId: params.parentCommentId ?? null,
       },
-      { headers: { Cookie: cookieHeader } },
+      { headers },
     );
   } catch {
     return { isError: true, message: "네트워크 오류가 발생했습니다." };

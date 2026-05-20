@@ -1,9 +1,9 @@
 "use client";
 
-import { TextInput } from "@/components/common/input/TextInput";
-import { PrimaryButton } from "@/components/common/button/PrimaryButton";
-import { useSignupStore } from "@/stores/useSignupStore";
-import { useSignupStep1 } from "@/features/signup/hooks/useSignupStep";
+import { TextInput } from "@/shared/ui/input/TextInput";
+import { PrimaryButton } from "@/shared/ui/button/PrimaryButton";
+import { useSignupStore } from "@/features/signup/model/store";
+import { useSignupStep1 } from "@/features/signup/model/useSignupStep";
 
 export default function Step1BasicInfo() {
   const { form, setField } = useSignupStore();

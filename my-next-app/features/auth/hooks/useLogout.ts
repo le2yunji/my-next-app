@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import { logoutApi } from "@/features/auth/api/logoutApi";
-import { useAuthStore } from "@/stores/auth.store";
+import { useAuthStore } from "@/entities/session/client";
 
 export default function useLogout() {
   const router = useRouter();

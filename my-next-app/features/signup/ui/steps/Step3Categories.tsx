@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, KeyboardEvent } from "react";
-import { PrimaryButton } from "@/components/common/button/PrimaryButton";
-import { SecondaryButton } from "@/components/common/button/SecondaryButton";
-import { useSignupStore } from "@/stores/useSignupStore";
-import { useSignupStep3 } from "@/features/signup/hooks/useSignupStep";
-import { INTEREST_CATEGORIES } from "@/features/signup/constants/categories";
-import useSignup from "@/features/signup/hooks/useSignup";
+import { PrimaryButton } from "@/shared/ui/button/PrimaryButton";
+import { SecondaryButton } from "@/shared/ui/button/SecondaryButton";
+import { useSignupStore } from "@/features/signup/model/store";
+import { useSignupStep3 } from "@/features/signup/model/useSignupStep";
+import { INTEREST_CATEGORIES } from "@/entities/user";
+import useSignup from "@/features/signup/model/useSignup";
 
 export default function Step3Categories() {
   const { form, setField } = useSignupStore();

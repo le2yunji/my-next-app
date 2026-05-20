@@ -1,8 +1,8 @@
 "use server";
 
-import apiClient from "@/app/utils/api-client";
-import { getMeServer } from "@/lib/auth/getMeServer";
-import type { BoardItem as PublicBoardItem } from "@/components/common/board/board.type";
+import apiClient from "@/shared/api/api-client";
+import { getMeServer } from "@/entities/session/api/getMeServer";
+import type { BoardItem as PublicBoardItem } from "@/shared/ui/board";
 import type {
   RawApiBoard,
   RawApiBoardPageItem,

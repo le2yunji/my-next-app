@@ -1,13 +1,10 @@
 import Image from "next/image";
-import Link from "next/link";
 
 export default function LoginBanner() {
   return (
     <div className="relative h-full w-full overflow-hidden">
       <div className="absolute inset-0 z-20 p-10 text-white">
-        <Link className="text-5xl font-bold leading-tight" href={"/"}>
-          MUTE
-        </Link>
+        <div className="text-5xl font-bold leading-tight">MUTE</div>
       </div>
 
       <Image

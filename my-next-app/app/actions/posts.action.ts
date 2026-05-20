@@ -1,15 +1,7 @@
 "use server";
 
-import { cookies } from "next/headers";
-import apiClient from "@/app/utils/api-client";
-
-async function getCookieHeader() {
-  const cookieStore = await cookies();
-  return cookieStore
-    .getAll()
-    .map(({ name, value }) => `${name}=${value}`)
-    .join("; ");
-}
+import apiClient from "@/shared/api/api-client";
+import { getServerAuthHeaders } from "@/shared/lib/server/auth-headers";
 
 export async function togglePostLikeAction(
   postId: string,
@@ -17,8 +9,9 @@ export async function togglePostLikeAction(
   { liked: boolean; likeCount: number } | { isError: true; message: string }
 > {
   try {
+    const headers = await getServerAuthHeaders();
     const res = await apiClient.post(`/api/post/${postId}/like`, undefined, {
-      headers: { Cookie: await getCookieHeader() },
+      headers,
     });
     const data = (await res.json()) as { liked: boolean; likeCount: number };
 
@@ -38,18 +31,13 @@ export async function createPostAction(params: {
   content: string;
   media: PostMedia[];
 }) {
-  const cookieStore = await cookies();
-  const cookieHeader = cookieStore
-    .getAll()
-    .map(({ name, value }) => `${name}=${value}`)
-    .join("; ");
-
   let res: Response;
   try {
+    const headers = await getServerAuthHeaders();
     res = await apiClient.post(
       `/api/users/${params.userId}/post`,
       { content: params.content, media: params.media },
-      { headers: { Cookie: cookieHeader } },
+      { headers },
     );
   } catch {
     return { isError: true, message: "네트워크 오류가 발생했습니다." };
@@ -78,10 +66,13 @@ export default async function getPostDetailAction(params: {
   userId: string;
   postId: string;
 }) {
-  const url = `/api/users/${params.userId}/post/${params.postId}`;
   let res: Response;
   try {
-    res = await apiClient.get(url, { credentials: "include" });
+    const headers = await getServerAuthHeaders();
+    res = await apiClient.get(
+      `/api/users/${params.userId}/post/${params.postId}`,
+      { credentials: "include", headers },
+    );
   } catch {
     return { isError: true, message: "네트워크 오류가 발생했습니다." };
   }

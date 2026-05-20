@@ -8,7 +8,7 @@ export type FeedAuthor = {
 };
 
 // 일반 피드 (/api/feed) 응답 구조
-export type FeedItems = {
+export type FeedItemDto = {
   id: string;
   content: string;
   author: FeedAuthor;

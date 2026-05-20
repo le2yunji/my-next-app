@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { Heart } from "lucide-react";
-import Avatar from "@/components/common/Avatar";
+import Avatar from "@/shared/ui/Avatar";
 import { formatRelativeTime } from "@/features/comments/utils/formatRelativeTime";
 import { toast } from "sonner";
 import {
@@ -11,7 +11,8 @@ import {
   updatePostCommentAction,
   toggleCommentLikeAction,
 } from "@/app/actions/comments.action";
-import { useOptimisticToggleCount } from "@/hooks/useOptimisticToggleCount";
+import { useOptimisticToggleCount } from "@/shared/hooks/useOptimisticToggleCount";
+import { useAuthStore } from "@/entities/session/client";
 
 type Author = {
   id: string;
@@ -37,7 +38,6 @@ type Props = {
   comment: CommentItemData;
   postId: string;
   currentUserId?: string | null;
-  isLoggedIn: boolean;
   onReply?: (commentId: string, userId: string) => void;
 };
 
@@ -45,11 +45,13 @@ export default function CommentItem({
   comment,
   postId,
   currentUserId,
-  isLoggedIn,
   onReply,
 }: Props) {
   const router = useRouter();
   const pathname = usePathname();
+  const user = useAuthStore((s) => s.user);
+  const isLoading = useAuthStore((s) => s.isLoading);
+  const isLoggedIn = !isLoading && !!user;
   const isOwner = !!currentUserId && currentUserId === comment.author.id;
 
   const [isEditing, setIsEditing] = useState(false);
@@ -67,8 +69,10 @@ export default function CommentItem({
     canToggle: isLoggedIn,
     onBlocked: () => {
       toast.warning("로그인이 필요합니다.");
-      //로그인 성공 후 다시 돌아올 위치를 login 페이지에 알려주는 주소
-      router.push(`/login?redirect=${encodeURIComponent(pathname)}`);
+      setTimeout(
+        () => router.push(`/login?redirect=${encodeURIComponent(pathname)}`),
+        800,
+      );
     },
 
     onToggle: async () => {

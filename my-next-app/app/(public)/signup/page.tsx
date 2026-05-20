@@ -1,9 +1,5 @@
-import SignupContainer from "@/containers/signup/SignupContainer";
+import SignupPage from "@/views/signup/ui/SignupPage";
 
 export default function Signup() {
-  return (
-    <>
-      <SignupContainer />
-    </>
-  );
+  return <SignupPage />;
 }

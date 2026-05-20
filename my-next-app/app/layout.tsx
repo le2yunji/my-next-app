@@ -1,5 +1,7 @@
-import "@/styles/globals.css";
-import AuthInitializer from "@/features/auth/ui/AuthInitializer";
+// app/layout.tsx
+import "@/app/styles/globals.css";
+import AuthInitializer from "@/app/providers/auth/AuthInitializer";
+import { Toaster } from "sonner";
 
 export default function RootLayout({
   children,
@@ -11,6 +13,7 @@ export default function RootLayout({
       <body>
         <AuthInitializer />
         {children}
+        <Toaster position="top-center" />
       </body>
     </html>
   );

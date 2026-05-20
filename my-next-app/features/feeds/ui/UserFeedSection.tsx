@@ -1,7 +1,7 @@
 import { getUserFeedAction } from "@/app/actions/users.action";
 import { getUserBoardsAction } from "@/app/actions/boards.action";
-import UserBoardList from "@/features/boards/ui/UserBoardList";
-import PostList from "@/features/posts/ui/PostList";
+import UserBoardList from "@/widgets/boards/ui/UserBoardList";
+import { PostList } from "@/features/create-posts";
 
 export default async function UserFeedSection({
   userId,

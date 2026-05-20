@@ -62,7 +62,6 @@ export default function CommentList({
                     comment={comment}
                     postId={postId}
                     currentUserId={currentUserId}
-                    isLoggedIn={!!isLoggedIn}
                     onReply={(commentId, userId) =>
                       setReplyTarget({ commentId, userId })
                     }
@@ -79,7 +78,6 @@ export default function CommentList({
                               comment={reply}
                               postId={postId}
                               currentUserId={currentUserId}
-                              isLoggedIn={!!isLoggedIn}
                             />
                           </li>
                         ))}

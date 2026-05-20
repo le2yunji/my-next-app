@@ -1,16 +1,7 @@
 "use server";
 
-import { cookies } from "next/headers";
-import apiClient from "@/app/utils/api-client";
-
-// 서버 액션에서 쿠키 인증을 전달하기 위한 헬퍼
-async function getCookieHeader() {
-  const cookieStore = await cookies();
-  return cookieStore
-    .getAll()
-    .map(({ name, value }) => `${name}=${value}`)
-    .join("; ");
-}
+import apiClient from "@/shared/api/api-client";
+import { getServerAuthHeaders } from "@/shared/lib/server/auth-headers";
 
 // 알림 목록 조회 (커서 기반 페이지네이션)
 // cursor: 마지막으로 받은 알림의 ID, 없으면 첫 페이지
@@ -26,10 +17,10 @@ export const getNotificationsAction = async (
 
   let res: Response;
   try {
-    const cookieHeader = await getCookieHeader();
+    const headers = await getServerAuthHeaders();
     res = await apiClient.get(`/api/notifications?${qs.toString()}`, {
       cache: "no-store",
-      headers: { Cookie: cookieHeader },
+      headers,
     });
   } catch {
     return { isError: true, message: "네트워크 오류가 발생했습니다." };
@@ -54,10 +45,10 @@ export const getNotificationsAction = async (
 export const getUnreadCountAction = async () => {
   let res: Response;
   try {
-    const cookieHeader = await getCookieHeader();
+    const headers = await getServerAuthHeaders();
     res = await apiClient.get("/api/notifications/unread-count", {
       cache: "no-store",
-      headers: { Cookie: cookieHeader },
+      headers,
     });
   } catch {
     return { isError: true, count: 0 };
@@ -77,12 +68,12 @@ export const getUnreadCountAction = async () => {
 // 특정 알림 1개 읽음 처리 — 알림 아이템 클릭 시 호출
 export const markNotificationReadAction = async (notificationId: string) => {
   try {
-    const cookieHeader = await getCookieHeader();
+    const headers = await getServerAuthHeaders();
     await apiClient.patch(
       `/api/notifications/${notificationId}/read`,
       undefined,
       {
-        headers: { Cookie: cookieHeader },
+        headers,
       },
     );
   } catch {
@@ -93,9 +84,9 @@ export const markNotificationReadAction = async (notificationId: string) => {
 // 모든 알림 읽음 처리 — "모두 읽음" 버튼 클릭 시 호출
 export const markAllNotificationsReadAction = async () => {
   try {
-    const cookieHeader = await getCookieHeader();
+    const headers = await getServerAuthHeaders();
     await apiClient.patch("/api/notifications/read-all", undefined, {
-      headers: { Cookie: cookieHeader },
+      headers,
     });
   } catch {
     /* 조용히 무시 */
@@ -106,10 +97,10 @@ export const markAllNotificationsReadAction = async () => {
 export const getNotificationPreferencesAction = async () => {
   let res: Response;
   try {
-    const cookieHeader = await getCookieHeader();
+    const headers = await getServerAuthHeaders();
     res = await apiClient.get("/api/users/me/notification-preferences", {
       cache: "no-store",
-      headers: { Cookie: cookieHeader },
+      headers,
     });
   } catch {
     return { isError: true, message: "네트워크 오류가 발생했습니다." };
@@ -136,13 +127,11 @@ export const updateNotificationPreferencesAction = async (
   preferences: Partial<Record<string, boolean>>,
 ) => {
   try {
-    const cookieHeader = await getCookieHeader();
+    const headers = await getServerAuthHeaders();
     await apiClient.patch(
       "/api/users/me/notification-preferences",
       preferences,
-      {
-        headers: { Cookie: cookieHeader },
-      },
+      { headers },
     );
   } catch {
     /* 조용히 무시 */

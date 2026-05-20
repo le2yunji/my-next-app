@@ -1,4 +1,4 @@
-import apiClient from "../../../app/utils/api-client";
+import apiClient from "@/shared/api/api-client";
 
 type LoginResult = {
   isError?: boolean;

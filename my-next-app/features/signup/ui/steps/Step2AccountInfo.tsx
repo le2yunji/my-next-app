@@ -1,11 +1,12 @@
 "use client";
 
-import { TextInput } from "@/components/common/input/TextInput";
-import { PasswordInput } from "@/components/common/input/PasswordInput";
-import { PrimaryButton } from "@/components/common/button/PrimaryButton";
-import { SecondaryButton } from "@/components/common/button/SecondaryButton";
-import { useSignupStore } from "@/stores/useSignupStore";
-import { useSignupStep2 } from "@/features/signup/hooks/useSignupStep";
+import { TextInput } from "@/shared/ui/input/TextInput";
+
+import { PrimaryButton } from "@/shared/ui/button/PrimaryButton";
+import { SecondaryButton } from "@/shared/ui/button/SecondaryButton";
+import { useSignupStore } from "@/features/signup/model/store";
+import { useSignupStep2 } from "@/features/signup/model/useSignupStep";
+import { PasswordInput } from "@/shared/ui/input/PasswordInput";
 
 export default function Step2AccountInfo() {
   const { form, setField } = useSignupStore();

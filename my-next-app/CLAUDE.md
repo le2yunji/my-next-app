@@ -97,3 +97,13 @@ Backend is a separate Express project at `../express-pjt/`.
 
 - 코드 작성 시 로직의 의도가 바로 파악되지 않는 부분에는 간단한 주석을 달아준다.
 - 자명한 코드(변수명·함수명만으로 충분한 경우)에는 주석을 생략한다.
+
+## FSD convention
+
+1. 모든 slice는 index.ts를 통해서만 외부 공개한다.
+2. shared에는 비즈니스 로직을 넣지 않는다.
+3. features는 사용자 행동 기준으로 이름 짓는다.
+4. entities는 도메인 명사 기준으로 이름 짓는다.
+5. 같은 layer의 slice끼리는 직접 import하지 않는다.
+6. pages는 조립만 담당하고, 복잡한 로직은 features/widgets로 내린다.
+7. components, hooks, utils 같은 전역 폴더는 만들지 않는다.

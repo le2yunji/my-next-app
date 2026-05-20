@@ -1,8 +1,8 @@
 "use client";
 
-import { TextInput } from "@/components/common/input/TextInput";
-import useLogin from "../hooks/useLogin";
-import { PrimaryButton } from "@/components/common/button/PrimaryButton";
+import useLogin from "../model/useLogin";
+import { PrimaryButton } from "@/shared/ui/button/PrimaryButton";
+import { TextInput } from "@/shared/ui/input/TextInput";
 import Link from "next/link";
 
 export default function LoginForm() {

@@ -1,32 +1,29 @@
 "use server";
 
-import { cookies } from "next/headers";
-import apiClient from "@/app/utils/api-client";
+import apiClient from "@/shared/api/api-client";
+import { getServerAuthHeaders } from "@/shared/lib/server/auth-headers";
+import type { UploadContext } from "@/shared/lib/upload/image-upload.constants";
 
 export type PresignedUrlResult = {
-  presignedUrl: string;
-  key: string;
-  publicUrl: string;
+  presignedUrl: string; // 실제 파일 업로드에 사용할 임시 URL
+  key: string; // 스토리지 내부 파일 경로 또는 파일 키
+  publicUrl: string; // 업로드 후 접근 가능한 공개 URL
 };
 
 export async function getPresignedUrlsAction(
-  files: { mimeType: string; size: number }[],
+  context: UploadContext,
+  files: { mimeType: string; size: number }[], // 파일의 MIME 타입과 크기만 서버에 전달
 ): Promise<
   | { isError: true; message: string }
   | { isError: false; data: PresignedUrlResult[] }
 > {
-  const cookieStore = await cookies();
-  const cookieHeader = cookieStore
-    .getAll()
-    .map(({ name, value }) => `${name}=${value}`)
-    .join("; ");
-
   let res: Response;
   try {
+    const headers = await getServerAuthHeaders();
     res = await apiClient.post(
       "/api/upload/presigned",
-      { context: "post", files },
-      { headers: { Cookie: cookieHeader } },
+      { context, files },
+      { headers },
     );
   } catch {
     return { isError: true, message: "네트워크 오류가 발생했습니다." };

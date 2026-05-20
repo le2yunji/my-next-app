@@ -2,7 +2,7 @@
 
 import { useRef, useState, useTransition } from "react";
 import { Send } from "lucide-react";
-import Avatar from "@/components/common/Avatar";
+import Avatar from "@/shared/ui/Avatar";
 import { createPostCommentAction } from "@/app/actions/comments.action";
 import { useRouter } from "next/navigation";
 
